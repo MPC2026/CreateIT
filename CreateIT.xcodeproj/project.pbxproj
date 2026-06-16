@@ -10,6 +10,7 @@
 		00B92CC1335232D30590D6A6 /* SampleStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54618AB461C27C2E4DB0926 /* SampleStepView.swift */; };
 		05E7C407821E1396279A5720 /* TemplateStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB8A652AE2E04473D7F6AFF /* TemplateStepView.swift */; };
 		3FDE4B502892F68139A2D3D5 /* StructureStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31812703FE0996CD40A12BEF /* StructureStepView.swift */; };
+		4189A33FE7DEE364CBD4E0AC /* ChangelogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC2D98A6E4BCB848A88E904 /* ChangelogStore.swift */; };
 		442137E81A4544C579D32AED /* AIAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3C4DF6B964D3434DA952F2F /* AIAssistant.swift */; };
 		476E97575042B0312B5722F3 /* SampleLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9D164B0B78BAA1A4641006 /* SampleLibrary.swift */; };
 		4C484B625FE1AE9E28517679 /* FDXExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE15A836F41A96713260A342 /* FDXExporter.swift */; };
@@ -25,9 +26,11 @@
 		9291D4A9048FBF47D4F2F697 /* AISettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DBFD4DCE72214721F76B8 /* AISettingsView.swift */; };
 		9EAF820A6168B8CAAD512339 /* WizardState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9268371922760085848CB4 /* WizardState.swift */; };
 		A96E2E760370C5D31559A47C /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC164401EB304C3DC069F8C5 /* AppInfo.swift */; };
+		B0C7FF1B61704209ED709163 /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = FDBDC1A6256810F4B1C0FB1F /* CHANGELOG.md */; };
 		B216CFA9784B7F3C794C878A /* UpdateCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54BEB7C5FF01545507A29CEA /* UpdateCenterView.swift */; };
 		BD67BE172BC4287F0E4BF590 /* ReleaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD19359C1A68BE48555377B /* ReleaseNotes.swift */; };
 		C418A71222B6BBBB2F1149AA /* FormatStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F3FFD0E48453427FCDA992 /* FormatStepView.swift */; };
+		E1D790BF729EFAE74B57E7E0 /* VersionHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385F0A9A13E9658804CDC588 /* VersionHistoryView.swift */; };
 		E7878C8B6FAFC3176C9A6102 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF36BF2EE7E3FB08ECFA72CB /* ContentView.swift */; };
 		EB6295681F3F1B6D58ACBA74 /* GenreStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BE152A1F1AABB238DBE0D /* GenreStepView.swift */; };
 /* End PBXBuildFile section */
@@ -37,6 +40,7 @@
 		20EAB205881F2C62D98C2F58 /* CreateITApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateITApp.swift; sourceTree = "<group>"; };
 		2577FA77CCFFA99F066527B7 /* LMStudioClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LMStudioClient.swift; sourceTree = "<group>"; };
 		31812703FE0996CD40A12BEF /* StructureStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructureStepView.swift; sourceTree = "<group>"; };
+		385F0A9A13E9658804CDC588 /* VersionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionHistoryView.swift; sourceTree = "<group>"; };
 		3CB8A652AE2E04473D7F6AFF /* TemplateStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateStepView.swift; sourceTree = "<group>"; };
 		3DD19359C1A68BE48555377B /* ReleaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseNotes.swift; sourceTree = "<group>"; };
 		4C9268371922760085848CB4 /* WizardState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WizardState.swift; sourceTree = "<group>"; };
@@ -46,6 +50,7 @@
 		68F3FFD0E48453427FCDA992 /* FormatStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatStepView.swift; sourceTree = "<group>"; };
 		6B01F34AD2390189324059BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D219D4F4FB2E73704778285 /* Beat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beat.swift; sourceTree = "<group>"; };
+		8DC2D98A6E4BCB848A88E904 /* ChangelogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangelogStore.swift; sourceTree = "<group>"; };
 		97A7B10E48F203BC095C8E98 /* SampleMovie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleMovie.swift; sourceTree = "<group>"; };
 		A07E694AF87CEC835C6FDC62 /* ScriptModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptModels.swift; sourceTree = "<group>"; };
 		A12EB497D813B9AF54052573 /* CreateIT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CreateIT.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,6 +63,7 @@
 		EF36BF2EE7E3FB08ECFA72CB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F3C4DF6B964D3434DA952F2F /* AIAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAssistant.swift; sourceTree = "<group>"; };
 		FA9D164B0B78BAA1A4641006 /* SampleLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleLibrary.swift; sourceTree = "<group>"; };
+		FDBDC1A6256810F4B1C0FB1F /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -86,6 +92,14 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		44FE88599C67DB907DA062F2 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FDBDC1A6256810F4B1C0FB1F /* CHANGELOG.md */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		46F41B9255A168847B4A1EEA /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -104,6 +118,7 @@
 				37001B17FDB1BAFFF340628D /* Data */,
 				079BB03CE3F1AAEB74315B97 /* Export */,
 				ED778EE366753CBFFE2ADCB2 /* Models */,
+				44FE88599C67DB907DA062F2 /* Resources */,
 				D2BEDD269037678BC4AD76F7 /* Support */,
 				46F41B9255A168847B4A1EEA /* ViewModels */,
 				DCAF6858EDBFF8C7FB9979BF /* Views */,
@@ -123,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				CC164401EB304C3DC069F8C5 /* AppInfo.swift */,
+				8DC2D98A6E4BCB848A88E904 /* ChangelogStore.swift */,
 				DE95C45E901ADD64A7C197CA /* GitHubUpdateService.swift */,
 				3DD19359C1A68BE48555377B /* ReleaseNotes.swift */,
 			);
@@ -142,6 +158,7 @@
 				31812703FE0996CD40A12BEF /* StructureStepView.swift */,
 				3CB8A652AE2E04473D7F6AFF /* TemplateStepView.swift */,
 				54BEB7C5FF01545507A29CEA /* UpdateCenterView.swift */,
+				385F0A9A13E9658804CDC588 /* VersionHistoryView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -224,6 +241,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B989AB4174C67859332B7FD /* Assets.xcassets in Resources */,
+				B0C7FF1B61704209ED709163 /* CHANGELOG.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,6 +256,7 @@
 				9291D4A9048FBF47D4F2F697 /* AISettingsView.swift in Sources */,
 				A96E2E760370C5D31559A47C /* AppInfo.swift in Sources */,
 				81DF55C65EE613E5047CE6F0 /* Beat.swift in Sources */,
+				4189A33FE7DEE364CBD4E0AC /* ChangelogStore.swift in Sources */,
 				71BF9BE7319AB400233516C8 /* Components.swift in Sources */,
 				E7878C8B6FAFC3176C9A6102 /* ContentView.swift in Sources */,
 				5C6E2F228BDABF91D444086E /* CreateITApp.swift in Sources */,
@@ -255,6 +274,7 @@
 				3FDE4B502892F68139A2D3D5 /* StructureStepView.swift in Sources */,
 				05E7C407821E1396279A5720 /* TemplateStepView.swift in Sources */,
 				B216CFA9784B7F3C794C878A /* UpdateCenterView.swift in Sources */,
+				E1D790BF729EFAE74B57E7E0 /* VersionHistoryView.swift in Sources */,
 				9EAF820A6168B8CAAD512339 /* WizardState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

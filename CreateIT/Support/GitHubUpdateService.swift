@@ -75,6 +75,7 @@ final class GitHubUpdateService: ObservableObject {
     @Published private(set) var state: LoadState = .idle
     @Published private(set) var latestRelease: Release?
     @Published private(set) var commits: [Commit] = []
+    @Published private(set) var releases: [Release] = []
     @Published private(set) var lastChecked: Date?
     @Published private(set) var isUpdateAvailable = false
 
@@ -84,12 +85,15 @@ final class GitHubUpdateService: ObservableObject {
         do {
             async let releaseTask = fetchLatestRelease()
             async let commitsTask = fetchRecentCommits()
+            async let releasesTask = fetchReleases()
 
             let release = try await releaseTask
             let commitList = try await commitsTask
+            let releaseList = try await releasesTask
 
             latestRelease = release
             commits = commitList
+            releases = releaseList
             isUpdateAvailable = isNewerReleaseAvailable(currentVersion: AppInfo.shortVersion, latestTag: release?.tagName)
             lastChecked = Date()
             state = .loaded
@@ -104,6 +108,14 @@ final class GitHubUpdateService: ObservableObject {
             latestRelease = release
             isUpdateAvailable = isNewerReleaseAvailable(currentVersion: AppInfo.shortVersion, latestTag: release?.tagName)
             lastChecked = Date()
+        } catch {
+            state = .failed(error.localizedDescription)
+        }
+    }
+
+    func refreshReleasesOnly() async {
+        do {
+            releases = try await fetchReleases()
         } catch {
             state = .failed(error.localizedDescription)
         }
@@ -127,6 +139,15 @@ final class GitHubUpdateService: ObservableObject {
             throw URLError(.badServerResponse)
         }
         return try decoder.decode([Commit].self, from: data)
+    }
+
+    private func fetchReleases() async throws -> [Release] {
+        let url = URL(string: "https://api.github.com/repos/\(ReleaseNotes.repositoryOwner)/\(ReleaseNotes.repositoryName)/releases?per_page=12")!
+        let (data, response) = try await request(url: url)
+        guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        return try decoder.decode([Release].self, from: data)
     }
 
     private func request(url: URL) async throws -> (Data, URLResponse) {

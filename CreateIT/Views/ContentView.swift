@@ -3,8 +3,10 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var wizard: WizardState
     @EnvironmentObject private var ai: AIAssistant
+    @EnvironmentObject private var updates: GitHubUpdateService
     @State private var showAISettings = false
     @State private var showUpdates = false
+    @State private var didBootstrapUpdates = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -25,6 +27,11 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showUpdates) {
             UpdateCenterView()
+        }
+        .task {
+            guard !didBootstrapUpdates else { return }
+            didBootstrapUpdates = true
+            await updates.refresh()
         }
     }
 
@@ -59,7 +66,17 @@ struct ContentView: View {
             Button {
                 showUpdates = true
             } label: {
-                Label("Updates", systemImage: "clock.arrow.circlepath")
+                HStack(spacing: 6) {
+                    Label("Updates", systemImage: "clock.arrow.circlepath")
+                    if updates.isUpdateAvailable {
+                        Text("NEW")
+                            .font(.caption2.weight(.bold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Capsule().fill(Color.orange.opacity(0.18)))
+                            .foregroundStyle(.orange)
+                    }
+                }
             }
             .help("View recent changes and the GitHub repo")
             Button {

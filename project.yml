@@ -17,6 +17,8 @@ targets:
     platform: macOS
     sources:
       - path: CreateIT
+    resources:
+      - path: CreateIT/Resources/CHANGELOG.md
     info:
       path: CreateIT/Info.plist
       properties:

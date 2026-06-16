@@ -2,10 +2,11 @@ import SwiftUI
 import AppKit
 
 struct UpdateCenterView: View {
+    @EnvironmentObject private var service: GitHubUpdateService
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var service = GitHubUpdateService()
     @State private var isChecking = false
     @State private var didLoad = false
+    @State private var showHistory = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -17,8 +18,15 @@ struct UpdateCenterView: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("What's new")
-                    .font(.headline)
+                HStack {
+                    Text("What's new")
+                        .font(.headline)
+                    Spacer()
+                    Button("Version history") {
+                        showHistory = true
+                    }
+                    .buttonStyle(.bordered)
+                }
                 releaseNotesBody
             }
 
@@ -53,6 +61,10 @@ struct UpdateCenterView: View {
             guard !didLoad else { return }
             didLoad = true
             await service.refresh()
+        }
+        .sheet(isPresented: $showHistory) {
+            VersionHistoryView()
+                .environmentObject(service)
         }
     }
 
