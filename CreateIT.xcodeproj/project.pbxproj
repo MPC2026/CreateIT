@@ -14,6 +14,7 @@
 		476E97575042B0312B5722F3 /* SampleLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9D164B0B78BAA1A4641006 /* SampleLibrary.swift */; };
 		4C484B625FE1AE9E28517679 /* FDXExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE15A836F41A96713260A342 /* FDXExporter.swift */; };
 		5C6E2F228BDABF91D444086E /* CreateITApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EAB205881F2C62D98C2F58 /* CreateITApp.swift */; };
+		6272FF0686B3BA4FE8334D4B /* GitHubUpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE95C45E901ADD64A7C197CA /* GitHubUpdateService.swift */; };
 		671B6B1856A2EA3E6D2B2D3D /* LMStudioClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577FA77CCFFA99F066527B7 /* LMStudioClient.swift */; };
 		71BF9BE7319AB400233516C8 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABD7B2FDFDC98B6CB2C6DF /* Components.swift */; };
 		7755D7B2F3A58C09C0BBAC1B /* SampleMovie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A7B10E48F203BC095C8E98 /* SampleMovie.swift */; };
@@ -52,6 +53,7 @@
 		C54618AB461C27C2E4DB0926 /* SampleStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleStepView.swift; sourceTree = "<group>"; };
 		C87BE152A1F1AABB238DBE0D /* GenreStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenreStepView.swift; sourceTree = "<group>"; };
 		CC164401EB304C3DC069F8C5 /* AppInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
+		DE95C45E901ADD64A7C197CA /* GitHubUpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubUpdateService.swift; sourceTree = "<group>"; };
 		EE3DBFD4DCE72214721F76B8 /* AISettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISettingsView.swift; sourceTree = "<group>"; };
 		EF36BF2EE7E3FB08ECFA72CB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F3C4DF6B964D3434DA952F2F /* AIAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAssistant.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				CC164401EB304C3DC069F8C5 /* AppInfo.swift */,
+				DE95C45E901ADD64A7C197CA /* GitHubUpdateService.swift */,
 				3DD19359C1A68BE48555377B /* ReleaseNotes.swift */,
 			);
 			path = Support;
@@ -241,6 +244,7 @@
 				4C484B625FE1AE9E28517679 /* FDXExporter.swift in Sources */,
 				C418A71222B6BBBB2F1149AA /* FormatStepView.swift in Sources */,
 				EB6295681F3F1B6D58ACBA74 /* GenreStepView.swift in Sources */,
+				6272FF0686B3BA4FE8334D4B /* GitHubUpdateService.swift in Sources */,
 				671B6B1856A2EA3E6D2B2D3D /* LMStudioClient.swift in Sources */,
 				7FC7916684AEEF14FD2DF72B /* PlotStepView.swift in Sources */,
 				BD67BE172BC4287F0E4BF590 /* ReleaseNotes.swift in Sources */,

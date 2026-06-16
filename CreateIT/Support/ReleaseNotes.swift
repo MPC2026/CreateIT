@@ -2,6 +2,8 @@ import Foundation
 
 enum ReleaseNotes {
     static let repositoryURL = URL(string: "https://github.com/MPC2026/CreateIT")!
+    static let repositoryOwner = "MPC2026"
+    static let repositoryName = "CreateIT"
 
     static let highlights: [String] = [
         "Beat targeting now follows the card you are actively editing.",
