@@ -1,0 +1,80 @@
+name: Update README release preview
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update README preview
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'README.md';
+            const markerStart = '<!-- RELEASE_PREVIEW_START -->';
+            const markerEnd = '<!-- RELEASE_PREVIEW_END -->';
+
+            const release = context.payload.release || (await github.rest.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })).data;
+
+            const published = release.published_at
+              ? new Date(release.published_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })
+              : 'recently';
+
+            const body = (release.body || '').trim();
+            const preview = [
+              markerStart,
+              `**${release.name || release.tag_name}** was published on ${published}.`,
+              '',
+              body ? body : 'GitHub release notes are available on the Releases page.',
+              '',
+              `See the full release on [GitHub Releases](${release.html_url}).`,
+              markerEnd,
+              '',
+            ].join('\n');
+
+            const readme = fs.readFileSync(path, 'utf8');
+            const startIndex = readme.indexOf(markerStart);
+            const endIndex = readme.indexOf(markerEnd);
+            if (startIndex === -1 || endIndex === -1 || endIndex < startIndex) {
+              throw new Error('README release preview markers were not found.');
+            }
+
+            const updated =
+              readme.slice(0, startIndex) +
+              preview +
+              readme.slice(endIndex + markerEnd.length);
+
+            if (updated === readme) {
+              console.log('README already up to date.');
+              return;
+            }
+
+            fs.writeFileSync(path, updated);
+
+      - name: Commit README
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          if ! git diff --cached --quiet; then
+            git commit -m "Update README release preview"
+            git push
+          fi
