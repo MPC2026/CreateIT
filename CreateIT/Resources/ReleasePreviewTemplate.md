@@ -1,5 +1,7 @@
-**{{title}}** was published on {{published}}.
-
-{{body}}
-
-See the full release on [GitHub Releases]({{url}}).
+> **{{title}}**
+>
+> *Published {{published}}*
+>
+> {{body}}
+>
+> [View the full release on GitHub Releases]({{url}})

@@ -6,7 +6,7 @@ enum ReleasePreviewFormatter {
         return template
             .replacingOccurrences(of: "{{title}}", with: title)
             .replacingOccurrences(of: "{{published}}", with: published)
-            .replacingOccurrences(of: "{{body}}", with: body.isEmpty ? "GitHub release notes are available on the Releases page." : body)
+            .replacingOccurrences(of: "{{body}}", with: quotedBody(body))
             .replacingOccurrences(of: "{{url}}", with: url)
     }
 
@@ -23,13 +23,23 @@ enum ReleasePreviewFormatter {
         guard let url = Bundle.main.url(forResource: "ReleasePreviewTemplate", withExtension: "md"),
               let template = try? String(contentsOf: url, encoding: .utf8) else {
             return """
-            **{{title}}** was published on {{published}}.
-
-            {{body}}
-
-            See the full release on [GitHub Releases]({{url}}).
+            > **{{title}}**
+            >
+            > *Published {{published}}*
+            >
+            > {{body}}
+            >
+            > [View the full release on GitHub Releases]({{url}})
             """
         }
         return template
+    }
+
+    private static func quotedBody(_ body: String) -> String {
+        let source = body.isEmpty ? "GitHub release notes are available on the Releases page." : body
+        return source
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .map { "> \($0)" }
+            .joined(separator: "\n")
     }
 }

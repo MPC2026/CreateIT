@@ -40,10 +40,14 @@ jobs:
               : 'recently';
 
             const body = (release.body || '').trim();
+            const quoteBody = (text) => {
+              const source = text || 'GitHub release notes are available on the Releases page.';
+              return source.split(/\r?\n/).map((line) => `> ${line}`).join('\n');
+            };
             const previewBody = template
               .replace(/{{title}}/g, release.name || release.tag_name)
               .replace(/{{published}}/g, published)
-              .replace(/{{body}}/g, body ? body : 'GitHub release notes are available on the Releases page.')
+              .replace(/{{body}}/g, quoteBody(body))
               .replace(/{{url}}/g, release.html_url);
 
             const preview = [
