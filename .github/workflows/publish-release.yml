@@ -9,7 +9,7 @@ on:
       tag_name:
         description: "Release tag to publish"
         required: true
-        default: "v1.3"
+        default: "v1.5"
 
 permissions:
   contents: write
@@ -51,6 +51,8 @@ jobs:
             -scheme CreateIT \
             -configuration Release \
             -destination 'generic/platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
             -derivedDataPath "$RUNNER_TEMP/CreateITDerivedData" \
             clean build
 
