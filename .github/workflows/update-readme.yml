@@ -21,6 +21,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
+            const template = fs.readFileSync('CreateIT/Resources/ReleasePreviewTemplate.md', 'utf8');
             const path = 'README.md';
             const markerStart = '<!-- RELEASE_PREVIEW_START -->';
             const markerEnd = '<!-- RELEASE_PREVIEW_END -->';
@@ -39,13 +40,15 @@ jobs:
               : 'recently';
 
             const body = (release.body || '').trim();
+            const previewBody = template
+              .replace(/{{title}}/g, release.name || release.tag_name)
+              .replace(/{{published}}/g, published)
+              .replace(/{{body}}/g, body ? body : 'GitHub release notes are available on the Releases page.')
+              .replace(/{{url}}/g, release.html_url);
+
             const preview = [
               markerStart,
-              `**${release.name || release.tag_name}** was published on ${published}.`,
-              '',
-              body ? body : 'GitHub release notes are available on the Releases page.',
-              '',
-              `See the full release on [GitHub Releases](${release.html_url}).`,
+              previewBody.trimEnd(),
               markerEnd,
               '',
             ].join('\n');

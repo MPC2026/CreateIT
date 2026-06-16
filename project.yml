@@ -18,6 +18,7 @@ targets:
     sources:
       - path: CreateIT
     resources:
+      - path: CreateIT/Resources/ReleasePreviewTemplate.md
     info:
       path: CreateIT/Info.plist
       properties:

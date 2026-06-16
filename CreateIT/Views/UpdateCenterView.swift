@@ -178,13 +178,12 @@ struct UpdateCenterView: View {
 
     @ViewBuilder
     private var releaseNotesBody: some View {
-        if let release = service.latestRelease,
-           let body = release.body?.trimmingCharacters(in: .whitespacesAndNewlines),
-           !body.isEmpty {
+        if let release = service.latestRelease {
+            let preview = ReleasePreviewFormatter.markdown(for: release)
             VStack(alignment: .leading, spacing: 8) {
-                Text(release.name ?? release.tagName)
+                Text("Latest release preview")
                     .font(.headline)
-                Text(.init(body))
+                Text(.init(preview))
                     .fixedSize(horizontal: false, vertical: true)
                     .textSelection(.enabled)
             }

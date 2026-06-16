@@ -23,6 +23,13 @@ struct VersionHistoryView: View {
                     }
                 }
 
+                if let latest = service.latestRelease {
+                    sectionCard(title: "Latest release preview") {
+                        Text(.init(ReleasePreviewFormatter.markdown(for: latest)))
+                            .textSelection(.enabled)
+                    }
+                }
+
                 sectionCard(title: "How it stays current") {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("This view is generated directly from the GitHub releases for MPC2026/CreateIT, so new release notes appear here automatically.")
