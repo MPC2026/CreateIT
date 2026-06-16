@@ -5,23 +5,12 @@ struct VersionHistoryView: View {
     @EnvironmentObject private var service: GitHubUpdateService
     @Environment(\.dismiss) private var dismiss
 
-    private var changelog: AttributedString? {
-        ChangelogStore.loadAttributed()
-    }
-
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 header
 
-                if let changelog {
-                    sectionCard(title: "Project Changelog") {
-                        Text(changelog)
-                            .textSelection(.enabled)
-                    }
-                }
-
-                sectionCard(title: "GitHub releases") {
+                sectionCard(title: "GitHub changelog") {
                     if service.releases.isEmpty {
                         Text("Release history will appear here after GitHub responds.")
                             .foregroundStyle(.secondary)
@@ -31,6 +20,16 @@ struct VersionHistoryView: View {
                                 releaseCard(release)
                             }
                         }
+                    }
+                }
+
+                sectionCard(title: "How it stays current") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("This view is generated directly from the GitHub releases for MPC2026/CreateIT, so new release notes appear here automatically.")
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text("Publish a release on GitHub and the app will pick it up the next time it checks for updates.")
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
@@ -50,7 +49,7 @@ struct VersionHistoryView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Version History")
                     .font(.system(size: 26, weight: .bold, design: .rounded))
-                Text("Release notes grouped by tag, plus the local changelog bundled with the app.")
+                Text("Release notes grouped by tag, synced from GitHub.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
