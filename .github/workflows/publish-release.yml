@@ -9,7 +9,7 @@ on:
       tag_name:
         description: "Release tag to publish"
         required: true
-        default: "v1.6"
+        default: "v1.7"
 
 permissions:
   contents: write
@@ -21,8 +21,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.ref }}
 
       - name: Capture release metadata
         id: meta
@@ -41,39 +39,6 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "dmg_name=CreateIT-${TAG}.dmg" >> "$GITHUB_OUTPUT"
           echo "release_name=CreateIT ${VERSION}" >> "$GITHUB_OUTPUT"
-
-      - name: Build app
-        shell: bash
-        run: |
-          set -euo pipefail
-          xcodebuild \
-            -project CreateIT.xcodeproj \
-            -scheme CreateIT \
-            -configuration Release \
-            -destination 'generic/platform=macOS' \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            -derivedDataPath "$RUNNER_TEMP/CreateITDerivedData" \
-            clean build
-
-      - name: Package DMG
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          APP_PATH="$RUNNER_TEMP/CreateITDerivedData/Build/Products/Release/CreateIT.app"
-          STAGING_DIR="$RUNNER_TEMP/CreateITRelease"
-          DMG_PATH="$GITHUB_WORKSPACE/dist/${{ steps.meta.outputs.dmg_name }}"
-
-          rm -rf "$STAGING_DIR"
-          mkdir -p "$STAGING_DIR" "$GITHUB_WORKSPACE/dist"
-          cp -R "$APP_PATH" "$STAGING_DIR/"
-
-          hdiutil create \
-            -srcfolder "$STAGING_DIR" \
-            -volname "CreateIT" \
-            -format UDZO \
-            -ov "$DMG_PATH"
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
