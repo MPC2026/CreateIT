@@ -12,65 +12,65 @@ struct UpdateCenterView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             header
-            statusCard
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    statusCard
 
-            if service.isUpdateAvailable {
-                updateBanner
-            }
-
-            updateStateCard
-
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("What's new")
-                        .font(.headline)
-                    Spacer()
-                    Button("Version history") {
-                        showHistory = true
+                    if service.isUpdateAvailable {
+                        updateBanner
                     }
-                    .buttonStyle(.bordered)
-                }
-                releaseNotesBody
-            }
 
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Recent commits")
-                    .font(.headline)
+                    updateStateCard
 
-                if service.commits.isEmpty {
-                    Text("Commit history will appear here after GitHub responds.")
-                        .foregroundStyle(.secondary)
-                } else {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("What's new")
+                                .font(.headline)
+                            Spacer()
+                            Button("Version history") {
+                                showHistory = true
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                        releaseNotesBody
+                    }
+
                     VStack(alignment: .leading, spacing: 10) {
-                        ForEach(service.commits) { commit in
-                            commitRow(commit)
+                        Text("Recent commits")
+                            .font(.headline)
+
+                        if service.commits.isEmpty {
+                            Text("Commit history will appear here after GitHub responds.")
+                                .foregroundStyle(.secondary)
+                        } else {
+                            VStack(alignment: .leading, spacing: 10) {
+                                ForEach(service.commits) { commit in
+                                    commitRow(commit)
+                                }
+                            }
                         }
                     }
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("GitHub access")
+                            .font(.headline)
+                        Text("If you ever point CreateIT at a private repo again, paste a read-only GitHub token here. Public releases do not need one.")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        SecureField("GitHub token", text: $githubToken)
+                            .textFieldStyle(.roundedBorder)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.trailing, 8)
             }
-
-            VStack(alignment: .leading, spacing: 10) {
-                Text("GitHub access")
-                    .font(.headline)
-                Text("If you ever point CreateIT at a private repo again, paste a read-only GitHub token here. Public releases do not need one.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                SecureField("GitHub token", text: $githubToken)
-                    .textFieldStyle(.roundedBorder)
-            }
-
-            Spacer(minLength: 0)
-
-            HStack {
-                Spacer()
-                Button("Close") { dismiss() }
-                    .buttonStyle(.bordered)
-            }
+            .scrollIndicators(.visible)
+            footer
         }
         .padding(22)
-        .frame(minWidth: 620, minHeight: 500)
+        .frame(minWidth: 620, minHeight: 460)
         .background(Color(nsColor: .windowBackgroundColor))
         .task {
             guard !didLoad else { return }
@@ -94,13 +94,27 @@ struct UpdateCenterView: View {
             }
 
             Spacer()
+        }
+    }
+
+    private var footer: some View {
+        HStack(spacing: 10) {
+            if let release = service.latestRelease {
+                Button {
+                    NSWorkspace.shared.open(release.htmlURL)
+                } label: {
+                    Label("View release", systemImage: "arrow.up.right.square")
+                }
+                .buttonStyle(.bordered)
+            }
+
+            Spacer()
+
+            Button("Close") { dismiss() }
+                .buttonStyle(.bordered)
 
             Button {
-                Task {
-                    isChecking = true
-                    defer { isChecking = false }
-                    await service.checkForUpdatesAndInstall()
-                }
+                Task { await startUpdateCheck() }
             } label: {
                 if isChecking {
                     HStack(spacing: 6) {
@@ -172,13 +186,28 @@ struct UpdateCenterView: View {
                 Label("New version available", systemImage: "sparkles")
                     .font(.headline)
                 Spacer()
-                if let release = service.latestRelease {
-                    Button("View release") {
-                        NSWorkspace.shared.open(release.htmlURL)
+                Button {
+                    Task { await startUpdateCheck() }
+                } label: {
+                    if isChecking {
+                        HStack(spacing: 6) {
+                            ProgressView().controlSize(.small)
+                            Text("Updating…")
+                        }
+                    } else {
+                        Text("Check & Install")
                     }
-                    .buttonStyle(.borderedProminent)
                 }
+                .buttonStyle(.borderedProminent)
             }
+
+            if let release = service.latestRelease {
+                Button("View release") {
+                    NSWorkspace.shared.open(release.htmlURL)
+                }
+                .buttonStyle(.borderless)
+            }
+
             Text("Your installed version is behind the latest GitHub release.")
                 .foregroundStyle(.secondary)
         }
@@ -300,5 +329,11 @@ struct UpdateCenterView: View {
         .background(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(Color(nsColor: .controlBackgroundColor)))
+    }
+
+    private func startUpdateCheck() async {
+        isChecking = true
+        defer { isChecking = false }
+        await service.checkForUpdatesAndInstall()
     }
 }
