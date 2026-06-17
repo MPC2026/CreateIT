@@ -183,6 +183,7 @@ final class AIAssistant: ObservableObject {
     /// Drafts a scene outline row from a beat's existing material.
     func draftSceneOutline(
         for beat: BeatTemplate,
+        sceneID: UUID,
         sceneIndex: Int,
         sceneCount: Int,
         seedText: String,
@@ -196,7 +197,7 @@ final class AIAssistant: ObservableObject {
         let trimmedSeed = seedText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedSeed.isEmpty else { return nil }
 
-        let sceneKey = "scene:\(beat.key)"
+        let sceneKey = "scene:\(sceneID.uuidString)"
         generating.insert(sceneKey)
         defer { generating.remove(sceneKey) }
 

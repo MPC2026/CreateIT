@@ -9,6 +9,8 @@ struct FinalDraftStepView: View {
     @State private var statusMessage: String?
     @State private var statusIsError = false
     @State private var draftConflict: DraftConflict?
+    @State private var activeSceneID: UUID?
+    @FocusState private var focusedSceneID: UUID?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -84,6 +86,9 @@ struct FinalDraftStepView: View {
             }
             .padding(20)
             .frame(minWidth: 760, minHeight: 560)
+        }
+        .onChange(of: focusedSceneID) { _, value in
+            activeSceneID = value
         }
     }
 
@@ -306,6 +311,7 @@ struct FinalDraftStepView: View {
         guard let index = sceneIndex(for: sceneID) else { return AnyView(EmptyView()) }
         let scene = wizard.scenes[index]
         let laneColor = laneColor(for: scene.act)
+        let isActive = activeSceneID == scene.id || focusedSceneID == scene.id
         let dividerOpacity = isLast ? 0 : 0.08
 
         return AnyView(
@@ -317,10 +323,17 @@ struct FinalDraftStepView: View {
                             .foregroundStyle(.primary)
                             .lineLimit(1)
 
-                        TextField("Scene label", text: sceneTitleBinding(for: sceneID))
-                            .textFieldStyle(.plain)
-                            .font(.headline)
-                            .padding(.vertical, 1)
+                        FinalDraftSceneTitleTextField(text: sceneTitleBinding(for: sceneID)) {
+                            selectScene(scene.id)
+                        }
+                        .font(.headline)
+                        .padding(.vertical, 1)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(isActive ? Color.accentColor.opacity(0.06) : Color.clear))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .strokeBorder(isActive ? Color.accentColor.opacity(0.35) : Color.primary.opacity(0.0), lineWidth: isActive ? 1.5 : 0))
                     }
                     .frame(width: 280, alignment: .leading)
 
@@ -330,10 +343,13 @@ struct FinalDraftStepView: View {
                         .padding(8)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(Color(nsColor: .textBackgroundColor)))
+                                .fill(isActive ? Color.accentColor.opacity(0.06) : Color(nsColor: .textBackgroundColor)))
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .strokeBorder(laneColor.opacity(0.12)))
+                                .strokeBorder(isActive ? Color.accentColor.opacity(0.35) : laneColor.opacity(0.12), lineWidth: isActive ? 1.5 : 1))
+                        .simultaneousGesture(TapGesture().onEnded {
+                            selectScene(scene.id)
+                        })
 
                     VStack(alignment: .trailing, spacing: 8) {
                         HStack(spacing: 6) {
@@ -388,7 +404,14 @@ struct FinalDraftStepView: View {
             }
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(Color(nsColor: .controlBackgroundColor).opacity(0.72)))
+                    .fill(isActive ? Color.accentColor.opacity(0.12) : Color(nsColor: .controlBackgroundColor).opacity(0.72)))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(isActive ? Color.accentColor : Color.primary.opacity(0.08), lineWidth: isActive ? 3 : 1))
+            .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .highPriorityGesture(TapGesture().onEnded {
+                selectScene(scene.id)
+            })
         )
     }
 
@@ -449,6 +472,11 @@ struct FinalDraftStepView: View {
                 wizard.scenes[index].summary = newValue
             }
         )
+    }
+
+    private func selectScene(_ sceneID: UUID) {
+        activeSceneID = sceneID
+        focusedSceneID = sceneID
     }
 
     private func addScene(toBeat beat: BeatTemplate) {
@@ -739,6 +767,72 @@ struct FinalDraftStepView: View {
                 statusIsError = true
             }
         }
+    }
+}
+
+private struct FinalDraftSceneTitleTextField: NSViewRepresentable {
+    @Binding var text: String
+    var onActivate: () -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(text: $text, onActivate: onActivate)
+    }
+
+    func makeNSView(context: Context) -> FinalDraftSceneTitleField {
+        let field = FinalDraftSceneTitleField()
+        field.onActivate = onActivate
+        field.delegate = context.coordinator
+        field.isEditable = true
+        field.isSelectable = true
+        field.isBordered = false
+        field.drawsBackground = false
+        field.focusRingType = .none
+        field.lineBreakMode = .byTruncatingTail
+        field.maximumNumberOfLines = 1
+        field.font = NSFont.preferredFont(forTextStyle: .headline)
+        field.stringValue = text
+        return field
+    }
+
+    func updateNSView(_ nsView: FinalDraftSceneTitleField, context: Context) {
+        if nsView.stringValue != text {
+            nsView.stringValue = text
+        }
+    }
+
+    final class Coordinator: NSObject, NSTextFieldDelegate {
+        @Binding var text: String
+        var onActivate: () -> Void
+
+        init(text: Binding<String>, onActivate: @escaping () -> Void) {
+            _text = text
+            self.onActivate = onActivate
+        }
+
+        func controlTextDidBeginEditing(_ obj: Notification) {
+            onActivate()
+        }
+
+        func controlTextDidChange(_ obj: Notification) {
+            guard let field = obj.object as? NSTextField else { return }
+            text = field.stringValue
+            onActivate()
+        }
+    }
+}
+
+private final class FinalDraftSceneTitleField: NSTextField {
+    var onActivate: (() -> Void)?
+
+    override func mouseDown(with event: NSEvent) {
+        onActivate?()
+        super.mouseDown(with: event)
+    }
+
+    override func becomeFirstResponder() -> Bool {
+        let result = super.becomeFirstResponder()
+        if result { onActivate?() }
+        return result
     }
 }
 

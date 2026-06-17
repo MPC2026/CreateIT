@@ -13,7 +13,7 @@ struct OutlineStepView: View {
     @State private var draggedSceneID: UUID?
     @State private var hoveredSceneID: UUID?
     @State private var activeSceneID: UUID?
-    @FocusState private var focusedSceneID: UUID?
+    @State private var activeSceneAIDraftID: UUID?
     @State private var beatElement: BeatElement = .card
     @State private var includeGuidance = true
     @State private var collapsedBeatKeys: Set<String> = []
@@ -103,9 +103,6 @@ struct OutlineStepView: View {
                 wizard.seedSceneOutlineFromBeats()
             }
             wizard.normalizeSceneOutline()
-        }
-        .onChange(of: focusedSceneID) { _, value in
-            activeSceneID = value
         }
         .overlay(alignment: .bottom) {
             if showCopiedToast {
@@ -445,6 +442,7 @@ struct OutlineStepView: View {
         guard let index = sceneIndex(for: sceneID) else { return AnyView(EmptyView()) }
         let scene = wizard.scenes[index]
         let laneColor = laneColor(for: scene.act)
+        let isActive = activeSceneID == scene.id
         let dividerOpacity = isLast ? 0 : 0.08
 
         return AnyView(
@@ -474,16 +472,46 @@ struct OutlineStepView: View {
                     }
                     .frame(width: 190, alignment: .leading)
 
-                    TextEditor(text: sceneSummaryBinding(for: sceneID))
-                        .font(.callout)
+                    VStack(alignment: .leading, spacing: 10) {
+                        SceneSummaryTextEditor(text: sceneSummaryBinding(for: sceneID)) {
+                            selectScene(scene.id)
+                        }
                         .frame(maxWidth: .infinity, minHeight: 108, alignment: .leading)
-                        .padding(8)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(Color(nsColor: .textBackgroundColor)))
+                                .fill(isActive ? Color.accentColor.opacity(0.06) : Color(nsColor: .textBackgroundColor)))
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .strokeBorder(laneColor.opacity(0.12)))
+                                .strokeBorder(isActive ? Color.accentColor.opacity(0.35) : laneColor.opacity(0.12), lineWidth: isActive ? 1.5 : 1))
+                        .onChange(of: sceneSummaryBinding(for: sceneID).wrappedValue) { _, _ in
+                            selectScene(scene.id)
+                        }
+
+                        HStack(spacing: 10) {
+                            Button {
+                                draftSceneWithAI(sceneID: scene.id, index: index)
+                            } label: {
+                                if activeSceneAIDraftID == scene.id {
+                                    HStack(spacing: 6) {
+                                        ProgressView().controlSize(.small)
+                                        Text("Draft with AI")
+                                    }
+                                } else {
+                                    Label("Draft with AI", systemImage: "sparkles")
+                                }
+                            }
+                            .disabled(isDraftingScenes || activeSceneAIDraftID != nil || !ai.isConfigured)
+                            .controlSize(.small)
+
+                            if !ai.isConfigured {
+                                Text("Connect a local LLM in the AI menu")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer(minLength: 0)
+                        }
+                    }
 
                     VStack(alignment: .trailing, spacing: 8) {
                         HStack(spacing: 6) {
@@ -538,7 +566,14 @@ struct OutlineStepView: View {
             }
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(Color(nsColor: .controlBackgroundColor).opacity(0.72)))
+                    .fill(isActive ? Color.accentColor.opacity(0.12) : Color(nsColor: .controlBackgroundColor).opacity(0.72)))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(isActive ? Color.accentColor : Color.primary.opacity(0.08), lineWidth: isActive ? 3 : 1))
+            .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .simultaneousGesture(TapGesture().onEnded {
+                selectScene(scene.id)
+            })
         )
     }
 
@@ -722,7 +757,7 @@ struct OutlineStepView: View {
             let laneColor = laneColor(for: scene.act)
             let isHovered = hoveredSceneID == scene.id
             let isDragged = draggedSceneID == scene.id
-            let isActive = activeSceneID == scene.id || focusedSceneID == scene.id
+            let isActive = activeSceneID == scene.id
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
                     RoundedRectangle(cornerRadius: 3, style: .continuous)
@@ -739,13 +774,14 @@ struct OutlineStepView: View {
                             selectScene(scene.id)
                         }
                         .font(.headline)
+                        .frame(minHeight: 22)
                         .padding(.vertical, 2)
                         .background(
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
                                 .fill(isActive ? Color.accentColor.opacity(0.06) : Color.clear))
                         .overlay(
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .strokeBorder(isActive ? Color.accentColor.opacity(0.35) : Color.primary.opacity(0.0), lineWidth: isActive ? 1.5 : 0))
+                                .strokeBorder(isActive ? Color.accentColor : Color.primary.opacity(0.0), lineWidth: isActive ? 2 : 0))
 
                         HStack(spacing: 8) {
                             Image(systemName: "line.3.horizontal")
@@ -763,6 +799,30 @@ struct OutlineStepView: View {
                             Spacer()
                         }
                     }
+                    .contentShape(Rectangle())
+                    .simultaneousGesture(TapGesture().onEnded {
+                        selectScene(scene.id)
+                    })
+                }
+
+                HStack {
+                    Button {
+                        draftSceneWithAI(sceneID: scene.id, index: index)
+                    } label: {
+                        if activeSceneAIDraftID == scene.id {
+                            HStack(spacing: 6) {
+                                ProgressView().controlSize(.small)
+                                Text("Draft with AI")
+                            }
+                        } else {
+                            Label("Draft with AI", systemImage: "sparkles")
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.regular)
+                    .disabled(isDraftingScenes || activeSceneAIDraftID != nil || !ai.isConfigured)
+
+                    Spacer()
                 }
 
                     SceneSummaryTextEditor(text: sceneSummaryBinding(for: sceneID)) {
@@ -774,7 +834,7 @@ struct OutlineStepView: View {
                             .fill(isActive ? Color.accentColor.opacity(0.06) : Color(nsColor: .textBackgroundColor)))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(isActive ? Color.accentColor.opacity(0.35) : laneColor.opacity(0.12), lineWidth: isActive ? 1.5 : 1))
+                            .strokeBorder(isActive ? Color.accentColor : laneColor.opacity(0.12), lineWidth: isActive ? 2 : 1))
                     .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .simultaneousGesture(TapGesture().onEnded {
                         selectScene(scene.id)
@@ -830,14 +890,14 @@ struct OutlineStepView: View {
                     .fill(
                         LinearGradient(
                             colors: [
-                                (isActive ? Color.accentColor.opacity(0.16) : (isHovered || isDragged ? laneColor.opacity(0.18) : laneColor.opacity(0.10))),
+                                (isActive ? Color.accentColor.opacity(0.18) : (isHovered || isDragged ? laneColor.opacity(0.18) : laneColor.opacity(0.10))),
                                 Color(nsColor: .controlBackgroundColor)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing)))
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .strokeBorder((isActive ? Color.accentColor : (isHovered || isDragged ? laneColor.opacity(0.38) : laneColor.opacity(0.18))), lineWidth: isActive ? 3.5 : (isHovered || isDragged ? 1.5 : 1)))
+                    .strokeBorder((isActive ? Color.accentColor : (isHovered || isDragged ? laneColor.opacity(0.38) : laneColor.opacity(0.18))), lineWidth: isActive ? 4 : (isHovered || isDragged ? 1.5 : 1)))
             .overlay(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .fill(
@@ -849,9 +909,9 @@ struct OutlineStepView: View {
                     .padding(.vertical, 8)
                     .padding(.leading, 4)
             }
-            .shadow(color: isHovered ? laneColor.opacity(0.14) : .clear, radius: 10, x: 0, y: 4)
+            .shadow(color: isActive ? Color.accentColor.opacity(0.22) : (isHovered ? laneColor.opacity(0.14) : .clear), radius: isActive ? 14 : 10, x: 0, y: 4)
             .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .highPriorityGesture(TapGesture().onEnded {
+            .simultaneousGesture(TapGesture().onEnded {
                 selectScene(scene.id)
             })
             .onHover { hovering in
@@ -901,7 +961,6 @@ struct OutlineStepView: View {
 
     private func selectScene(_ sceneID: UUID) {
         activeSceneID = sceneID
-        focusedSceneID = sceneID
     }
 
     private func draftScenesWithAI() {
@@ -930,6 +989,7 @@ struct OutlineStepView: View {
                         let input = seed.isEmpty ? beat.purpose : seed
                         let summary = await ai.draftSceneOutline(
                             for: beat,
+                            sceneID: scene.id,
                             sceneIndex: scene.beatSceneNumber,
                             sceneCount: beatScenes.count,
                             seedText: input,
@@ -974,6 +1034,45 @@ struct OutlineStepView: View {
         wizard.normalizeSceneOutline()
         sceneDraftStatus = "Added a new scene."
         sceneDraftError = nil
+    }
+
+    private func draftSceneWithAI(sceneID: UUID, index: Int) {
+        guard wizard.scenes.indices.contains(index) else { return }
+        guard let beatKey = wizard.scenes[index].beatKey,
+              let beat = wizard.beats.first(where: { $0.key == beatKey }) else { return }
+
+        activeSceneAIDraftID = sceneID
+        sceneDraftError = nil
+        sceneDraftStatus = "Drafting \(wizard.sceneNumberLabel(for: sceneID))..."
+
+        Task { @MainActor in
+            defer { activeSceneAIDraftID = nil }
+
+            let scene = wizard.scenes[index]
+            let seed = scene.summary.trimmingCharacters(in: .whitespacesAndNewlines)
+            let input = seed.isEmpty ? beat.purpose : seed
+
+            guard let summary = await ai.draftSceneOutline(
+                for: beat,
+                sceneID: sceneID,
+                sceneIndex: scene.beatSceneNumber,
+                sceneCount: wizard.scenes.filter { $0.beatKey == beat.key }.count,
+                seedText: input,
+                wizard: wizard)
+            else {
+                return
+            }
+
+            let cleaned = summary.trimmingCharacters(in: .whitespacesAndNewlines)
+            if let updateIndex = sceneIndex(for: sceneID), wizard.scenes.indices.contains(updateIndex) {
+                wizard.scenes[updateIndex].summary = cleaned
+                if wizard.scenes[updateIndex].title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wizard.scenes[updateIndex].title == "New Scene" {
+                    wizard.scenes[updateIndex].title = "Scene \(wizard.scenes[updateIndex].beatSceneNumber)"
+                }
+                sceneDraftStatus = "Finished drafting \(wizard.sceneNumberLabel(for: sceneID))."
+                sceneDraftError = nil
+            }
+        }
     }
 
     private func insertionIndex(for beatKey: String) -> Int {
@@ -1166,7 +1265,7 @@ private struct SceneSummaryTextEditor: NSViewRepresentable {
     }
 
     func makeNSView(context: Context) -> NSScrollView {
-        let scrollView = SceneEditorScrollView()
+        let scrollView = SceneSummaryEditorScrollView()
         scrollView.onActivate = onActivate
         scrollView.drawsBackground = false
         scrollView.hasVerticalScroller = true
@@ -1176,7 +1275,7 @@ private struct SceneSummaryTextEditor: NSViewRepresentable {
         scrollView.backgroundColor = .clear
         scrollView.focusRingType = .none
 
-        let textView = SceneEditorTextView()
+        let textView = SceneSummaryEditorTextView()
         textView.onActivate = onActivate
         textView.delegate = context.coordinator
         textView.isRichText = false
@@ -1211,7 +1310,7 @@ private struct SceneSummaryTextEditor: NSViewRepresentable {
     final class Coordinator: NSObject, NSTextViewDelegate {
         @Binding var text: String
         var onActivate: () -> Void
-        weak var textView: SceneEditorTextView?
+        weak var textView: SceneSummaryEditorTextView?
 
         init(text: Binding<String>, onActivate: @escaping () -> Void) {
             _text = text
@@ -1281,7 +1380,7 @@ private struct SceneTitleTextField: NSViewRepresentable {
     }
 }
 
-private final class SceneEditorScrollView: NSScrollView {
+private final class SceneSummaryEditorScrollView: NSScrollView {
     var onActivate: (() -> Void)?
 
     override func mouseDown(with event: NSEvent) {
@@ -1290,7 +1389,7 @@ private final class SceneEditorScrollView: NSScrollView {
     }
 }
 
-private final class SceneEditorTextView: NSTextView {
+private final class SceneSummaryEditorTextView: NSTextView {
     var onActivate: (() -> Void)?
 
     override func becomeFirstResponder() -> Bool {
