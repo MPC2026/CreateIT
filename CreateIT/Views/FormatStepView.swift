@@ -16,7 +16,12 @@ struct FormatStepView: View {
                 CardGrid(data: Medium.allCases, columns: 2) { medium in
                     SelectionCard(
                         isSelected: wizard.medium == medium,
-                        action: { wizard.selectMedium(medium) }
+                        action: {
+                            wizard.selectMedium(medium)
+                            if medium == .movie {
+                                wizard.next()
+                            }
+                        }
                     ) {
                         HStack(spacing: 14) {
                             Image(systemName: medium.symbol)
@@ -53,7 +58,10 @@ struct FormatStepView: View {
                     CardGrid(data: options, columns: 2) { runtime in
                         SelectionCard(
                             isSelected: wizard.runtime == runtime,
-                            action: { wizard.runtime = runtime }
+                            action: {
+                                wizard.runtime = runtime
+                                wizard.next()
+                            }
                         ) {
                             HStack(spacing: 14) {
                                 Image(systemName: runtime.symbol)

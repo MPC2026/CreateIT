@@ -4,6 +4,8 @@ import Foundation
 enum BeatElement: String, CaseIterable, Identifiable {
     /// Beats import as outline rows (Navigator / Beat Board friendly).
     case section = "Section Heading"
+    /// Beats import as Beat Board cards with synopsis text.
+    case card = "Synopsis"
     /// Beats import as scenes (each becomes a slug line on the page).
     case scene = "Scene Heading"
 
@@ -11,24 +13,27 @@ enum BeatElement: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .section: return "Beats as Outline Sections"
-        case .scene:   return "Beats as Scenes"
+        case .section: return "Beat Board Sections"
+        case .card:    return "Beat Board Cards"
+        case .scene:   return "Scene Script Pages"
         }
     }
 }
 
 /// Exports a CreateIT project to Final Draft's `.fdx` (Final Draft XML) format.
 ///
-/// Each act and beat becomes a heading paragraph, and the writer's text (plus
-/// optional guidance and sample) becomes `Action` paragraphs. Final Draft 13
-/// reads these as an outline / beat structure in the Navigator.
+/// Each act and beat becomes a heading paragraph. In beat-board mode, beats are
+/// exported as `Scene Heading` paragraphs followed by `Synopsis` paragraphs so
+/// Final Draft can treat them as cards with card text. The writer's text (plus
+/// optional guidance and sample) becomes `Action` paragraphs in the other modes.
 enum FDXExporter {
 
     @MainActor
     static func export(
         from wizard: WizardState,
         beatElement: BeatElement = .section,
-        includeGuidance: Bool = true
+        includeGuidance: Bool = true,
+        includeSceneScript: Bool = false
     ) -> String {
         var body = ""
 
@@ -62,26 +67,54 @@ enum FDXExporter {
 
             // Beat heading with timing.
             let timing = wizard.runtime.map { " — \(beat.timing(for: $0))" } ?? ""
-            // Scene headings read better in upper case as Final Draft slugs.
-            let headingText = beatElement == .scene
-                ? "\(beat.title.uppercased())\(timing)"
-                : "\(beat.title)\(timing)"
-            paragraph(beatElement.rawValue, headingText)
+            let headingText = beatElement == .section
+                ? beat.title
+                : beat.title.uppercased()
+            paragraph(beatElement == .card ? "Scene Heading" : beatElement.rawValue, "\(headingText)\(timing)")
 
-            if includeGuidance {
-                paragraph("Action", "GUIDANCE: \(beat.purpose)", style: "Italic")
-                if let sample = wizard.sampleMovie?.sample(for: beat.key) {
-                    let name = wizard.sampleMovie?.title ?? "Sample"
-                    paragraph("Action", "\(name.uppercased()) REFERENCE: \(sample)", style: "Italic")
+            let written = wizard.entries[beat.key]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+            if beatElement == .card {
+                let cardText = written.isEmpty ? beat.purpose : written
+                paragraph("Synopsis", cardText)
+            } else {
+                if includeGuidance {
+                    paragraph("Action", "GUIDANCE: \(beat.purpose)", style: "Italic")
+                    if let sample = wizard.sampleMovie?.sample(for: beat.key) {
+                        let name = wizard.sampleMovie?.title ?? "Sample"
+                        paragraph("Action", "\(name.uppercased()) REFERENCE: \(sample)", style: "Italic")
+                    }
+                }
+
+                if written.isEmpty {
+                    paragraph("Action", "[\(beat.placeholder)]")
+                } else {
+                    paragraph("Action", written)
                 }
             }
+        }
 
-            // The writer's own text, or the prompt if empty.
-            let written = wizard.entries[beat.key]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            if written.isEmpty {
-                paragraph("Action", "[\(beat.placeholder)]")
-            } else {
-                paragraph("Action", written)
+        if includeSceneScript, !wizard.scenes.isEmpty {
+            paragraph("Section Heading", "SCENE SCRIPT")
+
+            var currentSceneAct = Int.min
+            for scene in wizard.orderedScenes {
+                guard let beatKey = scene.beatKey,
+                      let beat = wizard.beats.first(where: { $0.key == beatKey }) else {
+                    continue
+                }
+
+                if beat.act != currentSceneAct {
+                    currentSceneAct = beat.act
+                    paragraph("Section Heading", beat.actLabel.uppercased())
+                }
+
+                paragraph("Scene Heading", wizard.sceneDisplayHeading(for: scene.id))
+
+                let summary = scene.summary.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !summary.isEmpty {
+                    paragraph("Action", summary)
+                }
             }
         }
 

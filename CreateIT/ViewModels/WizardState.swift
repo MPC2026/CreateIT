@@ -8,6 +8,8 @@ enum WizardStep: Int, CaseIterable {
     case sample
     case plot
     case template
+    case outline
+    case finalDraft
 
     var title: String {
         switch self {
@@ -16,7 +18,9 @@ enum WizardStep: Int, CaseIterable {
         case .genre:     return "Genre"
         case .sample:    return "Sample"
         case .plot:      return "Plot"
-        case .template:  return "Template"
+        case .template:  return "Beats"
+        case .outline:   return "Scenes"
+        case .finalDraft:return "Final Draft"
         }
     }
 }
@@ -36,6 +40,7 @@ final class WizardState: ObservableObject {
     @Published var projectTitle: String = ""
     @Published var logline: String = ""
     @Published var plot: String = ""
+    @Published var scenes: [SceneOutlineScene] = []
 
     /// Writer's fill-in text, keyed by beat key.
     @Published var entries: [String: String] = [:]
@@ -59,8 +64,10 @@ final class WizardState: ObservableObject {
         case .format:    return medium != nil && runtime != nil
         case .genre:     return genre != nil
         case .sample:    return sampleMovie != nil
-        case .plot:      return !projectTitle.trimmingCharacters(in: .whitespaces).isEmpty
-        case .template:  return false
+        case .plot:      return true
+        case .template:  return !beats.isEmpty
+        case .outline:   return false
+        case .finalDraft:return false
         }
     }
 
@@ -73,6 +80,12 @@ final class WizardState: ObservableObject {
         }
     }
 
+    func forceNext() {
+        if let nextStep = WizardStep(rawValue: step.rawValue + 1) {
+            withAnimation(.easeInOut(duration: 0.25)) { step = nextStep }
+        }
+    }
+
     func back() {
         if let prevStep = WizardStep(rawValue: step.rawValue - 1) {
             withAnimation(.easeInOut(duration: 0.25)) { step = prevStep }
@@ -80,7 +93,9 @@ final class WizardState: ObservableObject {
     }
 
     func go(to target: WizardStep) {
-        guard target.rawValue <= step.rawValue else { return }
+        let isCurrentOrEarlier = target.rawValue <= step.rawValue
+        let isNextStep = target.rawValue == step.rawValue + 1 && canAdvance
+        guard isCurrentOrEarlier || isNextStep else { return }
         withAnimation(.easeInOut(duration: 0.25)) { step = target }
     }
 
@@ -95,6 +110,7 @@ final class WizardState: ObservableObject {
             projectTitle = ""
             logline = ""
             plot = ""
+            scenes = []
             entries = [:]
         }
     }
@@ -117,6 +133,152 @@ final class WizardState: ObservableObject {
         } else if let current = runtime, !options.contains(current) {
             runtime = nil
         }
+    }
+
+    /// Seeds a scene outline from the current beats and any beat drafts.
+    func seedSceneOutlineFromBeats(replacing existing: Bool = false) {
+        guard !beats.isEmpty else {
+            scenes = []
+            return
+        }
+
+        if !existing, !scenes.isEmpty {
+            return
+        }
+
+        scenes = beats.flatMap { beat in
+            let count = defaultSceneCount(for: beat)
+            return (1...count).map { index in
+                SceneOutlineScene(
+                    act: beat.act,
+                    beatKey: beat.key,
+                    beatSceneNumber: index,
+                    title: defaultSceneTitle(for: beat, sceneNumber: index, sceneCount: count),
+                    summary: sceneSeedText(for: beat, sceneNumber: index, sceneCount: count))
+            }
+        }
+
+        normalizeSceneOutline()
+    }
+
+    func normalizeSceneOutline() {
+        var counters: [String: Int] = [:]
+        for index in scenes.indices {
+            if let beatKey = scenes[index].beatKey {
+                counters[beatKey, default: 0] += 1
+                scenes[index].beatSceneNumber = counters[beatKey] ?? 1
+            }
+        }
+    }
+
+    func nextSceneNumber(for beatKey: String) -> Int {
+        (scenes.filter { $0.beatKey == beatKey }.count) + 1
+    }
+
+    var orderedScenes: [SceneOutlineScene] {
+        let beatOrder = Dictionary(uniqueKeysWithValues: beats.enumerated().map { ($1.key, $0) })
+        return scenes.sorted {
+            let lhsBeatIndex = beatOrder[$0.beatKey ?? ""] ?? Int.max
+            let rhsBeatIndex = beatOrder[$1.beatKey ?? ""] ?? Int.max
+            if lhsBeatIndex != rhsBeatIndex { return lhsBeatIndex < rhsBeatIndex }
+            if $0.act != $1.act { return $0.act < $1.act }
+            if $0.beatSceneNumber != $1.beatSceneNumber { return $0.beatSceneNumber < $1.beatSceneNumber }
+            return $0.id.uuidString < $1.id.uuidString
+        }
+    }
+
+    func displaySceneNumber(for sceneID: UUID) -> Int {
+        orderedScenes.firstIndex(where: { $0.id == sceneID }).map { $0 + 1 } ?? 0
+    }
+
+    func sceneNumberLabel(for sceneID: UUID) -> String {
+        guard let scene = scene(for: sceneID) else { return "Scene" }
+        return "Act \(scene.act) - Scene \(displaySceneNumber(for: sceneID))"
+    }
+
+    func sceneDisplayHeading(for sceneID: UUID) -> String {
+        guard scene(for: sceneID) != nil else { return "Scene" }
+        let title = sceneTitleText(for: sceneID)
+        return "\(sceneNumberLabel(for: sceneID)) - \(title)"
+    }
+
+    func sceneTitleText(for sceneID: UUID) -> String {
+        guard let scene = scene(for: sceneID) else { return "Scene" }
+        let trimmed = scene.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmed.isEmpty { return trimmed }
+        if let beat = beat(for: scene.beatKey) {
+            return beat.title
+        }
+        return "Scene"
+    }
+
+    private func scene(for sceneID: UUID) -> SceneOutlineScene? {
+        scenes.first(where: { $0.id == sceneID })
+    }
+
+    private func beat(for beatKey: String?) -> BeatTemplate? {
+        guard let beatKey else { return nil }
+        return beats.first(where: { $0.key == beatKey })
+    }
+
+    private func defaultSceneCount(for beat: BeatTemplate) -> Int {
+        switch beat.key {
+        case "openingImage":   return 1
+        case "themeStated":    return 1
+        case "setup":          return 7
+        case "catalyst":       return 2
+        case "debate":         return 4
+        case "breakIntoTwo":   return 1
+        case "bStory":         return 2
+        case "funAndGames":    return 10
+        case "midpoint":       return 2
+        case "badGuysCloseIn": return 8
+        case "allIsLost":      return 2
+        case "darkNight":      return 3
+        case "breakIntoThree": return 1
+        case "finale":         return 12
+        case "finalImage":     return 1
+        case "teaser":         return 1
+        case "exposition":     return 7
+        case "risingAction":   return 10
+        case "climaxTurn":     return 2
+        case "fallingAction":  return 8
+        case "resolution":     return 12
+        case "tag":            return 1
+        default:
+            let span = beat.endPct - beat.startPct
+            switch span {
+            case ..<7:  return 1
+            case ..<16: return 2
+            case ..<32: return 3
+            default:    return 4
+            }
+        }
+    }
+
+    private func defaultSceneTitle(for beat: BeatTemplate, sceneNumber: Int, sceneCount: Int) -> String {
+        "Scene \(sceneNumber)"
+    }
+
+    private func sceneSeedText(for beat: BeatTemplate, sceneNumber: Int, sceneCount: Int) -> String {
+        let draft = entries[beat.key]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !draft.isEmpty {
+            return draft
+        }
+
+        if sceneCount == 1 {
+            return beat.purpose
+        }
+
+        if sceneNumber == 1 {
+            return "Open the beat with the key setup and direction \(beat.purpose.lowercased())"
+        }
+
+        if sceneNumber == sceneCount {
+            return "Land the beat so the story can move into the next turn."
+        }
+
+        return "Escalate the beat through a focused scene that advances the conflict."
     }
 
     // MARK: Export
@@ -142,6 +304,31 @@ final class WizardState: ObservableObject {
             lines.append("PLOT:")
             lines.append(plot)
         }
+
+        if !scenes.isEmpty {
+            lines.append("")
+            lines.append("SCENE OUTLINE:")
+            lines.append("")
+            for beat in beats {
+                let beatScenes = scenes.filter { $0.beatKey == beat.key }
+                guard !beatScenes.isEmpty else { continue }
+
+                lines.append("")
+                lines.append("\(beat.title)".uppercased())
+                lines.append(String(repeating: "-", count: beat.title.count))
+                for scene in beatScenes.sorted(by: { $0.beatSceneNumber < $1.beatSceneNumber }) {
+                    lines.append("")
+                    lines.append("• \(scene.title) [\(scene.beatSceneNumber)]")
+                    let summary = scene.summary.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if summary.isEmpty {
+                        lines.append("  (No scene summary yet)")
+                    } else {
+                        lines.append("  \(summary)")
+                    }
+                }
+            }
+        }
+
         lines.append("")
         lines.append("----------------------------------------")
         lines.append("")
@@ -165,5 +352,9 @@ final class WizardState: ObservableObject {
         }
         lines.append("")
         return lines.joined(separator: "\n")
+    }
+
+    private func sceneActLabel(for scene: SceneOutlineScene) -> String {
+        beats.first(where: { $0.act == scene.act })?.actLabel ?? "Act \(scene.act)"
     }
 }

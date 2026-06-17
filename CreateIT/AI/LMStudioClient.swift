@@ -6,6 +6,7 @@ struct LMStudioClient {
 
     struct Model: Identifiable, Hashable {
         let id: String
+        let displayName: String
     }
 
     enum ClientError: LocalizedError {
@@ -32,22 +33,49 @@ struct LMStudioClient {
         return url
     }
 
+    private func apiEndpoint(_ path: String) throws -> URL {
+        let trimmed = baseURL.trimmingCharacters(in: .whitespaces)
+            .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        let apiBase: String
+        if trimmed.hasSuffix("/api/v1") {
+            apiBase = trimmed
+        } else if trimmed.hasSuffix("/v1") {
+            apiBase = String(trimmed.dropLast(3)) + "/api/v1"
+        } else {
+            apiBase = trimmed + "/api/v1"
+        }
+        guard let url = URL(string: apiBase + path) else { throw ClientError.badURL }
+        return url
+    }
+
     // MARK: Models
 
-    /// Lists models exposed by the server (`GET /models`).
+    /// Lists loaded models exposed by LM Studio (`GET /api/v1/models`).
     func listModels() async throws -> [Model] {
-        let url = try endpoint("/models")
+        let url = try apiEndpoint("/models")
         var request = URLRequest(url: url)
         request.timeoutInterval = 15
         let (data, response) = try await URLSession.shared.data(for: request)
         try Self.validate(response, data)
 
         struct ModelsResponse: Decodable {
-            struct Entry: Decodable { let id: String }
-            let data: [Entry]
+            struct Entry: Decodable {
+                struct LoadedInstance: Decodable {
+                    let id: String
+                }
+
+                let key: String
+                let display_name: String
+                let loaded_instances: [LoadedInstance]
+            }
+            let models: [Entry]
         }
         let decoded = try JSONDecoder().decode(ModelsResponse.self, from: data)
-        return decoded.data.map { Model(id: $0.id) }
+        return decoded.models.flatMap { model in
+            model.loaded_instances.map {
+                Model(id: $0.id, displayName: model.display_name)
+            }
+        }
     }
 
     // MARK: Chat
@@ -80,20 +108,11 @@ struct LMStudioClient {
 
         let (data, response) = try await URLSession.shared.data(for: request)
         try Self.validate(response, data)
-
-        struct ChatResponse: Decodable {
-            struct Choice: Decodable {
-                struct Message: Decodable { let content: String }
-                let message: Message
-            }
-            let choices: [Choice]
+        if let text = Self.extractText(from: data)?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !text.isEmpty {
+            return text
         }
-        let decoded = try JSONDecoder().decode(ChatResponse.self, from: data)
-        guard let text = decoded.choices.first?.message.content,
-              !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            throw ClientError.empty
-        }
-        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        throw ClientError.empty
     }
 
     // MARK: Helpers
@@ -104,5 +123,129 @@ struct LMStudioClient {
             let body = String(data: data, encoding: .utf8) ?? ""
             throw ClientError.server("Server returned \(http.statusCode). \(body)")
         }
+    }
+    
+    private static func extractText(from data: Data) -> String? {
+        if let plain = String(data: data, encoding: .utf8) {
+            let trimmed = plain.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimmed.first != "{", trimmed.first != "[" {
+                return trimmed
+            }
+        }
+
+        guard let json = try? JSONSerialization.jsonObject(with: data) else {
+            return String(data: data, encoding: .utf8)
+        }
+
+        return extractText(from: json)
+    }
+
+    private static func extractText(from object: Any) -> String? {
+        if let string = object as? String {
+            let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+            return trimmed.isEmpty ? nil : trimmed
+        }
+
+        if let array = object as? [Any] {
+            for item in array {
+                if let text = extractText(from: item) {
+                    return text
+                }
+            }
+            return nil
+        }
+
+        guard let dict = object as? [String: Any] else { return nil }
+
+        if let choices = dict["choices"] as? [Any] {
+            for choice in choices {
+                if let text = extractChoiceText(choice) {
+                    return text
+                }
+            }
+        }
+
+        if let message = dict["message"] {
+            if let text = extractMessageText(message) {
+                return text
+            }
+        }
+
+        if let text = preferredText(in: dict) {
+            return text
+        }
+
+        return nil
+    }
+
+    private static func extractChoiceText(_ object: Any) -> String? {
+        guard let dict = object as? [String: Any] else {
+            return extractText(from: object)
+        }
+
+        if let message = dict["message"], let text = extractMessageText(message) {
+            return text
+        }
+
+        if let delta = dict["delta"], let text = extractMessageText(delta) {
+            return text
+        }
+
+        if let text = preferredText(in: dict) {
+            return text
+        }
+
+        return nil
+    }
+
+    private static func extractMessageText(_ object: Any) -> String? {
+        guard let dict = object as? [String: Any] else {
+            return extractText(from: object)
+        }
+
+        if let text = preferredText(in: dict) {
+            return text
+        }
+
+        return nil
+    }
+
+    private static func preferredText(in dict: [String: Any]) -> String? {
+        let prioritizedKeys = [
+            "content",
+            "text",
+            "output_text",
+            "reasoning_content"
+        ]
+
+        for key in prioritizedKeys {
+            if let value = value(for: key, in: dict), let text = extractText(from: value) {
+                return text
+            }
+        }
+
+        for (key, value) in dict {
+            let normalized = normalizeKey(key)
+            if normalized == "content" || normalized == "text" || normalized == "outputtext" || normalized == "reasoningcontent" {
+                if let text = extractText(from: value) {
+                    return text
+                }
+            }
+        }
+
+        return nil
+    }
+
+    private static func value(for key: String, in dict: [String: Any]) -> Any? {
+        if let value = dict[key] { return value }
+        let normalized = normalizeKey(key)
+        return dict.first(where: { normalizeKey($0.key) == normalized })?.value
+    }
+
+    private static func normalizeKey(_ key: String) -> String {
+        key
+            .lowercased()
+            .replacingOccurrences(of: "_", with: "")
+            .replacingOccurrences(of: " ", with: "")
     }
 }

@@ -9,7 +9,7 @@ Check the [Releases page](https://github.com/MPC2026/CreateIT/releases) for the 
 <!-- RELEASE_PREVIEW_END -->
 
 ## What it does
-- Guides you through structure, format, genre, sample-film reference, plot, and beat template steps.
+- Guides you through structure, format, genre, sample-film reference, plot, beat template, and scene outline steps.
 - Follows the beat you are actively working on and tailors AI prompts to that beat.
 - Shows inline AI suggestions with a sentence-by-sentence merge preview.
 - Keeps a GitHub-backed update center inside the app for version history and recent commits.

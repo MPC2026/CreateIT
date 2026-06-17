@@ -16,7 +16,10 @@ struct SampleStepView: View {
                 CardGrid(data: wizard.sampleMovies, columns: 2) { movie in
                     SelectionCard(
                         isSelected: wizard.sampleMovie?.id == movie.id,
-                        action: { wizard.sampleMovie = movie }
+                        action: {
+                            wizard.sampleMovie = movie
+                            wizard.next()
+                        }
                     ) {
                         VStack(alignment: .leading, spacing: 10) {
                             HStack(alignment: .firstTextBaseline) {

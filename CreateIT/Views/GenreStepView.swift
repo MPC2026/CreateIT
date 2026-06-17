@@ -13,7 +13,10 @@ struct GenreStepView: View {
             CardGrid(data: Genre.allCases, columns: 3) { genre in
                 SelectionCard(
                     isSelected: wizard.genre == genre,
-                    action: { wizard.selectGenre(genre) }
+                    action: {
+                        wizard.selectGenre(genre)
+                        wizard.next()
+                    }
                 ) {
                     VStack(alignment: .leading, spacing: 10) {
                         HStack {

@@ -22,6 +22,24 @@ final class AIAssistant: ObservableObject {
     @Published var connection: ConnectionState = .unknown
     /// Beat keys currently generating, so the UI can show per-beat spinners.
     @Published var generating: Set<String> = []
+    @Published private(set) var lastOutlineResponse: String?
+
+    enum OutlineError: LocalizedError {
+        case noModelSelected
+        case noBeatsAvailable
+        case unparseableResponse(String)
+
+        var errorDescription: String? {
+            switch self {
+            case .noModelSelected:
+                return "Choose a model first."
+            case .noBeatsAvailable:
+                return "No beats are available for the current wizard selections."
+            case .unparseableResponse(let preview):
+                return "LM Studio returned text the app could not parse as a story outline: \(preview)"
+            }
+        }
+    }
 
     var isConfigured: Bool {
         if case .connected = connection { return !model.isEmpty }
@@ -37,10 +55,11 @@ final class AIAssistant: ObservableObject {
         do {
             let models = try await client.listModels()
             availableModels = models
-            if model.isEmpty, let first = models.first { model = first.id }
+            model = models.first?.id ?? ""
             connection = .connected(modelCount: models.count)
         } catch {
             availableModels = []
+            model = ""
             connection = .failed(error.localizedDescription)
         }
     }
@@ -101,8 +120,200 @@ final class AIAssistant: ObservableObject {
                 user: user,
                 temperature: temperature)
         } catch {
+            if Self.isCancellation(error) { return nil }
             connection = .failed(error.localizedDescription)
             return nil
+        }
+    }
+
+    /// Expands a quick outline line into fuller beat prose.
+    func expandBeatOutline(_ outline: String, beat: BeatTemplate, wizard: WizardState) async -> String? {
+        guard !model.isEmpty else {
+            connection = .failed("Choose a model first.")
+            return nil
+        }
+
+        let trimmedOutline = outline.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedOutline.isEmpty else { return nil }
+
+        generating.insert(beat.key)
+        defer { generating.remove(beat.key) }
+
+        let system = """
+        You are a professional screenwriting assistant helping a writer turn a quick \
+        beat outline into fuller beat prose. Expand the provided outline into 2–4 \
+        present-tense sentences that feel concrete, cinematic, and specific to the \
+        beat's dramatic purpose. Keep the writer's intent intact. Return prose only \
+        with no heading, label, or commentary.
+        """
+
+        let context = projectContext(for: wizard)
+        let reference = referenceContext(for: wizard, beatKey: beat.key)
+
+        let user = """
+        Project context:
+        \(context)
+
+        \(reference)
+        Beat:
+        - Title: \(beat.title)
+        - Purpose: \(beat.purpose)
+        - Timing: \(beat.timing(for: wizard.runtime ?? .feature))
+
+        Quick outline:
+        \(trimmedOutline)
+
+        Expand this into full beat prose.
+        """
+
+        do {
+            return try await client.complete(
+                model: model,
+                system: system,
+                user: user,
+                temperature: temperature,
+                maxTokens: 900)
+        } catch {
+            if Self.isCancellation(error) { return nil }
+            connection = .failed(error.localizedDescription)
+            return nil
+        }
+    }
+
+    /// Drafts a scene outline row from a beat's existing material.
+    func draftSceneOutline(
+        for beat: BeatTemplate,
+        sceneIndex: Int,
+        sceneCount: Int,
+        seedText: String,
+        wizard: WizardState
+    ) async -> String? {
+        guard !model.isEmpty else {
+            connection = .failed("Choose a model first.")
+            return nil
+        }
+
+        let trimmedSeed = seedText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedSeed.isEmpty else { return nil }
+
+        let sceneKey = "scene:\(beat.key)"
+        generating.insert(sceneKey)
+        defer { generating.remove(sceneKey) }
+
+        let system = """
+        You are a professional screenwriting assistant helping a writer build a scene \
+        outline from story beats. Turn the provided beat material into a concise scene \
+        outline entry for one scene within the beat. Keep it specific, cinematic, and \
+        easy to edit by hand. Return 1–3 present-tense sentences only, with no heading, \
+        label, or commentary.
+        """
+
+        let context = projectContext(for: wizard)
+
+        let user = """
+        Project context:
+        \(context)
+
+        Beat:
+        - Title: \(beat.title)
+        - Purpose: \(beat.purpose)
+        - Timing: \(beat.timing(for: wizard.runtime ?? .feature))
+        - Scene position: \(sceneIndex) of \(sceneCount)
+
+        Beat material:
+        \(trimmedSeed)
+
+        Write a scene outline entry for this beat.
+        """
+
+        do {
+            return try await client.complete(
+                model: model,
+                system: system,
+                user: user,
+                temperature: temperature,
+                maxTokens: 500)
+        } catch {
+            if Self.isCancellation(error) { return nil }
+            connection = .failed(error.localizedDescription)
+            return nil
+        }
+    }
+
+    /// Generates a beat-by-beat story outline keyed by beat id.
+    func createStoryOutline(wizard: WizardState) async throws -> [String: String] {
+        guard !model.isEmpty else {
+            connection = .failed("Choose a model first.")
+            throw OutlineError.noModelSelected
+        }
+
+        let beats = wizard.beats
+        guard !beats.isEmpty else {
+            throw OutlineError.noBeatsAvailable
+        }
+
+        let system = """
+        You are a professional screenwriting assistant helping a writer build a story \
+        outline. Return only the final outline, not reasoning, analysis, or commentary. \
+        Use the exact beat ids or exact beat titles provided by the app. Keep each beat \
+        very short: one quick outline sentence, or at most two very short sentences. \
+        The goal is to produce a compact beat-by-beat pass that can be expanded into full \
+        beat prose later.
+        """
+
+        var context = ""
+        if let s = wizard.structure { context += "Structure: \(s.title)\n" }
+        if let m = wizard.medium, let r = wizard.runtime { context += "Format: \(m.rawValue), \(r.label)\n" }
+        if let g = wizard.genre { context += "Genre: \(g.title)\n" }
+        if !wizard.projectTitle.isEmpty { context += "Title: \(wizard.projectTitle)\n" }
+        if !wizard.logline.isEmpty { context += "Logline: \(wizard.logline)\n" }
+        if !wizard.plot.isEmpty { context += "Plot:\n\(wizard.plot)\n" }
+
+        var beatList = ""
+        for beat in beats {
+            beatList += """
+            - \(beat.key): \(beat.title)
+              Purpose: \(beat.purpose)
+              Timing: \(beat.timing(for: wizard.runtime ?? .feature))
+            """
+            beatList += "\n"
+        }
+
+        let user = """
+        Project context:
+        \(context)
+
+        Beat map:
+        \(beatList)
+
+        Existing beat drafts:
+        \(existingDraftsContext(for: wizard))
+
+        Return exactly one entry for each of these exact beats, in order.
+        Keep each entry to a quick outline sentence.
+        Do not skip any beats. Do not add preamble, explanation, or extra notes.
+        \(beats.map { "- \($0.key): \($0.title)" }.joined(separator: "\n"))
+        """
+
+        do {
+            let response = try await client.complete(
+                model: model,
+                system: system,
+                user: user,
+                temperature: min(temperature, 0.2),
+                maxTokens: 4096)
+            lastOutlineResponse = response
+            if let outline = Self.parseOutlineResponse(
+                response,
+                beats: beats) {
+                return outline
+            }
+
+            return Self.fallbackOutline(from: response, beats: beats)
+        } catch {
+            if Self.isCancellation(error) { throw CancellationError() }
+            connection = .failed(error.localizedDescription)
+            throw error
         }
     }
 
@@ -156,6 +367,7 @@ final class AIAssistant: ObservableObject {
                 temperature: temperature,
                 maxTokens: 600)
         } catch {
+            if Self.isCancellation(error) { return nil }
             connection = .failed(error.localizedDescription)
             return nil
         }
@@ -169,6 +381,14 @@ final class AIAssistant: ObservableObject {
         if !wizard.projectTitle.isEmpty { context += "Title: \(wizard.projectTitle)\n" }
         if !wizard.logline.isEmpty { context += "Logline: \(wizard.logline)\n" }
         if !wizard.plot.isEmpty { context += "Plot:\n\(wizard.plot)\n" }
+        if !wizard.scenes.isEmpty {
+            context += "Scene outline:\n"
+            for scene in wizard.scenes {
+                let summary = scene.summary.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !summary.isEmpty else { continue }
+                context += "- \(scene.title): \(summary)\n"
+            }
+        }
         if !wizard.entries.isEmpty {
             context += "Beat draft notes:\n"
             for beat in wizard.beats {
@@ -187,5 +407,324 @@ final class AIAssistant: ObservableObject {
             reference += "How that film handles this beat (for pacing/function, do not copy): \(sample)\n"
         }
         return reference
+    }
+
+    private static func isCancellation(_ error: Error) -> Bool {
+        if error is CancellationError { return true }
+        if let urlError = error as? URLError, urlError.code == .cancelled { return true }
+        return Task.isCancelled
+    }
+
+    private func existingDraftsContext(for wizard: WizardState) -> String {
+        guard !wizard.entries.isEmpty else { return "No beat drafts yet." }
+
+        var context = ""
+        for beat in wizard.beats {
+            let written = wizard.entries[beat.key]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            guard !written.isEmpty else { continue }
+            context += "- \(beat.key): \(written)\n"
+        }
+        return context.isEmpty ? "No beat drafts yet." : context
+    }
+
+    private static func parseOutlineResponse(_ text: String, beats: [BeatTemplate]) -> [String: String]? {
+        let aliases = outlineAliases(for: beats)
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let stripped = stripMarkdownFences(from: trimmed)
+
+        let objectCandidates = jsonObjectCandidates(from: stripped)
+        for candidate in objectCandidates {
+            if let result = parseOutlineJSONObject(candidate, aliases: aliases), !result.isEmpty {
+                return result
+            }
+        }
+
+        if let result = parseOutlineKeyValueLines(stripped, aliases: aliases), !result.isEmpty {
+            return result
+        }
+
+        if let result = parseOutlineHeadingSections(stripped, aliases: aliases), !result.isEmpty {
+            return result
+        }
+
+        if let result = parseOutlineSequentially(stripped, beats: beats), !result.isEmpty {
+            return result
+        }
+
+        return nil
+    }
+
+    private static func responsePreview(_ text: String) -> String {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.count <= 120 { return "\"\(trimmed)\"" }
+        let index = trimmed.index(trimmed.startIndex, offsetBy: 120)
+        return "\"\(trimmed[..<index])…\""
+    }
+
+    private static func parseOutlineJSONObject(_ text: String, aliases: [String: String]) -> [String: String]? {
+        guard let data = text.data(using: .utf8) else { return nil }
+        guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+
+        var result: [String: String] = [:]
+        for (key, value) in object {
+            guard let canonicalKey = canonicalBeatKey(from: key, aliases: aliases) else { continue }
+            if let string = value as? String {
+                let cleaned = string.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !cleaned.isEmpty { result[canonicalKey] = cleaned }
+                continue
+            }
+            if let nested = value as? [String: Any] {
+                if let string = nested["text"] as? String ?? nested["outline"] as? String ?? nested["content"] as? String {
+                    let cleaned = string.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !cleaned.isEmpty { result[canonicalKey] = cleaned }
+                }
+            }
+        }
+        return result
+    }
+
+    private static func parseOutlineKeyValueLines(_ text: String, aliases: [String: String]) -> [String: String]? {
+        let lines = text.components(separatedBy: .newlines)
+        var result: [String: String] = [:]
+        var currentKey: String?
+
+        for rawLine in lines {
+            let line = stripBulletPrefix(rawLine.trimmingCharacters(in: .whitespacesAndNewlines))
+            guard !line.isEmpty else { continue }
+
+            if let colonIndex = line.firstIndex(of: ":") {
+                let key = String(line[..<colonIndex]).trimmingCharacters(in: .whitespacesAndNewlines)
+                let value = String(line[line.index(after: colonIndex)...]).trimmingCharacters(in: .whitespacesAndNewlines)
+                if let canonicalKey = canonicalBeatKey(from: key, aliases: aliases), !value.isEmpty {
+                    currentKey = canonicalKey
+                    result[canonicalKey] = value
+                    continue
+                }
+            }
+
+            if let key = currentKey {
+                let existing = result[key, default: ""]
+                result[key] = existing.isEmpty ? line : "\(existing) \(line)"
+            }
+        }
+
+        return result.isEmpty ? nil : result
+    }
+
+    private static func parseOutlineHeadingSections(_ text: String, aliases: [String: String]) -> [String: String]? {
+        let lines = text.components(separatedBy: .newlines)
+        var result: [String: String] = [:]
+        var currentKey: String?
+
+        for rawLine in lines {
+            let line = stripBulletPrefix(rawLine.trimmingCharacters(in: .whitespacesAndNewlines))
+            guard !line.isEmpty else { continue }
+
+            let heading = stripHeadingPrefix(line)
+            if let canonicalKey = canonicalBeatKey(from: heading, aliases: aliases) {
+                currentKey = canonicalKey
+                if let colonIndex = line.firstIndex(of: ":") {
+                    let value = String(line[line.index(after: colonIndex)...]).trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !value.isEmpty {
+                        result[canonicalKey] = value
+                    }
+                }
+                continue
+            }
+
+            if let key = currentKey {
+                let existing = result[key, default: ""]
+                result[key] = existing.isEmpty ? line : "\(existing) \(line)"
+            }
+        }
+
+        return result.isEmpty ? nil : result
+    }
+
+    private static func outlineAliases(for beats: [BeatTemplate]) -> [String: String] {
+        var aliases: [String: String] = [:]
+        for beat in beats {
+            aliases[normalizeBeatLabel(beat.key)] = beat.key
+            aliases[normalizeBeatLabel(beat.title)] = beat.key
+        }
+        return aliases
+    }
+
+    private static func canonicalBeatKey(from label: String, aliases: [String: String]) -> String? {
+        aliases[normalizeBeatLabel(label)]
+    }
+
+    private static func normalizeBeatLabel(_ label: String) -> String {
+        let lowered = label.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        return lowered.unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) }.map(String.init).joined()
+    }
+
+    private static func stripMarkdownFences(from text: String) -> String {
+        var cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if cleaned.hasPrefix("```") {
+            cleaned = cleaned.replacingOccurrences(of: "```json", with: "")
+            cleaned = cleaned.replacingOccurrences(of: "```JSON", with: "")
+            cleaned = cleaned.replacingOccurrences(of: "```", with: "")
+        }
+        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static func jsonObjectCandidates(from text: String) -> [String] {
+        var candidates: [String] = []
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if let start = trimmed.firstIndex(of: "{"), let end = trimmed.lastIndex(of: "}") {
+            candidates.append(String(trimmed[start...end]))
+        }
+        if let start = trimmed.firstIndex(of: "["), let end = trimmed.lastIndex(of: "]") {
+            candidates.append(String(trimmed[start...end]))
+        }
+        candidates.append(trimmed)
+        candidates.append(trimmed.replacingOccurrences(of: ",\n}", with: "\n}"))
+        candidates.append(trimmed.replacingOccurrences(of: ",}", with: "}"))
+        return candidates
+    }
+
+    private static func stripBulletPrefix(_ line: String) -> String {
+        var cleaned = line
+        while cleaned.hasPrefix("-") || cleaned.hasPrefix("•") || cleaned.hasPrefix("–") || cleaned.hasPrefix("*") {
+            cleaned.removeFirst()
+            cleaned = cleaned.trimmingCharacters(in: .whitespaces)
+        }
+
+        if let dotIndex = cleaned.firstIndex(where: { $0 == "." }),
+           cleaned[..<dotIndex].allSatisfy({ $0.isNumber }) {
+            cleaned = String(cleaned[cleaned.index(after: dotIndex)...]).trimmingCharacters(in: .whitespaces)
+        }
+
+        return cleaned
+    }
+
+    private static func stripHeadingPrefix(_ line: String) -> String {
+        var cleaned = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        while cleaned.hasPrefix("#") {
+            cleaned.removeFirst()
+            cleaned = cleaned.trimmingCharacters(in: .whitespaces)
+        }
+
+        if let colonIndex = cleaned.firstIndex(of: ":") {
+            return String(cleaned[..<colonIndex]).trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        return cleaned
+    }
+
+    private static func parseOutlineSequentially(_ text: String, beats: [BeatTemplate]) -> [String: String]? {
+        let paragraphs = text
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .filter { !isGenericOutlineNoise($0) }
+
+        guard !paragraphs.isEmpty else { return nil }
+
+        var result: [String: String] = [:]
+        var paragraphIndex = 0
+
+        for beat in beats {
+            guard paragraphIndex < paragraphs.count else { break }
+            let collected = collectParagraphs(from: paragraphs, startingAt: &paragraphIndex)
+            if !collected.isEmpty {
+                result[beat.key] = collected
+            }
+        }
+
+        return result.isEmpty ? nil : result
+    }
+
+    private static func fallbackOutline(from text: String, beats: [BeatTemplate]) -> [String: String] {
+        let paragraphs = text
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        let chunks: [String]
+        if paragraphs.count > 1 {
+            chunks = paragraphs
+        } else {
+            chunks = splitIntoSentences(text)
+        }
+
+        guard !beats.isEmpty else { return [:] }
+
+        let usableChunks = chunks.isEmpty ? [text.trimmingCharacters(in: .whitespacesAndNewlines)] : chunks
+        var result: [String: String] = [:]
+
+        for (index, beat) in beats.enumerated() {
+            let chunkIndex = min(index, usableChunks.count - 1)
+            let chunk = usableChunks[chunkIndex].trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !chunk.isEmpty else { continue }
+            result[beat.key] = chunk
+        }
+
+        return result
+    }
+
+    private static func splitIntoSentences(_ text: String) -> [String] {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return [] }
+
+        let nsText = trimmed as NSString
+        var sentences: [String] = []
+        nsText.enumerateSubstrings(
+            in: NSRange(location: 0, length: nsText.length),
+            options: [.bySentences, .substringNotRequired]
+        ) { _, range, _, _ in
+            let sentence = nsText.substring(with: range).trimmingCharacters(in: .whitespacesAndNewlines)
+            if !sentence.isEmpty {
+                sentences.append(sentence)
+            }
+        }
+        return sentences.isEmpty ? [trimmed] : sentences
+    }
+
+    private static func collectParagraphs(from paragraphs: [String], startingAt index: inout Int) -> String {
+        guard index < paragraphs.count else { return "" }
+
+        var pieces: [String] = []
+        let first = paragraphs[index]
+        pieces.append(first)
+        index += 1
+
+        while index < paragraphs.count {
+            let paragraph = paragraphs[index]
+            if looksLikeNewBeatHeading(paragraph) && !pieces.isEmpty {
+                break
+            }
+            if paragraph.lowercased().hasPrefix("act ") || paragraph.lowercased().hasPrefix("beat ") {
+                break
+            }
+            if paragraph.count > 220 && pieces.count > 0 {
+                break
+            }
+            pieces.append(paragraph)
+            index += 1
+            if pieces.joined(separator: " ").count > 260 {
+                break
+            }
+        }
+
+        return pieces.joined(separator: "\n\n").trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static func looksLikeNewBeatHeading(_ line: String) -> Bool {
+        let stripped = stripHeadingPrefix(stripBulletPrefix(line))
+        return stripped.lowercased().hasPrefix("act ") || stripped.lowercased().hasPrefix("beat ")
+    }
+
+    private static func isGenericOutlineNoise(_ line: String) -> Bool {
+        let lower = line.lowercased()
+        return lower.hasPrefix("here is") ||
+            lower.hasPrefix("here's") ||
+            lower.hasPrefix("below is") ||
+            lower.hasPrefix("outline:") ||
+            lower.hasPrefix("story outline") ||
+            lower == "json" ||
+            lower == "markdown"
     }
 }

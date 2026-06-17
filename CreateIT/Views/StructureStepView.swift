@@ -13,7 +13,10 @@ struct StructureStepView: View {
             CardGrid(data: ScriptStructure.allCases, columns: 2) { structure in
                 SelectionCard(
                     isSelected: wizard.structure == structure,
-                    action: { wizard.structure = structure }
+                    action: {
+                        wizard.structure = structure
+                        wizard.next()
+                    }
                 ) {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
