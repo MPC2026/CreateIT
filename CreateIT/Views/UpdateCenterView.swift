@@ -4,6 +4,7 @@ import AppKit
 struct UpdateCenterView: View {
     @EnvironmentObject private var service: GitHubUpdateService
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("github.token") private var githubToken: String = ""
     @State private var isChecking = false
     @State private var didLoad = false
     @State private var showHistory = false
@@ -16,6 +17,8 @@ struct UpdateCenterView: View {
             if service.isUpdateAvailable {
                 updateBanner
             }
+
+            updateStateCard
 
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
@@ -44,6 +47,18 @@ struct UpdateCenterView: View {
                         }
                     }
                 }
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
+                Text("GitHub access")
+                    .font(.headline)
+                Text("If you ever point CreateIT at a private repo again, paste a read-only GitHub token here. Public releases do not need one.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                SecureField("GitHub token", text: $githubToken)
+                    .textFieldStyle(.roundedBorder)
             }
 
             Spacer(minLength: 0)
@@ -84,16 +99,16 @@ struct UpdateCenterView: View {
                 Task {
                     isChecking = true
                     defer { isChecking = false }
-                    await service.checkForUpdates()
+                    await service.checkForUpdatesAndInstall()
                 }
             } label: {
                 if isChecking {
                     HStack(spacing: 6) {
                         ProgressView().controlSize(.small)
-                        Text("Checking…")
+                        Text("Updating…")
                     }
                 } else {
-                    Label("Check for updates", systemImage: "arrow.clockwise")
+                    Label("Check & Install", systemImage: "arrow.clockwise")
                 }
             }
             .buttonStyle(.borderedProminent)
@@ -174,6 +189,48 @@ struct UpdateCenterView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .strokeBorder(Color.orange.opacity(0.22)))
+    }
+
+    @ViewBuilder
+    private var updateStateCard: some View {
+        switch service.state {
+        case .installing:
+            HStack(spacing: 10) {
+                ProgressView().controlSize(.small)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Installing update")
+                        .font(.headline)
+                    Text("CreateIT is downloading the new app and will relaunch when it finishes.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.orange.opacity(0.10)))
+        case .failed(let message):
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Update failed")
+                        .font(.headline)
+                    Text(message)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer()
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.orange.opacity(0.10)))
+        default:
+            EmptyView()
+        }
     }
 
     @ViewBuilder

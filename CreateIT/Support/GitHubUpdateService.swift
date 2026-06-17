@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 
 @MainActor
 final class GitHubUpdateService: ObservableObject {
@@ -6,7 +7,18 @@ final class GitHubUpdateService: ObservableObject {
         case idle
         case loading
         case loaded
+        case installing
         case failed(String)
+    }
+
+    struct ReleaseAsset: Decodable, Equatable {
+        let name: String
+        let browserDownloadURL: URL
+
+        enum CodingKeys: String, CodingKey {
+            case name
+            case browserDownloadURL = "browser_download_url"
+        }
     }
 
     struct Release: Decodable, Identifiable, Equatable {
@@ -16,6 +28,7 @@ final class GitHubUpdateService: ObservableObject {
         let body: String?
         let htmlURL: URL
         let publishedAt: Date?
+        let assets: [ReleaseAsset]
 
         enum CodingKeys: String, CodingKey {
             case id
@@ -24,6 +37,7 @@ final class GitHubUpdateService: ObservableObject {
             case body
             case htmlURL = "html_url"
             case publishedAt = "published_at"
+            case assets
         }
     }
 
@@ -113,6 +127,29 @@ final class GitHubUpdateService: ObservableObject {
         }
     }
 
+    func checkForUpdatesAndInstall() async {
+        do {
+            let release = try await fetchLatestRelease()
+            latestRelease = release
+            isUpdateAvailable = isNewerReleaseAvailable(currentVersion: AppInfo.shortVersion, latestTag: release?.tagName)
+            lastChecked = Date()
+
+            guard let release, isUpdateAvailable else { return }
+            guard let asset = release.assets.first(where: { $0.name.lowercased().hasSuffix(".dmg") }) else {
+                state = .failed("No DMG asset was found on the latest GitHub release.")
+                return
+            }
+
+            state = .installing
+            try await downloadAndLaunchInstaller(asset: asset)
+            DispatchQueue.main.async {
+                NSApplication.shared.terminate(nil)
+            }
+        } catch {
+            state = .failed(error.localizedDescription)
+        }
+    }
+
     func refreshReleasesOnly() async {
         do {
             releases = try await fetchReleases()
@@ -155,6 +192,79 @@ final class GitHubUpdateService: ObservableObject {
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         request.setValue("CreateIT/1.0", forHTTPHeaderField: "User-Agent")
         return try await URLSession.shared.data(for: request)
+    }
+
+    private func downloadAndLaunchInstaller(asset: ReleaseAsset) async throws {
+        let downloadURL = asset.browserDownloadURL
+        let (downloadedURL, _) = try await URLSession.shared.download(from: downloadURL)
+
+        let targetAppURL = Bundle.main.bundleURL
+        let targetDirectoryURL = targetAppURL.deletingLastPathComponent()
+        let helperURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("CreateITUpdate-\(UUID().uuidString)")
+            .appendingPathExtension("sh")
+
+        let script = updateScript(
+            dmgPath: downloadedURL.path,
+            targetAppPath: targetAppURL.path,
+            targetDirectoryPath: targetDirectoryURL.path
+        )
+
+        try script.write(to: helperURL, atomically: true, encoding: .utf8)
+        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: helperURL.path)
+
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/bin/zsh")
+        process.arguments = [helperURL.path]
+        process.standardOutput = nil
+        process.standardError = nil
+        try process.run()
+    }
+
+    private func updateScript(dmgPath: String, targetAppPath: String, targetDirectoryPath: String) -> String {
+        func shellQuote(_ value: String) -> String {
+            "'" + value.replacingOccurrences(of: "'", with: "'\\''") + "'"
+        }
+
+        let dmg = shellQuote(dmgPath)
+        let targetApp = shellQuote(targetAppPath)
+        let targetDirectory = shellQuote(targetDirectoryPath)
+        let mountPoint = shellQuote(FileManager.default.temporaryDirectory.appendingPathComponent("CreateITMount").path)
+
+        return """
+        #!/bin/zsh
+        set -euo pipefail
+
+        DMG_PATH=\(dmg)
+        TARGET_APP=\(targetApp)
+        TARGET_DIR=\(targetDirectory)
+        MOUNT_POINT=\(mountPoint)
+
+        rm -rf "$MOUNT_POINT"
+        mkdir -p "$MOUNT_POINT"
+
+        while pgrep -x CreateIT >/dev/null 2>&1; do
+            sleep 1
+        done
+
+        hdiutil attach "$DMG_PATH" -nobrowse -quiet -mountpoint "$MOUNT_POINT"
+
+        APP_SOURCE=$(find "$MOUNT_POINT" -maxdepth 1 -name "*.app" -print -quit)
+        if [ -z "$APP_SOURCE" ]; then
+            hdiutil detach "$MOUNT_POINT" -quiet || true
+            exit 1
+        fi
+
+        UPDATED_APP="$TARGET_DIR/$(basename "$APP_SOURCE")"
+        TMP_APP="$TARGET_DIR/.CreateIT.tmp"
+        rm -rf "$TMP_APP"
+        rm -rf "$UPDATED_APP"
+        ditto "$APP_SOURCE" "$TMP_APP"
+        mv "$TMP_APP" "$UPDATED_APP"
+        hdiutil detach "$MOUNT_POINT" -quiet || true
+        open "$UPDATED_APP"
+        rm -rf "$DMG_PATH" "$MOUNT_POINT" "$0"
+        """
     }
 
     private func isNewerReleaseAvailable(currentVersion: String, latestTag: String?) -> Bool {
