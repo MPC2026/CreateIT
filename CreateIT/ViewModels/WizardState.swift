@@ -246,9 +246,13 @@ final class WizardState: ObservableObject {
     }
 
     func sceneDisplayHeading(for sceneID: UUID) -> String {
-        guard scene(for: sceneID) != nil else { return "Scene" }
-        let title = sceneTitleText(for: sceneID)
-        return "\(sceneNumberLabel(for: sceneID)) - \(title)"
+        guard let scene = scene(for: sceneID), let beatKey = scene.beatKey,
+              let beat = beats.first(where: { $0.key == beatKey }) else {
+            return "Scene"
+        }
+        
+        // Format: ACT X - BEAT NAME - SCENE Y
+        return "ACT \(scene.act) - \(beat.title.uppercased()) - SCENE \(scene.beatSceneNumber)"
     }
 
     func sceneTitleText(for sceneID: UUID) -> String {
