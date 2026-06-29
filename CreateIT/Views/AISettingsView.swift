@@ -30,7 +30,7 @@ struct AISettingsView: View {
                                 .font(.system(size: 14))
                                 .foregroundStyle(.green)
                         }
-                        Text("Close")
+                        Text("Select Server & Model")
                             .font(.callout.weight(.medium))
                     }
                     .padding(.horizontal, 12)
