@@ -1,0 +1,13 @@
+# Auto‑generated ignore patterns for CreateIT
+node_modules/
+vendor/
+storage/logs/
+.expo/
+dist/
+package-lock.json
+composer.lock
+.DS_Store
+.build/
+DerivedData/
+*.xcworkspace
+*.xcodeproj/project.xcworkspace

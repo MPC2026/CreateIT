@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct SampleMovieReference: Codable, Equatable {
     let title: String
@@ -274,5 +275,82 @@ final class TemplateLibraryStore: ObservableObject {
         }
         return base.appendingPathComponent("CreateIT", isDirectory: true)
             .appendingPathComponent("templates.json")
+    }
+
+    /// Saves the current wizard state to a backup file selected by the user
+    @MainActor
+    func saveBackup(from wizard: WizardState) async -> (success: Bool, message: String) {
+        do {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            let data = try encoder.encode(wizard.snapshot())
+
+            // Show save panel
+            let panel = NSSavePanel()
+            panel.canCreateDirectories = true
+            panel.nameFieldStringValue = "project.createit-backup"
+
+            if let backupType = UTType(filenameExtension: "createit-backup") {
+                panel.allowedContentTypes = [backupType]
+            }
+
+            let result = panel.runModal()
+            switch result {
+            case .OK:
+                guard let url = panel.url else {
+                    return (false, "Save cancelled")
+                }
+                do {
+                    try data.write(to: url, options: .atomic)
+                    return (true, "Project state saved successfully to:\n\(url.path)")
+                } catch {
+                    return (false, "Save failed: \(error.localizedDescription)")
+                }
+            default:
+                // User cancelled
+                return (false, "Save cancelled")
+            }
+        } catch {
+            return (false, "Encoding failed: \(error.localizedDescription)")
+        }
+    }
+
+    /// Restores wizard state from a backup file selected by the user
+    @MainActor
+    func restoreBackup(into wizard: WizardState) async -> (success: Bool, message: String) {
+        do {
+            // Show open panel
+            let panel = NSOpenPanel()
+            panel.canChooseFiles = true
+            panel.canChooseDirectories = false
+            panel.allowsMultipleSelection = false
+
+            if let backupType = UTType(filenameExtension: "createit-backup") {
+                panel.allowedContentTypes = [backupType]
+            }
+
+            let result = panel.runModal()
+            switch result {
+            case .OK:
+                guard let selectedURL = panel.url else {
+                    return (false, "No file selected")
+                }
+                do {
+                    let data = try Data(contentsOf: selectedURL)
+                    let decoder = JSONDecoder()
+                    let stateData = try decoder.decode(
+                        WizardState.StateData.self, from: data)
+                    wizard.apply(data: stateData)
+                    return (true, "Project state restored successfully!")
+                } catch {
+                    return (false, "Restore failed: \(error.localizedDescription)")
+                }
+            default:
+                // User cancelled
+                return (false, "No file selected")
+            }
+        } catch {
+            return (false, "Error: \(error.localizedDescription)")
+        }
     }
 }

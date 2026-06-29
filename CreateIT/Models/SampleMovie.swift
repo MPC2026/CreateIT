@@ -4,7 +4,7 @@ import Foundation
 /// beat keys (from `BeatLibrary`) to short, illustrative descriptions.
 /// These are original paraphrased summaries meant as structural guidance —
 /// never to be copied into the writer's own script.
-struct SampleMovie: Identifiable {
+struct SampleMovie: Identifiable, Codable {
     let id = UUID()
     let title: String
     let year: Int

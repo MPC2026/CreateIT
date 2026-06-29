@@ -7,10 +7,25 @@ struct TemplateLibrarySidebarView: View {
     @State private var recentlyLoadedTemplateID: UUID?
     @State private var showLoadedToast = false
     @State private var loadedToastTitle = ""
+    @State private var isProcessingBackup = false
+    @State private var showRestoreAlert = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             header
+
+            // New Project and Save buttons
+            HStack(spacing: 8) {
+                Button(action: { library.startNewDraft(with: wizard) }) {
+                    Label("New Project", systemImage: "plus")
+                }
+                .buttonStyle(.bordered)
+                
+                Button(action: { library.saveCurrent(from: wizard) }) {
+                    Label("Save Project", systemImage: "square.and.arrow.down")
+                }
+                .buttonStyle(.bordered)
+            }
 
             if let selected = library.selectedTemplate {
                 Text("Current draft: \(selected.displayTitle)")
@@ -79,13 +94,40 @@ struct TemplateLibrarySidebarView: View {
                 }
             }
         }
+        .confirmationDialog(
+            "Restore from backup?",
+            isPresented: $showRestoreAlert
+        ) {
+            Button("Restore", role: .destructive) {
+                Task { await library.restoreBackup(into: wizard) }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will restore your project from a backup file. Current unsaved changes may be lost.")
+        }
     }
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text("Saved Projects")
+            HStack(spacing: 6) {
+                Text("My Projects")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
+                
+                // Backup/Restore dropdown
+                Menu {
+                    Button(action: { Task { await performBackup() } }) {
+                        Label("Save Backup", systemImage: "archivebox.fill")
+                    }
+                    Button(action: { showRestoreAlert = true }) {
+                        Label("Restore from Backup", systemImage: "tray.and.arrow.up")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                }
+                .menuStyle(.borderlessButton)
+                
                 Text("\(library.templates.count)")
                     .font(.caption2.weight(.bold))
                     .padding(.horizontal, 7)
@@ -96,23 +138,19 @@ struct TemplateLibrarySidebarView: View {
             Text("Save projects here, reopen them later, and remove them only when you're sure.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+        }
+    }
 
-            HStack(spacing: 8) {
-                Button {
-                    library.startNewDraft(with: wizard)
-                } label: {
-                    Label("New Project", systemImage: "plus")
-                }
-                .buttonStyle(.bordered)
-
-                Button {
-                    library.saveCurrent(from: wizard)
-                } label: {
-                    Label(library.selectedTemplateID == nil ? "Save Project" : "Save Changes",
-                          systemImage: "tray.and.arrow.down")
-                }
-                .buttonStyle(.borderedProminent)
-            }
+    private func performBackup() async {
+        isProcessingBackup = true
+        defer { isProcessingBackup = false }
+        
+        let (success, message) = await library.saveBackup(from: wizard)
+        
+        // Show alert on main actor
+        await MainActor.run {
+            // For now, just log the result - could add an alert if needed
+            print("Backup result: \(message)")
         }
     }
 

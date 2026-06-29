@@ -1,0 +1,680 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project CreateIT.xcodeproj -configuration Debug
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'CreateIT' in project 'CreateIT' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: 36120c215d9a88fd32d61c866856b253
+Build description path: /Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/build/XCBuildData/36120c215d9a88fd32d61c866856b253.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk /var/folders/q9/3821rt7n0kxdmklyg2x9g2cm0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -o /var/folders/q9/3821rt7n0kxdmklyg2x9g2cm0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+
+CreateBuildDirectory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT.xcodeproj
+    builtin-create-build-directory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build
+
+CreateBuildDirectory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT.xcodeproj
+    builtin-create-build-directory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules
+
+CreateBuildDirectory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT.xcodeproj
+    builtin-create-build-directory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug
+
+CreateBuildDirectory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/ExplicitPrecompiledModules
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT.xcodeproj
+    builtin-create-build-directory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/ExplicitPrecompiledModules
+
+CreateBuildDirectory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/EagerLinkingTBDs/Debug
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT.xcodeproj
+    builtin-create-build-directory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/EagerLinkingTBDs/Debug
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT-2959de04e6bc3bd8af5aa3dfef4f281a-VFS/all-product-headers.yaml
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT.xcodeproj
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT-2959de04e6bc3bd8af5aa3dfef4f281a-VFS/all-product-headers.yaml
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.hmap (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.hmap
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.DependencyStaticMetadataFileList (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.DependencyMetadataFileList (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-project-headers.hmap (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-project-headers.hmap
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-own-target-headers.hmap (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-generated-files.hmap (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-generated-files.hmap
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT.SwiftFileList (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT.SwiftFileList
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT-OutputFileMap.json (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT.LinkFileList (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT.LinkFileList
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT-OutputFileMap.json (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT_const_extract_protocols.json (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT.LinkFileList (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT.LinkFileList
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT_const_extract_protocols.json (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT.SwiftConstValuesFileList (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT.SwiftFileList (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT.SwiftFileList
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT.SwiftConstValuesFileList (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/Entitlements.plist (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/Entitlements.plist
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-all-target-headers.hmap (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-all-non-framework-target-headers.hmap (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    write-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-all-non-framework-target-headers.hmap
+
+MkDir /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    /bin/mkdir -p /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents
+
+MkDir /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    /bin/mkdir -p /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app
+
+MkDir /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/Resources (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    /bin/mkdir -p /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/Resources
+
+MkDir /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/MacOS (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    /bin/mkdir -p /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/MacOS
+
+ProcessProductPackaging "" /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.app.xcent (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+    Entitlements:
+    
+    {
+    "com.apple.security.get-task-allow" = 1;
+}
+    
+    builtin-productPackagingUtility -entitlements -format xml -o /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.app.xcent
+
+ProcessProductPackagingDER /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.app.xcent /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.app.xcent.der (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    /usr/bin/derq query -f xml -i /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.app.xcent -o /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT.app.xcent.der --raw
+
+CpResource /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/Resources/ReleasePreviewTemplate.md /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Resources/ReleasePreviewTemplate.md (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Resources/ReleasePreviewTemplate.md /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/Resources
+
+MkDir /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_output/thinned (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    /bin/mkdir -p /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_output/thinned
+
+MkDir /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_output/unthinned (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    /bin/mkdir -p /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_output/unthinned
+
+GenerateAssetSymbols /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Assets.xcassets (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Assets.xcassets --compile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/Resources --output-format human-readable-text --notices --warnings --export-dependency-info /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_dependencies --output-partial-info-plist /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_generated_info.plist --app-icon AppIcon --enable-on-demand-resources NO --development-region en --target-device mac --minimum-deployment-target 14.0 --platform macosx --bundle-identifier com.createit.app --generate-swift-asset-symbol-extensions NO --generate-swift-asset-symbols /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/GeneratedAssetSymbols.h
+/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/GeneratedAssetSymbols.swift
+
+
+CompileAssetCatalogVariant thinned /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/Resources /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Assets.xcassets (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Assets.xcassets --compile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --enable-on-demand-resources NO --development-region en --target-device mac --minimum-deployment-target 14.0 --platform macosx
+/* com.apple.actool.compilation-results */
+/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_generated_info.plist_thinned
+/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_output/thinned/AppIcon.icns
+/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_output/thinned/Assets.car
+
+
+LinkAssetCatalog /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Assets.xcassets (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    builtin-linkAssetCatalog --thinned /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_output/thinned --thinned-dependencies /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_generated_info.plist_unthinned --output /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/Resources --plist-output /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_generated_info.plist
+note: Emplaced /Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/Resources/AppIcon.icns (in target 'CreateIT' from project 'CreateIT')
+note: Emplaced /Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/Resources/Assets.car (in target 'CreateIT' from project 'CreateIT')
+
+ProcessInfoPlistFile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/Info.plist /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Info.plist (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    builtin-infoPlistUtility /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/PkgInfo -expandbuildsettings -platform macosx -additionalcontentfile /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/assetcatalog_generated_info.plist -o /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/CreateIT.app/Contents/Info.plist
+
+SwiftDriver CreateIT normal arm64 com.apple.xcode.tools.swift.compiler (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name CreateIT -Onone @/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos14.0 -g -Xfrontend -serialize-debugging-options -enable-testing -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug -F /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /var/folders/q9/3821rt7n0kxdmklyg2x9g2cm0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT.swiftmodule -validate-clang-modules-once -clang-build-session-file /var/folders/q9/3821rt7n0kxdmklyg2x9g2cm0000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT_const_extract_protocols.json -Xcc -iquote -Xcc /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-generated-files.hmap -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-own-target-headers.hmap -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-all-target-headers.hmap -Xcc -iquote -Xcc /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-project-headers.hmap -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/include -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources-normal/arm64 -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/arm64 -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/arm64/CreateIT-Swift.h -working-directory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver CreateIT normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name CreateIT -Onone @/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target x86_64-apple-macos14.0 -g -Xfrontend -serialize-debugging-options -enable-testing -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug -F /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /var/folders/q9/3821rt7n0kxdmklyg2x9g2cm0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT.swiftmodule -validate-clang-modules-once -clang-build-session-file /var/folders/q9/3821rt7n0kxdmklyg2x9g2cm0000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT_const_extract_protocols.json -Xcc -iquote -Xcc /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-generated-files.hmap -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-own-target-headers.hmap -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-all-target-headers.hmap -Xcc -iquote -Xcc /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-project-headers.hmap -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/include -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources-normal/x86_64 -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/x86_64 -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT-Swift.h -working-directory /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT -experimental-emit-module-separately -disable-cmo
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_SwiftConcurrencyShims-C8B6W11K4L1PVZCAESRAXJXW6.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/SwiftShims-41S4ZAOAB5UPLZ5ZGTNAWLT7Q.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_stdbool-4TU6WBTKPAFGENCOLDXL7BWF.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ptrcheck-15XWPC27CTIR93233L5CE057.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_AvailabilityInternal-2D609WX3TLL67N4T20M7WR3NL.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_stdarg-3GDK4MVGRRRMSLK33DJ7GXYKQ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ptrauth-D39V0XAH5M3NZ1OFNEUB2AKM4.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/DeveloperToolsSupport-3UMG9SCMOO6CSS1QX4O5LQQHV.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_float-A9PJLBWIKV995KYJLN9PHG1L3.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_stddef-BJFWA1BVHQ8GABCP02BNFTGR9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/SwiftShims-BAERJXZQTGDXD1T3FTDA3JJHI.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_AvailabilityInternal-CFAYSG3TJS3O7EYYUME9UNHD3.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_SwiftConcurrencyShims-807HEMCAFSW98NR2EJXOPPG41.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_stdarg-5QI74DSU7DEE8HTI4X43NWZPX.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_stddef-EIKULY17RQEOUZ4AOPEA139LH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/DeveloperToolsSupport-6TNYIO5NVJYAINJU1PDZS9XXV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_stdbool-CM89WZYDB8SU58F0EF4YFPN5Z.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_float-9G0P0VV45XRVQB7K36CBC4ZWO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ptrcheck-2OQQUSTTQID4VJF7LEWPMYLI3.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ptrauth-6BX4W3DCNUGRASD8661DUZZVS.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_DarwinFoundation1-374N373105R76KA13ON21X3SR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_DarwinFoundation1-7Y4JBH9W6IJF26K8287CVN32.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_limits-28X8EE1SB3ECTBQLE51AV1D4I.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_DarwinFoundation2-CSI2BHWI9WHNJ3NKTP22FBUE6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_limits-DPX8B9GDL90V95EORQ7Z7RN8F.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_DarwinFoundation2-E5GJSDE61I8HXW6BK8GV137B.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_stdint-BKRGS7LM7OFX68RMEI7GVC30S.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_tgmath-29HHU47ED2P7N67RJDQPHN10Y.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/sys_types-5OOHHD8FCAYPN5NYXL4W2OQ2H.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_stdint-DS2O9T03MCD25XPACMBL5WLXR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/sys_types-3TLJYOXQMPFL7TMEA087BRVYQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_tgmath-61Y3FL7AFKI6GEX2ZBEJ86H30.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_DarwinFoundation3-AX4Q9490SCR2IX4229UAOXK6H.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_stdatomic-184AT1K3K2RSUI1O02VLAMDL3.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/libDER-9A41CTBUUN4R1YJHCT3MRSN17.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/OpenGL-18MNBPISA9F95UIHAF0WYAFK5.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_DarwinFoundation3-B0VG04FMA3F51A2Z6BKTULV1F.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/libDER-7XYHQ84V7H89FNAB6BNECF8ZZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_intrinsics-3202NDU6V5UH0BR91D6I3WSQJ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/OpenGL-DFHB2XOUT5H8CHDEFN4NQPN1U.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_stdatomic-ES80ZGD85C8Q15RIQ3LIU4QVK.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_intrinsics-5IED0JBYFK0MZEB5YBS3XU0IQ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_inttypes-BF0RR74IK45T3K3BT1P79H6WO.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Darwin-9OKEG60L4UGO4AR71V3CB4F1F.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/_Builtin_inttypes-6FKFX28HQWO8HRBHNI4HV4FWN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Darwin-8AU6XYS8BIH8XTS6FNOHGC28A.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/simd-C2Z70VGFQSBF5YWO22RGGGN3V.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/simd-5LQOKMZNOABWQ26VHW8JE8PJK.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/launch-DDUSW3SNQ0NDR8FK699KC2O9A.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CUPS-BUJORNNOBT2DEG240CQODMPCT.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/MachO-9JV7U5JNDOGMNO3N0J2NLE8S5.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/libkern-4HZEQT5EIJQIJZ2B5XSBVR00M.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/MachO-Q49IRE6QUPS8CNI4PDJKV643.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CUPS-3IN411WOI7QPKA3H1M87J6OMS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/launch-8NVO3FP9FNVWCYZ1H29H5OTQQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/libkern-6LDSXAS2BVC80G6KDI6U988ZQ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ObjectiveC-A0XBU33FZ386OU0I2JMZQR7Y9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Spatial-DBOXCDULJDGHWZ0SP9OABKZRQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ObjectiveC-CWS20VI5F50YA38PD97LY62GQ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/os_object-CII2AD2OIK4XZR6OI56S36OH9.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/os_workgroup-BII8JWGKVKHRDCBCPJ2AVMCWK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/os_object-16VUJGUQBH3ZDM8B9WS0OZYH6.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Spatial-BYG059ENRWCCVGNQS8F48FJ2G.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Dispatch-W65BFBAA3X4VNN8M4OPSPQ49.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/os_workgroup-346NQHGOOR1ECK5TI8U9GR0CD.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/XPC-1RMIID9BZEWG8JDWRASAKL56C.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Dispatch-2GNGN9BUYW08KAQPAS6BG1AZV.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreFoundation-C7A2B92OHPFFAG0010MI2IM52.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/os-5C56L8L485RNOLPILIVDPKS6C.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/XPC-BK51LP9QOLRNCCNJ98QDHVKYQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreFoundation-9KQUSCFIK3XI8XC584W93HXHG.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Security-6HY50VWONDTGF8TZ5292J3O9.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ColorSync-1LKKN5XWJCI35R3PFEXTB5CHN.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CFNetwork-8VEDVEF09RFPQK5UCQX417WKE.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/IOKit-E5QHZJ4FRU66D1P0PH1KOBRAV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/os-C0B32RHJEXS89L84U0SJ4AOXQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Security-D786XIRYKPDE334ESAF4F0T6S.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ColorSync-BR7KNU78U5W67HJC8WPVDMVKU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CFNetwork-38NR80CT2C0Z7M7DVDAF5WKE0.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/IOKit-2OJH42B423FHATGS7ZQ1OQE43.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/DiskArbitration-C1F0ZBSPF2K8AYFVC3JKX6DRK.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreGraphics-F0SXYSB4UGVB3UWAE2CAXL9SH.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreServices-4DEKOZ2ANI7OJNU1IGG09XZY9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/DiskArbitration-952H4Q018B114JR8KHBCUXPZC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreGraphics-7SWB19HG2VVJTRUX53GFWUSV7.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ImageIO-2DPRUIGOQA9K3JVXBSWDXH1NR.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreText-69GPL0SSTO2BUIBZ8PA7KMILH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreServices-DS2Q7EJCYXR88I55235T5H5VL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ImageIO-381TJ9DC014IQHQT9J16MQXHT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreText-CQBDNRUZ5KMEXIMDL81E13Y1B.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Foundation-CY3GJM1KAO7O6M11T98DDZBXN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Foundation-CT8YVXO9V3YCJGGZ2Q40XRXU3.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ApplicationServices-7K9J73TIA7P7EQA94IZH0P0H8.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/IOSurface-8ZGQX9NAJ1TQ05AW2OEW5PJSS.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreTransferable-50U0H4FY7PGUKO33JU6JRWFWC.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/OSLog-L5F55RIQ4LNZBZVIELYK4JUT.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/DataDetection-AYQQCP6M0S9FU7C3D3F49ACMR.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/UniformTypeIdentifiers-S7OA0KLHJ1RG8N93Y7I1J9Q2.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreData-2SCU7DHHGA848AEZI7ZCIQCDX.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Symbols-7XY6DHIRY9FX72XAVHDGOWDYY.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Accessibility-8XBEFV1ASS4T5R0EMHSOQE9P4.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Metal-COZYLG9TGREJOSJCCTDCES7T2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/DataDetection-6PMNQBB9H5QZKYVHZ8YM4OBHB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/UniformTypeIdentifiers-AOJCW5P1PRSJZ88LOS0HFB1HU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Accessibility-D4VQ9OT0SPF5DWVTR0277E1GU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Symbols-15NDBHEFRS03X6FUJXK1MOHIJ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/OSLog-D2T13VLHAJJNK4LGFY18JQ474.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreData-AL8AU7I7BIUEURQ0PSU76M5QW.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/ApplicationServices-3RUNOM9IA0WIK2IYHH8FEUMIH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/IOSurface-DD35721UZAGGSFPMDPI5Q3SEL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreTransferable-10ARTK22HMIQ12OVEH6W3U732.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/Metal-6VQBUL8DVTWPSFZNJS0FFU0KG.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreVideo-39URJBPLAHBAGHCSR8J4R7ZJC.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreImage-1TW31HL8ZY4CKBBR0YGZF1MMQ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/QuartzCore-5C17EBQGHCEVAPEFUKXPQRSXD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreVideo-C45L278EBY741EDDU2G52XVF7.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/CoreImage-F3D5MJ32FDO5DTZXKS5PMSNGJ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/QuartzCore-A2AJJK1CWS04L6T4TTVYS7DA7.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/SwiftUICore-C5GXPYSGE6GLRGUAKZIBMAZA6.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/AppKit-4YGZ4Y7VURR3LGVVE5VI4P1JT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/SwiftUICore-AUW60LI5GK7N2VARGH60XQUVL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/AppKit-CXR7WHDQI9WXIITYOQM4VVOR4.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/SwiftUI-795P9OI1THQKRDMC539QDITZA.pcm
+
+SwiftEmitModule normal x86_64 Emitting\ module\ for\ CreateIT (in target 'CreateIT' from project 'CreateIT')
+
+EmitSwiftModule normal x86_64 (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ WizardState.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/ViewModels/WizardState.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/ViewModels/WizardState.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ ScriptModels.swift,\ ServerSelectionView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/ScriptModels.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/ServerSelectionView.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/ScriptModels.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/ServerSelectionView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ VersionHistoryView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/VersionHistoryView.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/VersionHistoryView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ SampleLibrary.swift,\ SampleMovie.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Data/SampleLibrary.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/SampleMovie.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Data/SampleLibrary.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/SampleMovie.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ SampleStepView.swift,\ SceneOutline.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/SampleStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/SceneOutline.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/SampleStepView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/SceneOutline.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ TemplateLibraryStore.swift,\ TemplateStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/ViewModels/TemplateLibraryStore.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/TemplateStepView.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/ViewModels/TemplateLibraryStore.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/TemplateStepView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ GitHubUpdateService.swift,\ LMStudioClient.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/GitHubUpdateService.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/AI/LMStudioClient.swift (in target 'CreateIT' from project 'CreateIT')
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/AI/AIAssistant.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/AISettingsView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/AppInfo.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/Beat.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Export/BeatSheetPDFExporter.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/Components.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/ContentView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/CreateITApp.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Export/FDXExporter.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/FinalDraftStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/FormatStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/GenreStepView.swift -primary-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/GitHubUpdateService.swift -primary-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/AI/LMStudioClient.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/OutlineStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/PlotStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/ReleaseNotes.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/ReleasePreviewFormatter.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Data/SampleLibrary.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/SampleMovie.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/SampleStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/SceneOutline.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/ScriptModels.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/ServerSelectionView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/StructureStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/TemplateLibrarySidebarView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/ViewModels/TemplateLibraryStore.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/TemplateStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/TemplatesView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/UpdateCenterView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/VersionHistoryView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/ViewModels/WizardState.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/GeneratedAssetSymbols.swift -emit-dependencies-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/GitHubUpdateService.d -emit-const-values-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/GitHubUpdateService.swiftconstvalues -emit-reference-dependencies-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/GitHubUpdateService.swiftdeps -serialize-diagnostics-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/GitHubUpdateService.dia -emit-dependencies-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/LMStudioClient.d -emit-const-values-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/LMStudioClient.swiftconstvalues -emit-reference-dependencies-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/LMStudioClient.swiftdeps -serialize-diagnostics-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/LMStudioClient.dia -target x86_64-apple-macos14.0 -module-can-import-version DeveloperToolsSupport 23.40.26 23.40.26 -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT-dependencies-2.json -debug-module-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT.swiftmodule -enable-objc-interop -stack-check -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -I /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug -F /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=4 -module-cache-path /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/CreateIT_const_extract_protocols.json -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /var/folders/q9/3821rt7n0kxdmklyg2x9g2cm0000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT -enable-anonymous-context-mangled-names -file-compilation-dir /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /var/folders/q9/3821rt7n0kxdmklyg2x9g2cm0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-generated-files.hmap -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-own-target-headers.hmap -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-all-target-headers.hmap -Xcc -iquote -Xcc /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/CreateIT-project-headers.hmap -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/Debug/include -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources-normal/x86_64 -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/x86_64 -Xcc -I/Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name CreateIT -frontend-parseable-output -disable-clang-spi -clang-target x86_64-apple-macos26.5 -target-sdk-version 26.5 -target-sdk-name macosx26.5 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/GitHubUpdateService.o -o /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/LMStudioClient.o -index-unit-output-path /CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/GitHubUpdateService.o -index-unit-output-path /CreateIT.build/Debug/CreateIT.build/Objects-normal/x86_64/LMStudioClient.o
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/GitHubUpdateService.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/AI/LMStudioClient.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/CreateIT/AI/LMStudioClient.swift:463:8: error: invalid redeclaration of 'OllamaClient'
+struct OllamaClient {
+       ^
+/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/CreateIT/AI/LMStudioClient.swift:260:8: note: 'OllamaClient' previously declared here
+struct OllamaClient {
+       ^
+/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT/CreateIT/AI/LMStudioClient.swift:260:8: note: 'OllamaClient' previously declared here
+struct OllamaClient {
+       ^
+
+SwiftCompile normal x86_64 Compiling\ FDXExporter.swift,\ FinalDraftStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Export/FDXExporter.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/FinalDraftStepView.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Export/FDXExporter.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/FinalDraftStepView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ ReleaseNotes.swift,\ ReleasePreviewFormatter.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/ReleaseNotes.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/ReleasePreviewFormatter.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/ReleaseNotes.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/ReleasePreviewFormatter.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ FormatStepView.swift,\ GenreStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/FormatStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/GenreStepView.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/FormatStepView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/GenreStepView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ GeneratedAssetSymbols.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/CreateIT.build/Debug/CreateIT.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ TemplatesView.swift,\ UpdateCenterView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/TemplatesView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/UpdateCenterView.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/TemplatesView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/UpdateCenterView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ OutlineStepView.swift,\ PlotStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/OutlineStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/PlotStepView.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/OutlineStepView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/PlotStepView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ BeatSheetPDFExporter.swift,\ Components.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Export/BeatSheetPDFExporter.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/Components.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Export/BeatSheetPDFExporter.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/Components.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ ContentView.swift,\ CreateITApp.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/ContentView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/CreateITApp.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/ContentView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/CreateITApp.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ StructureStepView.swift,\ TemplateLibrarySidebarView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/StructureStepView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/TemplateLibrarySidebarView.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/StructureStepView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/TemplateLibrarySidebarView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 Compiling\ AIAssistant.swift,\ AISettingsView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/AI/AIAssistant.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/AISettingsView.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/AI/AIAssistant.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/AISettingsView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/build/SwiftExplicitPrecompiledModules/SwiftUI-6U83B6B6EMIKRFQVCKBY4JZD1.pcm
+
+SwiftDriverJobDiscovery normal x86_64 Compiling GeneratedAssetSymbols.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 Compiling\ AppInfo.swift,\ Beat.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/AppInfo.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/Beat.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/AppInfo.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/Beat.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling ReleaseNotes.swift, ReleasePreviewFormatter.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ CreateIT (in target 'CreateIT' from project 'CreateIT')
+
+EmitSwiftModule normal arm64 (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal arm64 Compiling\ ContentView.swift,\ CreateITApp.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/ContentView.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/CreateITApp.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Views/ContentView.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftCompile normal arm64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/CreateITApp.swift (in target 'CreateIT' from project 'CreateIT')
+    cd /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling SampleLibrary.swift, SampleMovie.swift (in target 'CreateIT' from project 'CreateIT')
+
+SwiftCompile normal arm64 Compiling\ SampleLibrary.swift,\ SampleMovie.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Data/SampleLibrary.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Models/SampleMovie.swift (in target 'CreateIT' from project 'CreateIT')
+
+warning: ONLY_ACTIVE_ARCH=YES requested with multiple ARCHS and no active architecture could be computed; building for all applicable architectures (in target 'CreateIT' from project 'CreateIT')
+** BUILD FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal x86_64 Compiling\ GitHubUpdateService.swift,\ LMStudioClient.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/Support/GitHubUpdateService.swift /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/AI/LMStudioClient.swift (in target 'CreateIT' from project 'CreateIT')
+	SwiftCompile normal x86_64 /Users/michael/Documents/MacbookPro/My\ Apps/Projects/Apps/MacOS/CreateIT/CreateIT/AI/LMStudioClient.swift (in target 'CreateIT' from project 'CreateIT')
+(2 failures)

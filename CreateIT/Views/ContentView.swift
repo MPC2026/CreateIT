@@ -20,6 +20,7 @@ struct ContentView: View {
     @EnvironmentObject private var templateLibrary: TemplateLibraryStore
     @State private var showAISettings = false
     @State private var showUpdates = false
+    @State private var showBackupRestore = false
     @State private var didBootstrapUpdates = false
     @State private var showTemplatePanel = true
     @State private var showProjectLoadedToast = false
@@ -55,9 +56,14 @@ struct ContentView: View {
         .animation(.easeInOut(duration: 0.24), value: showTemplatePanel)
         .sheet(isPresented: $showAISettings) {
             AISettingsView()
+                .frame(minWidth: 624, minHeight: 510)
         }
         .sheet(isPresented: $showUpdates) {
             UpdateCenterView()
+        }
+        .sheet(isPresented: $showBackupRestore) {
+            BackupRestoreView()
+                .frame(minWidth: 450, minHeight: 350)
         }
         .overlay(alignment: .bottom) {
             if showProjectLoadedToast {
@@ -128,13 +134,6 @@ struct ContentView: View {
                 }
                 .help(aiHelp)
                 .tint(aiConnected ? .green : nil)
-
-                Button {
-                    templateLibrary.startNewDraft(with: wizard)
-                } label: {
-                    Label("New", systemImage: "plus")
-                }
-                .help("Start a new script")
             }
             .padding(.horizontal, 50)
             .fixedSize(horizontal: true, vertical: false)

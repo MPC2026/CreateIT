@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-enum WizardStep: Int, CaseIterable {
+enum WizardStep: Int, CaseIterable, Codable {
     case structure
     case format
     case genre
@@ -27,6 +27,21 @@ enum WizardStep: Int, CaseIterable {
 
 @MainActor
 final class WizardState: ObservableObject {
+    // MARK: - State Data Struct
+    struct StateData: Codable {
+        var step: WizardStep
+        var structure: ScriptStructure?
+        var medium: Medium?
+        var runtime: Runtime?
+        var genre: Genre?
+        var sampleMovie: SampleMovie?
+        var projectTitle: String
+        var logline: String
+        var plot: String
+        var scenes: [SceneOutlineScene]
+        var entries: [String: String]
+    }
+
     @Published var step: WizardStep = .structure
 
     // Selections
@@ -112,6 +127,40 @@ final class WizardState: ObservableObject {
             plot = ""
             scenes = []
             entries = [:]
+        }
+    }
+
+    // MARK: - Backup / Restore
+
+    func snapshot() -> StateData {
+        StateData(
+            step: step,
+            structure: structure,
+            medium: medium,
+            runtime: runtime,
+            genre: genre,
+            sampleMovie: sampleMovie,
+            projectTitle: projectTitle,
+            logline: logline,
+            plot: plot,
+            scenes: scenes,
+            entries: entries
+        )
+    }
+
+    func apply(data: StateData) {
+        withAnimation(.easeInOut(duration: 0.25)) {
+            self.step = data.step
+            self.structure = data.structure
+            self.medium = data.medium
+            self.runtime = data.runtime
+            self.genre = data.genre
+            self.sampleMovie = data.sampleMovie
+            self.projectTitle = data.projectTitle
+            self.logline = data.logline
+            self.plot = data.plot
+            self.scenes = data.scenes
+            self.entries = data.entries
         }
     }
 
@@ -257,7 +306,7 @@ final class WizardState: ObservableObject {
     }
 
     private func defaultSceneTitle(for beat: BeatTemplate, sceneNumber: Int, sceneCount: Int) -> String {
-        "Scene \(sceneNumber)"
+        "Act \(beat.act), \(beat.title), Scene \(sceneNumber)"
     }
 
     private func sceneSeedText(for beat: BeatTemplate, sceneNumber: Int, sceneCount: Int) -> String {
@@ -267,18 +316,20 @@ final class WizardState: ObservableObject {
         }
 
         if sceneCount == 1 {
-            return beat.purpose
+            return "Create a complete scene outline that covers the entire beat: \(beat.purpose)"
         }
 
-        if sceneNumber == 1 {
-            return "Open the beat with the key setup and direction \(beat.purpose.lowercased())"
+        let positionDescription: String
+        switch sceneNumber {
+        case 1:
+            positionDescription = "Start the beat by establishing the key situation and direction"
+        case sceneCount:
+            positionDescription = "Conclude this section of the beat to prepare for the next beat"
+        default:
+            positionDescription = "Develop the beat further by escalating tension and advancing the conflict"
         }
-
-        if sceneNumber == sceneCount {
-            return "Land the beat so the story can move into the next turn."
-        }
-
-        return "Escalate the beat through a focused scene that advances the conflict."
+        
+        return "\(positionDescription). Create a complete, self-contained scene outline that contributes to \(beat.purpose.lowercased())."
     }
 
     // MARK: Export

@@ -14,11 +14,16 @@ final class AIAssistant: ObservableObject {
         case failed(String)
     }
 
-    @AppStorage("ai.baseURL") var baseURL: String = "http://127.0.0.1:1234/v1"
+    @AppStorage("ai.baseURL") var baseURL: String = "http://127.0.0.1:11434"
     @AppStorage("ai.model") var model: String = ""
     @AppStorage("ai.temperature") var temperature: Double = 0.8
+    @AppStorage("ai.serverType") var serverType: AIProvider = .lmStudio
 
     @Published var availableModels: [LMStudioClient.Model] = []
+    
+    // Persisted models for UI display when not connected
+    private let persistedModelsKey = "ai.availableModels"
+    
     @Published var connection: ConnectionState = .unknown
     /// Beat keys currently generating, so the UI can show per-beat spinners.
     @Published var generating: Set<String> = []
@@ -36,7 +41,8 @@ final class AIAssistant: ObservableObject {
             case .noBeatsAvailable:
                 return "No beats are available for the current wizard selections."
             case .unparseableResponse(let preview):
-                return "LM Studio returned text the app could not parse as a story outline: \(preview)"
+                return
+                    "LM Studio returned text the app could not parse as a story outline: \(preview)"
             }
         }
     }
@@ -46,23 +52,48 @@ final class AIAssistant: ObservableObject {
         return false
     }
 
-    private var client: LMStudioClient { LMStudioClient(baseURL: baseURL) }
-
     // MARK: Connection
 
     func testConnection() async {
         connection = .connecting
         do {
-            let models = try await client.listModels()
-            availableModels = models
-            model = models.first?.id ?? ""
-            connection = .connected(modelCount: models.count)
+            switch serverType {
+            case .lmStudio:
+                let lmModels = try await LMStudioClient(baseURL: baseURL).listModels()
+                availableModels = lmModels
+                model = lmModels.first?.id ?? ""
+            case .ollama:
+                let olModels = try await OllamaClient(baseURL: baseURL).listModels()
+                // Convert Ollama Model to LMStudio Model (they have same structure)
+                availableModels = olModels.map { LMStudioClient.Model(id: $0.id, displayName: $0.displayName) }
+                model = olModels.first?.id ?? ""
+            }
+            connection = .connected(modelCount: availableModels.count)
+            // Persist models for future use
+            savePersistedModels()
         } catch {
             availableModels = []
             model = ""
             connection = .failed(error.localizedDescription)
         }
     }
+    
+    /// Load persisted models from UserDefaults
+    func loadPersistedModels() {
+        guard let data = UserDefaults.standard.data(forKey: persistedModelsKey),
+              let models = try? JSONDecoder().decode([LMStudioClient.Model].self, from: data) else {
+            return
+        }
+        availableModels = models
+    }
+    
+    /// Save current models to UserDefaults
+    func savePersistedModels() {
+        guard let data = try? JSONEncoder().encode(availableModels) else { return }
+        UserDefaults.standard.set(data, forKey: persistedModelsKey)
+    }
+
+    // Ollama now uses OpenAI-compatible API, so no conversion needed
 
     // MARK: Generation
 
@@ -76,17 +107,19 @@ final class AIAssistant: ObservableObject {
         defer { generating.remove(beat.key) }
 
         let system = """
-        You are a professional screenwriting assistant helping a writer outline a \
-        script. You write concise, vivid beat descriptions in present tense. You \
-        follow the writer's plot and the structural purpose of the requested beat. \
-        Use the provided reference film only as a structural guide for pacing and \
-        function — never copy its plot, characters, or lines. Respond with 2–4 \
-        sentences of outline prose only, no headings or preamble.
-        """
+            You are a professional screenwriting assistant helping a writer outline a \
+            script. You write concise, vivid beat descriptions in present tense. You \
+            follow the writer's plot and the structural purpose of the requested beat. \
+            Use the provided reference film only as a structural guide for pacing and \
+            function — never copy its plot, characters, or lines. Respond with 2–4 \
+            sentences of outline prose only, no headings or preamble.
+            """
 
         var context = ""
         if let s = wizard.structure { context += "Structure: \(s.title)\n" }
-        if let m = wizard.medium, let r = wizard.runtime { context += "Format: \(m.rawValue), \(r.label)\n" }
+        if let m = wizard.medium, let r = wizard.runtime {
+            context += "Format: \(m.rawValue), \(r.label)\n"
+        }
         if let g = wizard.genre { context += "Genre: \(g.title)\n" }
         if !wizard.projectTitle.isEmpty { context += "Title: \(wizard.projectTitle)\n" }
         if !wizard.logline.isEmpty { context += "Logline: \(wizard.logline)\n" }
@@ -94,40 +127,65 @@ final class AIAssistant: ObservableObject {
 
         var reference = ""
         if let movie = wizard.sampleMovie {
-            reference += "Reference film for structural guidance only: \(movie.title) (\(movie.year)).\n"
+            reference +=
+                "Reference film for structural guidance only: \(movie.title) (\(movie.year)).\n"
             if let sample = movie.sample(for: beat.key) {
-                reference += "How that film handles this beat (for pacing/function, do not copy): \(sample)\n"
+                reference +=
+                    "How that film handles this beat (for pacing/function, do not copy): \(sample)\n"
             }
         }
 
         // Include any text the writer already started, to continue their voice.
-        let existing = wizard.entries[beat.key]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        let existingBlock = existing.isEmpty ? "" : "The writer's draft so far (build on this, keep their intent):\n\(existing)\n"
+        let existing =
+            wizard.entries[beat.key]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let existingBlock =
+            existing.isEmpty
+            ? "" : "The writer's draft so far (build on this, keep their intent):\n\(existing)\n"
 
         let user = """
-        \(context)
-        \(reference)
-        Write the "\(beat.title)" beat.
-        Purpose of this beat: \(beat.purpose)
-        \(existingBlock)
-        Return only the beat description.
-        """
+            \(context)
+            \(reference)
+            Write the "\(beat.title)" beat.
+            Purpose of this beat: \(beat.purpose)
+            \(existingBlock)
+            Return only the beat description.
+            """
 
-        do {
-            return try await client.complete(
-                model: model,
-                system: system,
-                user: user,
-                temperature: temperature)
-        } catch {
-            if Self.isCancellation(error) { return nil }
-            connection = .failed(error.localizedDescription)
-            return nil
-        }
+         // Use appropriate client based on server type
+         switch serverType {
+         case .lmStudio:
+             let lmClient = LMStudioClient(baseURL: baseURL)
+             do {
+                 return try await lmClient.complete(
+                     model: model,
+                     system: system,
+                     user: user,
+                     temperature: temperature)
+             } catch {
+                 if Self.isCancellation(error) { return nil }
+                 connection = .failed(error.localizedDescription)
+                 return nil
+             }
+          case .ollama:
+              let olClient = OllamaClient(baseURL: baseURL)
+              do {
+                 return try await olClient.complete(
+                     model: model,
+                     system: system,
+                     user: user,
+                     temperature: temperature)
+             } catch {
+                 if Self.isCancellation(error) { return nil }
+                 connection = .failed(error.localizedDescription)
+                 return nil
+             }
+         }
     }
 
     /// Expands a quick outline line into fuller beat prose.
-    func expandBeatOutline(_ outline: String, beat: BeatTemplate, wizard: WizardState) async -> String? {
+    func expandBeatOutline(_ outline: String, beat: BeatTemplate, wizard: WizardState) async
+        -> String?
+    {
         guard !model.isEmpty else {
             connection = .failed("Choose a model first.")
             return nil
@@ -140,44 +198,63 @@ final class AIAssistant: ObservableObject {
         defer { generating.remove(beat.key) }
 
         let system = """
-        You are a professional screenwriting assistant helping a writer turn a quick \
-        beat outline into fuller beat prose. Expand the provided outline into 2–4 \
-        present-tense sentences that feel concrete, cinematic, and specific to the \
-        beat's dramatic purpose. Keep the writer's intent intact. Return prose only \
-        with no heading, label, or commentary.
-        """
+            You are a professional screenwriting assistant helping a writer turn a quick \
+            beat outline into fuller beat prose. Expand the provided outline into 2–4 \
+            present-tense sentences that feel concrete, cinematic, and specific to the \
+            beat's dramatic purpose. Keep the writer's intent intact. Return prose only \
+            with no heading, label, or commentary.
+            """
 
         let context = projectContext(for: wizard)
         let reference = referenceContext(for: wizard, beatKey: beat.key)
 
         let user = """
-        Project context:
-        \(context)
+            Project context:
+            \(context)
 
-        \(reference)
-        Beat:
-        - Title: \(beat.title)
-        - Purpose: \(beat.purpose)
-        - Timing: \(beat.timing(for: wizard.runtime ?? .feature))
+            \(reference)
+            Beat:
+            - Title: \(beat.title)
+            - Purpose: \(beat.purpose)
+            - Timing: \(beat.timing(for: wizard.runtime ?? .feature))
 
-        Quick outline:
-        \(trimmedOutline)
+            Quick outline:
+            \(trimmedOutline)
 
-        Expand this into full beat prose.
-        """
+            Expand this into full beat prose.
+            """
 
-        do {
-            return try await client.complete(
-                model: model,
-                system: system,
-                user: user,
-                temperature: temperature,
-                maxTokens: 900)
-        } catch {
-            if Self.isCancellation(error) { return nil }
-            connection = .failed(error.localizedDescription)
-            return nil
-        }
+         // Use appropriate client based on server type
+         switch serverType {
+         case .lmStudio:
+             let lmClient = LMStudioClient(baseURL: baseURL)
+             do {
+                 return try await lmClient.complete(
+                     model: model,
+                     system: system,
+                     user: user,
+                     temperature: temperature,
+                     maxTokens: 900)
+             } catch {
+                 if Self.isCancellation(error) { return nil }
+                 connection = .failed(error.localizedDescription)
+                 return nil
+             }
+          case .ollama:
+              let olClient = OllamaClient(baseURL: baseURL)
+              do {
+                  return try await olClient.complete(
+                      model: model,
+                      system: system,
+                      user: user,
+                      temperature: temperature,
+                      maxTokens: 900)
+             } catch {
+                 if Self.isCancellation(error) { return nil }
+                 connection = .failed(error.localizedDescription)
+                 return nil
+             }
+         }
     }
 
     /// Drafts a scene outline row from a beat's existing material.
@@ -202,43 +279,66 @@ final class AIAssistant: ObservableObject {
         defer { generating.remove(sceneKey) }
 
         let system = """
-        You are a professional screenwriting assistant helping a writer build a scene \
-        outline from story beats. Turn the provided beat material into a concise scene \
-        outline entry for one scene within the beat. Keep it specific, cinematic, and \
-        easy to edit by hand. Return 1–3 present-tense sentences only, with no heading, \
-        label, or commentary.
-        """
+            You are a professional screenwriting assistant helping a writer build a scene \
+            outline from story beats. Turn the provided beat material into a concise scene \
+            outline entry for one scene within the beat. Keep it specific, cinematic, and \
+            easy to edit by hand. Return 1–3 present-tense sentences only, with no heading, \
+            label, or commentary.
+            
+            IMPORTANT: Each scene must be unique and distinct from other scenes in the same beat. 
+            Focus on creating a progressive sequence where each scene builds on the previous one.
+            """
 
         let context = projectContext(for: wizard)
 
         let user = """
-        Project context:
-        \(context)
+            Project context:
+            \(context)
 
-        Beat:
-        - Title: \(beat.title)
-        - Purpose: \(beat.purpose)
-        - Timing: \(beat.timing(for: wizard.runtime ?? .feature))
-        - Scene position: \(sceneIndex) of \(sceneCount)
+            Beat:
+            - Title: \(beat.title)
+            - Purpose: \(beat.purpose)
+            - Timing: \(beat.timing(for: wizard.runtime ?? .feature))
+            - Scene position: \(sceneIndex) of \(sceneCount)
 
-        Beat material:
-        \(trimmedSeed)
+            Beat material for this specific scene:
+            \(trimmedSeed)
 
-        Write a scene outline entry for this beat.
-        """
+            Write a unique scene outline entry for this specific scene in the beat's sequence.
+            Make sure this scene is different from other scenes in the same beat and contributes uniquely to the beat's progression.
+            """
 
-        do {
-            return try await client.complete(
-                model: model,
-                system: system,
-                user: user,
-                temperature: temperature,
-                maxTokens: 500)
-        } catch {
-            if Self.isCancellation(error) { return nil }
-            connection = .failed(error.localizedDescription)
-            return nil
-        }
+         // Use appropriate client based on server type
+         switch serverType {
+         case .lmStudio:
+             let lmClient = LMStudioClient(baseURL: baseURL)
+             do {
+                 return try await lmClient.complete(
+                     model: model,
+                     system: system,
+                     user: user,
+                     temperature: temperature,
+                     maxTokens: 500)
+             } catch {
+                 if Self.isCancellation(error) { return nil }
+                 connection = .failed(error.localizedDescription)
+                 return nil
+             }
+          case .ollama:
+              let olClient = OllamaClient(baseURL: baseURL)
+              do {
+                  return try await olClient.complete(
+                      model: model,
+                      system: system,
+                      user: user,
+                      temperature: temperature,
+                      maxTokens: 500)
+             } catch {
+                 if Self.isCancellation(error) { return nil }
+                 connection = .failed(error.localizedDescription)
+                 return nil
+             }
+         }
     }
 
     /// Generates a beat-by-beat story outline keyed by beat id.
@@ -254,17 +354,19 @@ final class AIAssistant: ObservableObject {
         }
 
         let system = """
-        You are a professional screenwriting assistant helping a writer build a story \
-        outline. Return only the final outline, not reasoning, analysis, or commentary. \
-        Use the exact beat ids or exact beat titles provided by the app. Keep each beat \
-        very short: one quick outline sentence, or at most two very short sentences. \
-        The goal is to produce a compact beat-by-beat pass that can be expanded into full \
-        beat prose later.
-        """
+            You are a professional screenwriting assistant helping a writer build a story \
+            outline. Return only the final outline, not reasoning, analysis, or commentary. \
+            Use the exact beat ids or exact beat titles provided by the app. Keep each beat \
+            very short: one quick outline sentence, or at most two very short sentences. \
+            The goal is to produce a compact beat-by-beat pass that can be expanded into full \
+            beat prose later.
+            """
 
         var context = ""
         if let s = wizard.structure { context += "Structure: \(s.title)\n" }
-        if let m = wizard.medium, let r = wizard.runtime { context += "Format: \(m.rawValue), \(r.label)\n" }
+        if let m = wizard.medium, let r = wizard.runtime {
+            context += "Format: \(m.rawValue), \(r.label)\n"
+        }
         if let g = wizard.genre { context += "Genre: \(g.title)\n" }
         if !wizard.projectTitle.isEmpty { context += "Title: \(wizard.projectTitle)\n" }
         if !wizard.logline.isEmpty { context += "Logline: \(wizard.logline)\n" }
@@ -273,49 +375,78 @@ final class AIAssistant: ObservableObject {
         var beatList = ""
         for beat in beats {
             beatList += """
-            - \(beat.key): \(beat.title)
-              Purpose: \(beat.purpose)
-              Timing: \(beat.timing(for: wizard.runtime ?? .feature))
-            """
+                - \(beat.key): \(beat.title)
+                  Purpose: \(beat.purpose)
+                  Timing: \(beat.timing(for: wizard.runtime ?? .feature))
+                """
             beatList += "\n"
         }
 
         let user = """
-        Project context:
-        \(context)
+            Project context:
+            \(context)
 
-        Beat map:
-        \(beatList)
+            Beat map:
+            \(beatList)
 
-        Existing beat drafts:
-        \(existingDraftsContext(for: wizard))
+            Existing beat drafts:
+            \(existingDraftsContext(for: wizard))
 
-        Return exactly one entry for each of these exact beats, in order.
-        Keep each entry to a quick outline sentence.
-        Do not skip any beats. Do not add preamble, explanation, or extra notes.
-        \(beats.map { "- \($0.key): \($0.title)" }.joined(separator: "\n"))
-        """
+            Return exactly one entry for each of these exact beats, in order.
+            Keep each entry to a quick outline sentence.
+            Do not skip any beats. Do not add preamble, explanation, or extra notes.
+            \(beats.map { "- \($0.key): \($0.title)" }.joined(separator: "\n"))
+            """
 
-        do {
-            let response = try await client.complete(
-                model: model,
-                system: system,
-                user: user,
-                temperature: min(temperature, 0.2),
-                maxTokens: 4096)
-            lastOutlineResponse = response
-            if let outline = Self.parseOutlineResponse(
-                response,
-                beats: beats) {
-                return outline
-            }
+         // Use appropriate client based on server type
+         switch serverType {
+         case .lmStudio:
+             let lmClient = LMStudioClient(baseURL: baseURL)
+             do {
+                 let response = try await lmClient.complete(
+                     model: model,
+                     system: system,
+                     user: user,
+                     temperature: min(temperature, 0.2),
+                     maxTokens: 4096)
+                 lastOutlineResponse = response
+                 if let outline = Self.parseOutlineResponse(
+                     response,
+                     beats: beats)
+                 {
+                     return outline
+                 }
 
-            return Self.fallbackOutline(from: response, beats: beats)
-        } catch {
-            if Self.isCancellation(error) { throw CancellationError() }
-            connection = .failed(error.localizedDescription)
-            throw error
-        }
+                 return Self.fallbackOutline(from: response, beats: beats)
+             } catch {
+                 if Self.isCancellation(error) { throw CancellationError() }
+                 connection = .failed(error.localizedDescription)
+                 throw error
+             }
+          case .ollama:
+              let olClient = OllamaClient(baseURL: baseURL)
+              do {
+                  let response = try await olClient.complete(
+                      model: model,
+                      system: system,
+                      user: user,
+                      temperature: min(temperature, 0.2),
+                      maxTokens: 4096)
+                 lastOutlineResponse = response
+                 if let outline = Self.parseOutlineResponse(
+                     response,
+                     beats: beats)
+                 {
+                     return outline
+                 }
+
+                 return Self.fallbackOutline(from: response, beats: beats)
+             } catch {
+                 if Self.isCancellation(error) { throw CancellationError() }
+                 connection = .failed(error.localizedDescription)
+                 throw error
+             }
+         }
     }
 
     /// Answers a free-form prompt using the current project as context.
@@ -334,50 +465,88 @@ final class AIAssistant: ObservableObject {
         let beatInstructions: String
         if let beat {
             beatInstructions = """
-            Target beat:
-            - Title: \(beat.title)
-            - Purpose: \(beat.purpose)
-            - Timing: \(beat.timing(for: wizard.runtime ?? .feature))
-            """
+                Target beat:
+                - Title: \(beat.title)
+                - Purpose: \(beat.purpose)
+                - Timing: \(beat.timing(for: wizard.runtime ?? .feature))
+                """
         } else {
             beatInstructions = "Target beat: none specified."
         }
 
-        do {
-            return try await client.complete(
-                model: model,
-                system: """
-                You are a professional screenwriting assistant helping a writer shape an \
-                outline. Use the provided project context and target beat to answer the \
-                writer's prompt with practical, specific guidance. Keep the tone concise \
-                and useful. If a target beat is provided, focus on that beat and write in \
-                outline prose. Do not add headings unless the user explicitly asks for them.
-                """,
-                user: """
-                Project context:
-                \(context)
+         // Use appropriate client based on server type
+         switch serverType {
+         case .lmStudio:
+             let lmClient = LMStudioClient(baseURL: baseURL)
+             do {
+                 return try await lmClient.complete(
+                     model: model,
+                     system: """
+                         You are a professional screenwriting assistant helping a writer shape an \
+                         outline. Use the provided project context and target beat to answer the \
+                         writer's prompt with practical, specific guidance. Keep the tone concise \
+                         and useful. If a target beat is provided, focus on that beat and write in \
+                         outline prose. Do not add headings unless the user explicitly asks for them.
+                         """,
+                     user: """
+                         Project context:
+                         \(context)
 
-                \(reference)
-                \(beatInstructions)
+                         \(reference)
+                         \(beatInstructions)
 
-                Writer prompt:
-                \(trimmedPrompt)
+                         Writer prompt:
+                         \(trimmedPrompt)
 
-                Respond directly to the prompt.
-                """,
-                temperature: temperature,
-                maxTokens: 600)
-        } catch {
-            if Self.isCancellation(error) { return nil }
-            connection = .failed(error.localizedDescription)
-            return nil
-        }
+                         Respond directly to the prompt.
+                         """,
+                     temperature: temperature,
+                     maxTokens: 600)
+             } catch {
+                 if Self.isCancellation(error) { return nil }
+                 connection = .failed(error.localizedDescription)
+                 return nil
+             }
+          case .ollama:
+              let olClient = OllamaClient(baseURL: baseURL)
+              do {
+                  return try await olClient.complete(
+                     model: model,
+                     system: """
+                         You are a professional screenwriting assistant helping a writer shape an \
+                         outline. Use the provided project context and target beat to answer the \
+                         writer's prompt with practical, specific guidance. Keep the tone concise \
+                         and useful. If a target beat is provided, focus on that beat and write in \
+                         outline prose. Do not add headings unless the user explicitly asks for them.
+                         """,
+                     user: """
+                         Project context:
+                         \(context)
+
+                         \(reference)
+                         \(beatInstructions)
+
+                         Writer prompt:
+                         \(trimmedPrompt)
+
+                         Respond directly to the prompt.
+                         """,
+                     temperature: temperature,
+                     maxTokens: 600)
+             } catch {
+                 if Self.isCancellation(error) { return nil }
+                 connection = .failed(error.localizedDescription)
+                 return nil
+             }
+         }
     }
 
     private func projectContext(for wizard: WizardState) -> String {
         var context = ""
         if let s = wizard.structure { context += "Structure: \(s.title)\n" }
-        if let m = wizard.medium, let r = wizard.runtime { context += "Format: \(m.rawValue), \(r.label)\n" }
+        if let m = wizard.medium, let r = wizard.runtime {
+            context += "Format: \(m.rawValue), \(r.label)\n"
+        }
         if let g = wizard.genre { context += "Genre: \(g.title)\n" }
         if !wizard.projectTitle.isEmpty { context += "Title: \(wizard.projectTitle)\n" }
         if !wizard.logline.isEmpty { context += "Logline: \(wizard.logline)\n" }
@@ -393,7 +562,8 @@ final class AIAssistant: ObservableObject {
         if !wizard.entries.isEmpty {
             context += "Beat draft notes:\n"
             for beat in wizard.beats {
-                let written = wizard.entries[beat.key]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                let written =
+                    wizard.entries[beat.key]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
                 guard !written.isEmpty else { continue }
                 context += "- \(beat.title): \(written)\n"
             }
@@ -403,9 +573,11 @@ final class AIAssistant: ObservableObject {
 
     private func referenceContext(for wizard: WizardState, beatKey: String?) -> String {
         guard let movie = wizard.sampleMovie else { return "" }
-        var reference = "Reference film for structural guidance only: \(movie.title) (\(movie.year)).\n"
+        var reference =
+            "Reference film for structural guidance only: \(movie.title) (\(movie.year)).\n"
         if let beatKey, let sample = movie.sample(for: beatKey) {
-            reference += "How that film handles this beat (for pacing/function, do not copy): \(sample)\n"
+            reference +=
+                "How that film handles this beat (for pacing/function, do not copy): \(sample)\n"
         }
         return reference
     }
@@ -421,14 +593,17 @@ final class AIAssistant: ObservableObject {
 
         var context = ""
         for beat in wizard.beats {
-            let written = wizard.entries[beat.key]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let written =
+                wizard.entries[beat.key]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             guard !written.isEmpty else { continue }
             context += "- \(beat.key): \(written)\n"
         }
         return context.isEmpty ? "No beat drafts yet." : context
     }
 
-    private static func parseOutlineResponse(_ text: String, beats: [BeatTemplate]) -> [String: String]? {
+    private static func parseOutlineResponse(_ text: String, beats: [BeatTemplate]) -> [String:
+        String]?
+    {
         let aliases = outlineAliases(for: beats)
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         let stripped = stripMarkdownFences(from: trimmed)
@@ -462,9 +637,13 @@ final class AIAssistant: ObservableObject {
         return "\"\(trimmed[..<index])…\""
     }
 
-    private static func parseOutlineJSONObject(_ text: String, aliases: [String: String]) -> [String: String]? {
+    private static func parseOutlineJSONObject(_ text: String, aliases: [String: String])
+        -> [String: String]?
+    {
         guard let data = text.data(using: .utf8) else { return nil }
-        guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
 
         var result: [String: String] = [:]
         for (key, value) in object {
@@ -475,7 +654,9 @@ final class AIAssistant: ObservableObject {
                 continue
             }
             if let nested = value as? [String: Any] {
-                if let string = nested["text"] as? String ?? nested["outline"] as? String ?? nested["content"] as? String {
+                if let string = nested["text"] as? String ?? nested["outline"] as? String ?? nested[
+                    "content"] as? String
+                {
                     let cleaned = string.trimmingCharacters(in: .whitespacesAndNewlines)
                     if !cleaned.isEmpty { result[canonicalKey] = cleaned }
                 }
@@ -484,7 +665,9 @@ final class AIAssistant: ObservableObject {
         return result
     }
 
-    private static func parseOutlineKeyValueLines(_ text: String, aliases: [String: String]) -> [String: String]? {
+    private static func parseOutlineKeyValueLines(_ text: String, aliases: [String: String])
+        -> [String: String]?
+    {
         let lines = text.components(separatedBy: .newlines)
         var result: [String: String] = [:]
         var currentKey: String?
@@ -494,9 +677,12 @@ final class AIAssistant: ObservableObject {
             guard !line.isEmpty else { continue }
 
             if let colonIndex = line.firstIndex(of: ":") {
-                let key = String(line[..<colonIndex]).trimmingCharacters(in: .whitespacesAndNewlines)
-                let value = String(line[line.index(after: colonIndex)...]).trimmingCharacters(in: .whitespacesAndNewlines)
-                if let canonicalKey = canonicalBeatKey(from: key, aliases: aliases), !value.isEmpty {
+                let key = String(line[..<colonIndex]).trimmingCharacters(
+                    in: .whitespacesAndNewlines)
+                let value = String(line[line.index(after: colonIndex)...]).trimmingCharacters(
+                    in: .whitespacesAndNewlines)
+                if let canonicalKey = canonicalBeatKey(from: key, aliases: aliases), !value.isEmpty
+                {
                     currentKey = canonicalKey
                     result[canonicalKey] = value
                     continue
@@ -512,7 +698,9 @@ final class AIAssistant: ObservableObject {
         return result.isEmpty ? nil : result
     }
 
-    private static func parseOutlineHeadingSections(_ text: String, aliases: [String: String]) -> [String: String]? {
+    private static func parseOutlineHeadingSections(_ text: String, aliases: [String: String])
+        -> [String: String]?
+    {
         let lines = text.components(separatedBy: .newlines)
         var result: [String: String] = [:]
         var currentKey: String?
@@ -525,7 +713,8 @@ final class AIAssistant: ObservableObject {
             if let canonicalKey = canonicalBeatKey(from: heading, aliases: aliases) {
                 currentKey = canonicalKey
                 if let colonIndex = line.firstIndex(of: ":") {
-                    let value = String(line[line.index(after: colonIndex)...]).trimmingCharacters(in: .whitespacesAndNewlines)
+                    let value = String(line[line.index(after: colonIndex)...]).trimmingCharacters(
+                        in: .whitespacesAndNewlines)
                     if !value.isEmpty {
                         result[canonicalKey] = value
                     }
@@ -557,7 +746,9 @@ final class AIAssistant: ObservableObject {
 
     private static func normalizeBeatLabel(_ label: String) -> String {
         let lowered = label.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        return lowered.unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) }.map(String.init).joined()
+        return lowered.unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) }.map(
+            String.init
+        ).joined()
     }
 
     private static func stripMarkdownFences(from text: String) -> String {
@@ -588,14 +779,18 @@ final class AIAssistant: ObservableObject {
 
     private static func stripBulletPrefix(_ line: String) -> String {
         var cleaned = line
-        while cleaned.hasPrefix("-") || cleaned.hasPrefix("•") || cleaned.hasPrefix("–") || cleaned.hasPrefix("*") {
+        while cleaned.hasPrefix("-") || cleaned.hasPrefix("•") || cleaned.hasPrefix("–")
+            || cleaned.hasPrefix("*")
+        {
             cleaned.removeFirst()
             cleaned = cleaned.trimmingCharacters(in: .whitespaces)
         }
 
         if let dotIndex = cleaned.firstIndex(where: { $0 == "." }),
-           cleaned[..<dotIndex].allSatisfy({ $0.isNumber }) {
-            cleaned = String(cleaned[cleaned.index(after: dotIndex)...]).trimmingCharacters(in: .whitespaces)
+            cleaned[..<dotIndex].allSatisfy({ $0.isNumber })
+        {
+            cleaned = String(cleaned[cleaned.index(after: dotIndex)...]).trimmingCharacters(
+                in: .whitespaces)
         }
 
         return cleaned
@@ -615,8 +810,11 @@ final class AIAssistant: ObservableObject {
         return cleaned
     }
 
-    private static func parseOutlineSequentially(_ text: String, beats: [BeatTemplate]) -> [String: String]? {
-        let paragraphs = text
+    private static func parseOutlineSequentially(_ text: String, beats: [BeatTemplate]) -> [String:
+        String]?
+    {
+        let paragraphs =
+            text
             .components(separatedBy: .newlines)
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
@@ -638,8 +836,11 @@ final class AIAssistant: ObservableObject {
         return result.isEmpty ? nil : result
     }
 
-    private static func fallbackOutline(from text: String, beats: [BeatTemplate]) -> [String: String] {
-        let paragraphs = text
+    private static func fallbackOutline(from text: String, beats: [BeatTemplate]) -> [String:
+        String]
+    {
+        let paragraphs =
+            text
             .components(separatedBy: .newlines)
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
@@ -653,7 +854,8 @@ final class AIAssistant: ObservableObject {
 
         guard !beats.isEmpty else { return [:] }
 
-        let usableChunks = chunks.isEmpty ? [text.trimmingCharacters(in: .whitespacesAndNewlines)] : chunks
+        let usableChunks =
+            chunks.isEmpty ? [text.trimmingCharacters(in: .whitespacesAndNewlines)] : chunks
         var result: [String: String] = [:]
 
         for (index, beat) in beats.enumerated() {
@@ -676,7 +878,8 @@ final class AIAssistant: ObservableObject {
             in: NSRange(location: 0, length: nsText.length),
             options: [.bySentences, .substringNotRequired]
         ) { _, range, _, _ in
-            let sentence = nsText.substring(with: range).trimmingCharacters(in: .whitespacesAndNewlines)
+            let sentence = nsText.substring(with: range).trimmingCharacters(
+                in: .whitespacesAndNewlines)
             if !sentence.isEmpty {
                 sentences.append(sentence)
             }
@@ -684,7 +887,9 @@ final class AIAssistant: ObservableObject {
         return sentences.isEmpty ? [trimmed] : sentences
     }
 
-    private static func collectParagraphs(from paragraphs: [String], startingAt index: inout Int) -> String {
+    private static func collectParagraphs(from paragraphs: [String], startingAt index: inout Int)
+        -> String
+    {
         guard index < paragraphs.count else { return "" }
 
         var pieces: [String] = []
@@ -697,7 +902,8 @@ final class AIAssistant: ObservableObject {
             if looksLikeNewBeatHeading(paragraph) && !pieces.isEmpty {
                 break
             }
-            if paragraph.lowercased().hasPrefix("act ") || paragraph.lowercased().hasPrefix("beat ") {
+            if paragraph.lowercased().hasPrefix("act ") || paragraph.lowercased().hasPrefix("beat ")
+            {
                 break
             }
             if paragraph.count > 220 && pieces.count > 0 {
@@ -720,12 +926,8 @@ final class AIAssistant: ObservableObject {
 
     private static func isGenericOutlineNoise(_ line: String) -> Bool {
         let lower = line.lowercased()
-        return lower.hasPrefix("here is") ||
-            lower.hasPrefix("here's") ||
-            lower.hasPrefix("below is") ||
-            lower.hasPrefix("outline:") ||
-            lower.hasPrefix("story outline") ||
-            lower == "json" ||
-            lower == "markdown"
+        return lower.hasPrefix("here is") || lower.hasPrefix("here's")
+            || lower.hasPrefix("below is") || lower.hasPrefix("outline:")
+            || lower.hasPrefix("story outline") || lower == "json" || lower == "markdown"
     }
 }
