@@ -269,7 +269,34 @@ final class GitHubUpdateService: ObservableObject {
 
     private func isNewerReleaseAvailable(currentVersion: String, latestTag: String?) -> Bool {
         guard let latestTag else { return false }
-        return Version(latestTag) > Version(currentVersion)
+        
+        // Parse version from tag (remove 'v' prefix if present)
+        let tagVersion = latestTag.hasPrefix("v") ? String(latestTag.dropFirst()) : latestTag
+        let currentAppVersion = Version(currentVersion)
+        let latestTagVersion = Version(tagVersion)
+        
+        // If versions are different, use version comparison
+        if currentAppVersion != latestTagVersion {
+            return latestTagVersion > currentAppVersion
+        }
+        
+        // Versions are the same, compare build numbers
+        let currentBuild = Int(AppInfo.buildNumber) ?? 0
+        // Extract build number from tag (e.g., "v2.5-build31" -> 31)
+        let tagBuild = extractBuildNumber(from: latestTag)
+        
+        return tagBuild > currentBuild
+    }
+    
+    private func extractBuildNumber(from tag: String) -> Int {
+        // Look for pattern like "-buildNNN" in the tag
+        let components = tag.split(separator: "-")
+        for component in components {
+            if component.starts(with: "build"), let buildNum = Int(String(component.dropFirst(5))) {
+                return buildNum
+            }
+        }
+        return 0
     }
 
     private var decoder: JSONDecoder {
