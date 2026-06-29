@@ -275,9 +275,9 @@ final class GitHubUpdateService: ObservableObject {
         let currentAppMajorMinor = extractMajorMinor(from: currentVersion)
         let latestTagMajorMinor = extractMajorMinor(from: tagVersion)
         
-        // Compare major.minor versions first
+        // Compare major.minor versions first (element by element)
         if currentAppMajorMinor != latestTagMajorMinor {
-            return latestTagMajorMinor > currentAppMajorMinor
+            return isGreaterVersion(latestTagMajorMinor, than: currentAppMajorMinor)
         }
         
         // Versions are the same, compare build numbers
@@ -287,6 +287,17 @@ final class GitHubUpdateService: ObservableObject {
         let tagBuild = extractBuildNumber(from: latestTag)
         
         return tagBuild > currentBuild
+    }
+    
+    private func isGreaterVersion(_ lhs: [Int], than rhs: [Int]) -> Bool {
+        // Compare element by element
+        let count = max(lhs.count, rhs.count)
+        for index in 0..<count {
+            let left = index < lhs.count ? lhs[index] : 0
+            let right = index < rhs.count ? rhs[index] : 0
+            if left != right { return left > right }
+        }
+        return false
     }
     
     private func extractMajorMinor(from versionString: String) -> [Int] {
