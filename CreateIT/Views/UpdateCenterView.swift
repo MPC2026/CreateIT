@@ -347,6 +347,6 @@ struct UpdateCenterView: View {
     }
 
     private func startUpdateCheck() {
-        showInstallConfirmation = true
+        Task { await service.checkForUpdatesAndInstall() }
     }
 }
