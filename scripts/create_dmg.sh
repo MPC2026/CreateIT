@@ -18,6 +18,9 @@ fi
 
 DMG_NAME="${APP_NAME}-${MARKETING_VERSION}-build${CURRENT_PROJECT_VERSION}.dmg"
 
+# Create dist directory for GitHub Actions
+mkdir -p dist
+
 echo "🚀 Starting DMG creation process for $APP_NAME..."
 echo "   Version: ${MARKETING_VERSION} (Build ${CURRENT_PROJECT_VERSION})"
 
@@ -46,10 +49,10 @@ hdiutil create -volname "$APP_NAME Installer" \
     -format UDBZ \
     -fs HFS+ \
     -fsargs "-c c=64,a=16,e=16" \
-    "$DMG_NAME"
+    "dist/$DMG_NAME"
 
 if [ $? -eq 0 ]; then
-    echo "✅ Successfully created $DMG_NAME"
+    echo "✅ Successfully created dist/$DMG_NAME"
 else
     echo "❌ Failed to create DMG."
     exit 1
@@ -65,4 +68,4 @@ if [ -f "PriorBuilds/$DMG_NAME" ]; then
     rm -f "PriorBuilds/$DMG_NAME"
 fi
 
-echo "🎉 Done! You can find your installer at $(pwd)/$DMG_NAME"
+echo "🎉 Done! You can find your installer at $(pwd)/dist/$DMG_NAME"
