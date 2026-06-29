@@ -11,8 +11,8 @@ enum AppInfo {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
     }
 
-    /// e.g. "v2.5-build33" (matches GitHub release tag format)
+    /// e.g. "v2.6b1" (matches GitHub release tag format)
     static var displayVersion: String {
-        "v\(shortVersion)-build\(buildNumber)"
+        "v\(shortVersion)b\(buildNumber)"
     }
 }
