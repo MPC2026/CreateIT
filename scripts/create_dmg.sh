@@ -38,7 +38,6 @@ mkdir -p "$STAGING_DIR"
 cp -R "$BUILD_PATH/$APP_NAME.app" "$STAGING_DIR/"
 
 # 3. Create a symlink to Applications folder for the user's convenience
-# This is a common pattern in DMGs
 ln -s /Applications "$STAGING_DIR/Applications"
 
 # 4. Build the DMG using hdiutil with optimized settings
