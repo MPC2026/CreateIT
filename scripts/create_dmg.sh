@@ -16,8 +16,8 @@ if [ -z "$MARKETING_VERSION" ] || [ -z "$CURRENT_PROJECT_VERSION" ]; then
     exit 1
 fi
 
-# Use tag format for GitHub releases (v2.5-build39)
-DMG_NAME="${APP_NAME}-v${MARKETING_VERSION}-build${CURRENT_PROJECT_VERSION}.dmg"
+# Use tag format for GitHub releases (v2.6b1)
+DMG_NAME="${APP_NAME}-v${MARKETING_VERSION}b${CURRENT_PROJECT_VERSION}.dmg"
 
 # Create dist directory for GitHub Actions
 mkdir -p dist
