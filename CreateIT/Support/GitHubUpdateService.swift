@@ -270,27 +270,34 @@ final class GitHubUpdateService: ObservableObject {
     private func isNewerReleaseAvailable(currentVersion: String, latestTag: String?) -> Bool {
         guard let latestTag else { return false }
         
-        // Parse version from tag (remove 'v' prefix if present)
+        // Parse versions - extract only major.minor for comparison (ignore build numbers)
         let tagVersion = latestTag.hasPrefix("v") ? String(latestTag.dropFirst()) : latestTag
-        let currentAppVersion = Version(currentVersion)
-        let latestTagVersion = Version(tagVersion)
+        let currentAppMajorMinor = extractMajorMinor(from: currentVersion)
+        let latestTagMajorMinor = extractMajorMinor(from: tagVersion)
         
-        // If versions are different, use version comparison
-        if currentAppVersion != latestTagVersion {
-            return latestTagVersion > currentAppVersion
+        // Compare major.minor versions first
+        if currentAppMajorMinor != latestTagMajorMinor {
+            return latestTagMajorMinor > currentAppMajorMinor
         }
         
         // Versions are the same, compare build numbers
-        let currentBuild = Int(AppInfo.buildNumber) ?? 0
-        // Extract build number from tag (e.g., "v2.5-build31" -> 31)
+        // Extract build number from app version (e.g., "v2.5-build35" -> 35)
+        let currentBuild = extractBuildNumber(from: currentVersion)
+        // Extract build number from tag (e.g., "v2.5-build31" -> 31, or just "v2.5" -> 0)
         let tagBuild = extractBuildNumber(from: latestTag)
         
         return tagBuild > currentBuild
     }
     
-    private func extractBuildNumber(from tag: String) -> Int {
-        // Look for pattern like "-buildNNN" in the tag
-        let components = tag.split(separator: "-")
+    private func extractMajorMinor(from versionString: String) -> [Int] {
+        // Extract only major.minor components (first two numbers)
+        let digits = versionString.split { !$0.isNumber }.compactMap { Int($0) }
+        return digits.count >= 2 ? Array(digits.prefix(2)) : digits
+    }
+    
+    private func extractBuildNumber(from versionString: String) -> Int {
+        // Look for pattern like "-buildNNN" in the version string
+        let components = versionString.split(separator: "-")
         for component in components {
             if component.starts(with: "build"), let buildNum = Int(String(component.dropFirst(5))) {
                 return buildNum
