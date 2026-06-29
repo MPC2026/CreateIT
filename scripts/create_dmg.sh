@@ -79,7 +79,7 @@ echo "💿 Generating Disk Image..."
 hdiutil create -volname "$APP_NAME Installer" \
     -srcfolder "$STAGING_DIR" \
     -ov \
-    -format UDBZ \
+    -format UDZO \
     -fs HFS+ \
     -fsargs "-c c=64,a=16,e=16" \
     "dist/$DMG_NAME"
