@@ -632,8 +632,6 @@ struct OutlineStepView: View {
                                 .foregroundStyle(.tint)
                         }
                         HStack(spacing: 8) {
-                            Text(group.beat.actLabel)
-                            Text("•")
                             Text("Planned \(plannedSceneCount(for: group.beat))")
                         }
                         .font(.caption.weight(.medium))
