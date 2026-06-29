@@ -490,11 +490,17 @@ struct ContentView: View {
     private var aiConnected: Bool { ai.isConfigured }
 
     private var aiSymbol: String {
-        aiConnected ? "brain.head.profile" : "brain"
+        if aiConnected, let serverName = AIProvider(rawValue: ai.serverType.rawValue).map({ $0.displayName }), !ai.model.isEmpty {
+            return "brain.head.profile"
+        }
+        return "brain"
     }
 
     private var aiHelp: String {
-        aiConnected ? "Local AI connected — click to configure" : "Connect a local LLM (LM Studio)"
+        if aiConnected, let serverName = AIProvider(rawValue: ai.serverType.rawValue).map({ $0.displayName }), !ai.model.isEmpty {
+            return "\(serverName) - \(ai.model)"
+        }
+        return "Connect a local LLM (LM Studio)"
     }
 
     // MARK: Step content
