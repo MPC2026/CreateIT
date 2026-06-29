@@ -8,6 +8,8 @@ struct UpdateCenterView: View {
     @State private var isChecking = false
     @State private var didLoad = false
     @State private var showHistory = false
+    @State private var showInstallConfirmation = false
+    @State private var showInstallConfirmation = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -81,6 +83,18 @@ struct UpdateCenterView: View {
             VersionHistoryView()
                 .environmentObject(service)
         }
+        .alert("Install Update?", isPresented: $showInstallConfirmation, actions: {
+            Button("Cancel", role: .cancel) { }
+            Button("Install") {
+                Task { await startUpdateCheck() }
+            }
+        }, message: {
+            if let release = service.latestRelease {
+                Text("A new version (\(release.tagName)) is available. The app will close, install the update, and relaunch.")
+            } else {
+                Text("An update is available. The app will close, install the update, and relaunch.")
+            }
+        })
     }
 
     private var header: some View {
@@ -114,7 +128,7 @@ struct UpdateCenterView: View {
                 .buttonStyle(.bordered)
 
             Button {
-                Task { await startUpdateCheck() }
+                showInstallConfirmation = true
             } label: {
                 if isChecking {
                     HStack(spacing: 6) {
@@ -126,6 +140,7 @@ struct UpdateCenterView: View {
                 }
             }
             .buttonStyle(.borderedProminent)
+            .disabled(!service.isUpdateAvailable)
         }
     }
 
@@ -187,7 +202,7 @@ struct UpdateCenterView: View {
                     .font(.headline)
                 Spacer()
                 Button {
-                    Task { await startUpdateCheck() }
+                    showInstallConfirmation = true
                 } label: {
                     if isChecking {
                         HStack(spacing: 6) {
@@ -199,6 +214,7 @@ struct UpdateCenterView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
+                .disabled(isChecking || !service.isUpdateAvailable)
             }
 
             if let release = service.latestRelease {
@@ -331,9 +347,7 @@ struct UpdateCenterView: View {
                 .fill(Color(nsColor: .controlBackgroundColor)))
     }
 
-    private func startUpdateCheck() async {
-        isChecking = true
-        defer { isChecking = false }
-        await service.checkForUpdatesAndInstall()
+    private func startUpdateCheck() {
+        showInstallConfirmation = true
     }
 }
