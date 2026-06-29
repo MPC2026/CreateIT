@@ -40,7 +40,41 @@ cp -R "$BUILD_PATH/$APP_NAME.app" "$STAGING_DIR/"
 # 3. Create a symlink to Applications folder for the user's convenience
 ln -s /Applications "$STAGING_DIR/Applications"
 
-# 4. Build the DMG using hdiutil with optimized settings
+# 4. Set up DMG window layout using AppleScript to fix white line issue
+echo "🎨 Setting up DMG window layout..."
+
+cat > /tmp/dmg_layout.scpt << 'APPLESCRIPT'
+tell application "Finder"
+    tell disk "CreateIT Installer"
+        open
+        delay 2
+        
+        set current view to icon view
+        set position of window to {100, 100}
+        set size of window to {540, 380}
+        set icon size of icon view options of window to 128
+        
+        set appItem to item "CreateIT.app"
+        set applicationsItem to item "Applications"
+        
+        set position of appItem to {150, 170}
+        set position of applicationsItem to {360, 170}
+        
+        delay 1
+        close
+        delay 1
+        open
+        delay 2
+        
+        update without registering applications
+        delay 1
+    end tell
+end tell
+APPLESCRIPT
+
+osascript /tmp/dmg_layout.scpt
+
+# 5. Build the DMG using hdiutil with optimized settings
 echo "💿 Generating Disk Image..."
 hdiutil create -volname "$APP_NAME Installer" \
     -srcfolder "$STAGING_DIR" \
@@ -57,11 +91,10 @@ else
     exit 1
 fi
 
-# 5. Move old DMGs to PriorBuilds folder
+# 6. Move old DMGs to PriorBuilds folder
 echo "📦 Archiving previous builds..."
 mkdir -p PriorBuilds
 
-# Remove any existing DMG with the same name from PriorBuilds before creating new one
 if [ -f "PriorBuilds/$DMG_NAME" ]; then
     echo "   Removing existing build with same version from PriorBuilds..."
     rm -f "PriorBuilds/$DMG_NAME"
