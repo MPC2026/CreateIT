@@ -108,7 +108,7 @@ final class GitHubUpdateService: ObservableObject {
             latestRelease = release
             commits = commitList
             releases = releaseList
-            isUpdateAvailable = isNewerReleaseAvailable(currentVersion: AppInfo.shortVersion, latestTag: release?.tagName)
+            isUpdateAvailable = isNewerReleaseAvailable(currentVersion: AppInfo.displayVersion, latestTag: release?.tagName)
             lastChecked = Date()
             state = .loaded
         } catch {
@@ -120,7 +120,7 @@ final class GitHubUpdateService: ObservableObject {
         do {
             let release = try await fetchLatestRelease()
             latestRelease = release
-            isUpdateAvailable = isNewerReleaseAvailable(currentVersion: AppInfo.shortVersion, latestTag: release?.tagName)
+            isUpdateAvailable = isNewerReleaseAvailable(currentVersion: AppInfo.displayVersion, latestTag: release?.tagName)
             lastChecked = Date()
         } catch {
             state = .failed(error.localizedDescription)
@@ -131,7 +131,7 @@ final class GitHubUpdateService: ObservableObject {
         do {
             let release = try await fetchLatestRelease()
             latestRelease = release
-            isUpdateAvailable = isNewerReleaseAvailable(currentVersion: AppInfo.shortVersion, latestTag: release?.tagName)
+            isUpdateAvailable = isNewerReleaseAvailable(currentVersion: AppInfo.displayVersion, latestTag: release?.tagName)
             lastChecked = Date()
 
             guard let release, isUpdateAvailable else { return }
