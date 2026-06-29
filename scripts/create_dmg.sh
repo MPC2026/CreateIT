@@ -7,16 +7,17 @@ APP_NAME="CreateIT"
 BUILD_PATH="/Users/michael/Library/Developer/Xcode/DerivedData/CreateIT-gaiqncznvpqexkfgdfunupbfwsye/Build/Products/Release" # Xcode derived data path
 STAGING_DIR="./dmg_staging"
 
-# Get version info from project.yml or Info.plist
-MARKETING_VERSION=$(grep "MARKETING_VERSION:" project.yml 2>/dev/null | awk '{print $2}' | tr -d '"')
-CURRENT_PROJECT_VERSION=$(grep "CURRENT_PROJECT_VERSION:" project.yml 2>/dev/null | awk '{print $2}' | tr -d '"')
+# Get version info from Info.plist
+MARKETING_VERSION=$(plutil -extract CFBundleShortVersionString xml1 -o - "CreateIT/Info.plist" 2>/dev/null | grep '<string>' | sed 's/<[^>]*>//g' | tr -d ' ')
+CURRENT_PROJECT_VERSION=$(plutil -extract CFBundleVersion xml1 -o - "CreateIT/Info.plist" 2>/dev/null | grep '<string>' | sed 's/<[^>]*>//g' | tr -d ' ')
 
 if [ -z "$MARKETING_VERSION" ] || [ -z "$CURRENT_PROJECT_VERSION" ]; then
-    echo "❌ Error: Could not determine version info from project.yml"
+    echo "❌ Error: Could not determine version info from Info.plist"
     exit 1
 fi
 
-DMG_NAME="${APP_NAME}-${MARKETING_VERSION}-build${CURRENT_PROJECT_VERSION}.dmg"
+# Use tag format for GitHub releases (v2.5-build39)
+DMG_NAME="${APP_NAME}-v${MARKETING_VERSION}-build${CURRENT_PROJECT_VERSION}.dmg"
 
 # Create dist directory for GitHub Actions
 mkdir -p dist
@@ -95,9 +96,25 @@ fi
 echo "📦 Archiving previous builds..."
 mkdir -p PriorBuilds
 
-if [ -f "PriorBuilds/$DMG_NAME" ]; then
-    echo "   Removing existing build with same version from PriorBuilds..."
-    rm -f "PriorBuilds/$DMG_NAME"
+# Move all .dmg files from dist/ to PriorBuilds/ except the one we just created
+if [ -d "dist" ]; then
+    for old_dmg in dist/*.dmg; do
+        if [ -f "$old_dmg" ]; then
+            dmg_filename=$(basename "$old_dmg")
+            if [ "$dmg_filename" != "$DMG_NAME" ]; then
+                echo "   Moving $dmg_filename to PriorBuilds..."
+                mv "$old_dmg" "PriorBuilds/"
+            fi
+        fi
+    done
 fi
 
+# Also move any old DMGs from PriorBuilds that match our naming pattern (keep latest 3)
+count=$(ls -1 PriorBuilds/*.dmg 2>/dev/null | wc -l)
+if [ "$count" -gt 3 ]; then
+    echo "   Cleaning up old builds (keeping last 3)..."
+    ls -1t PriorBuilds/*.dmg | tail -n +4 | xargs rm -f
+fi
+
+echo "✅ Successfully created dist/$DMG_NAME"
 echo "🎉 Done! You can find your installer at $(pwd)/dist/$DMG_NAME"
