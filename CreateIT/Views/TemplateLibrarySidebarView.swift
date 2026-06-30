@@ -109,9 +109,18 @@ struct TemplateLibrarySidebarView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
+            HStack {
                 Text("My Projects")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
+                
+                Spacer()
+                
+                Text("\(library.templates.count)")
+                    .font(.caption2.weight(.bold))
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 2)
+                    .background(Capsule().fill(Color.accentColor.opacity(0.16)))
+                    .foregroundStyle(.tint)
                 
                 // Backup/Restore dropdown
                 Menu {
@@ -127,13 +136,6 @@ struct TemplateLibrarySidebarView: View {
                         .foregroundStyle(.secondary)
                 }
                 .menuStyle(.borderlessButton)
-                
-                Text("\(library.templates.count)")
-                    .font(.caption2.weight(.bold))
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 2)
-                    .background(Capsule().fill(Color.accentColor.opacity(0.16)))
-                    .foregroundStyle(.tint)
             }
             Text("Save projects here, reopen them later, and remove them only when you're sure.")
                 .font(.caption)
