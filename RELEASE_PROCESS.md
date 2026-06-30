@@ -5,8 +5,10 @@ This guide covers the complete release process for CreateIT: bumping the build n
 ## Prerequisites
 
 - Xcode installed and working
-- GitHub CLI (`gh`) or git access
+- Git access (GitHub CLI not required - releases are automated via GitHub Actions)
 - Write access to the MPC2026/CreateIT repository
+
+**Note:** This project uses GitHub Actions to automatically build and publish releases. After pushing a tag, the release will be automatically created - no manual upload needed.
 
 ## Steps
 
@@ -76,9 +78,11 @@ fi
 TAG_NAME="vX.YbZ"
 git tag "$TAG_NAME"
 
-# Push to GitHub
+# Push to GitHub (release is automatically published via GitHub Actions)
 git push origin main --tags
 ```
+
+**Note:** The release will be automatically built and published on GitHub via the `publish-release.yml` workflow. No manual upload needed.
 
 ## Quick Command Summary
 
@@ -89,18 +93,20 @@ xcodebuild -project CreateIT.xcodeproj -scheme CreateIT -configuration Release c
 # 2. Create DMG
 bash scripts/create_dmg.sh
 
-# 3. Commit and push
+# 3. Commit and push (release auto-publishes via GitHub Actions)
 git add -A && git commit -m "Release: Version X.Y (Build Z)" && git tag vX.YbZ && git push origin main --tags
 ```
 
-## Example: Releasing v2.7b1
+**Note:** After pushing the tag, the release will be automatically built and published on GitHub. Check https://github.com/MPC2026/CreateIT/actions to monitor progress.
+
+## Example: Releasing v2.7b43
 
 ```bash
-# Update versions to 2.7 and build 1
+# Update versions to 2.7 and build 43 in project.yml, Info.plist, and project.pbxproj
 # Then run:
-xcodebuild -project CreateIT.xcodeproj -scheme CreateIT -configuration Release clean build
-bash scripts/create_dmg.sh
-git add -A && git commit -m "Release: Version 2.7 (Build 1)" && git tag v2.7b1 && git push origin main --tags
+git add -A && git commit -m "Release: Version 2.7 (Build 43)" && git tag v2.7b43 && git push origin main --tags
+
+# The release will be automatically built and published on GitHub via the publish-release.yml workflow.
 ```
 
 ## Troubleshooting
