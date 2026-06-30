@@ -26,7 +26,8 @@ echo "✅ Build successful"
 echo "💿 Creating DMG..."
 bash scripts/create_dmg.sh > /dev/null 2>&1
 
-if [ ! -f "dist/${APP_NAME}-v*.dmg" ]; then
+DMG_FILE=$(ls dist/${APP_NAME}-v*.dmg 2>/dev/null | head -1)
+if [ -z "$DMG_FILE" ]; then
     echo "❌ DMG creation failed!"
     exit 1
 fi

@@ -141,21 +141,16 @@ final class GitHubUpdateService: ObservableObject {
             }
 
             state = .installing
+        
+        // Launch the installer first (it will wait for the app to terminate)
+        Task { [asset] in
+            try await self.downloadAndLaunchInstaller(asset: asset)
             
-            // Launch the installer first (it will wait for the app to terminate)
-            Task { [asset] in
-                do {
-                    try await self.downloadAndLaunchInstaller(asset: asset)
-                    
-                    // Terminate after installer is launched
-                    DispatchQueue.main.async {
-                        NSApplication.shared.terminate(nil)
-                    }
-                } catch {
-                    state = .failed(error.localizedDescription)
-                }
+            // Terminate after installer is launched
+            DispatchQueue.main.async {
+                NSApplication.shared.terminate(nil)
             }
-        } catch {
+        catch {
             state = .failed(error.localizedDescription)
         }
     }

@@ -4,3 +4,25 @@ DerivedData/
 *.xcuserstate
 *.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
+
+# Dependencies
+node_modules/
+.bun/
+vendor/
+
+# Build outputs & Caches
+dist/
+build/
+.next/
+.nuxt/
+out/
+.cache/
+
+# Media and Binary Lockfiles
+*.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+*.mp4
+*.png
+*.jpg
