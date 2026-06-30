@@ -9,6 +9,8 @@ struct SampleMovie: Identifiable, Codable {
     let title: String
     let year: Int
     let genre: Genre
+    let medium: Medium
+    let runtime: Runtime
     let logline: String
     let beatSamples: [String: String]
 
