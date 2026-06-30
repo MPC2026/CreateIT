@@ -1,10 +1,14 @@
 import Foundation
 import SwiftUI
 
+// Import SampleListLoader for JSON data access
+import CreateIT.Data
+
 enum WizardStep: Int, CaseIterable, Codable {
     case structure
     case format
     case genre
+    case secondaryGenre
     case sample
     case plot
     case template
@@ -16,6 +20,7 @@ enum WizardStep: Int, CaseIterable, Codable {
         case .structure: return "Structure"
         case .format:    return "Format"
         case .genre:     return "Genre"
+        case .secondaryGenre: return "Secondary Genre"
         case .sample:    return "Sample"
         case .plot:      return "Plot"
         case .template:  return "Beats"
@@ -33,11 +38,11 @@ final class WizardState: ObservableObject {
         var structure: ScriptStructure?
         var medium: Medium?
         var runtime: Runtime?
-        var genre: Genre?
-        var sampleMovie: SampleMovie?
-        var primaryGenreTitle: String?
-        var secondaryGenreTitle: String?
+        var primaryGenre: Genre?
         var secondaryGenre: Genre?
+        var sampleMovie: SampleMovie?
+        var sampleMovieTitle: String
+        var sampleMovieYear: Int
         var projectTitle: String
         var logline: String
         var plot: String
@@ -51,13 +56,13 @@ final class WizardState: ObservableObject {
     @Published var structure: ScriptStructure?
     @Published var medium: Medium?
     @Published var runtime: Runtime?
-    @Published var genre: Genre?
-    @Published var sampleMovie: SampleMovie?
-    
-    // Secondary genre selection (for sample filtering)
-    @Published var primaryGenreTitle: String?
-    @Published var secondaryGenreTitle: String?
+    @Published var primaryGenre: Genre?
     @Published var secondaryGenre: Genre?
+    @Published var sampleMovie: SampleMovie?
+
+    // Sample movie selection (for JSON-based samples)
+    @Published var sampleMovieTitle: String = ""
+    @Published var sampleMovieYear: Int = 0
 
     // Project details
     @Published var projectTitle: String = ""
@@ -75,30 +80,51 @@ final class WizardState: ObservableObject {
         return BeatLibrary.beats(for: structure, medium: medium)
     }
 
-    var sampleMovies: [SampleMovie] {
-        guard let primary = primaryGenreTitle, let secondary = secondaryGenreTitle else { return [] }
-        // Get samples from SampleListLoader and convert to SampleMovie objects
-        let sampleStrings = SampleListLoader.shared.getSamples(for: primary, secondaryGenre: secondary)
-        
-        // Limit to 4 unique samples with no duplicates
-        let uniqueSamples = Array(Set(sampleStrings)).prefix(4)
-        
-        var movies: [SampleMovie] = []
-        for sampleString in uniqueSamples {
-            if let (title, year) = SampleListLoader.parseMovieString(sampleString) {
-                let movie = SampleMovie(
-                    title: title,
-                    year: year,
-                    genre: genre ?? .action,
-                    medium: medium ?? .movie,
-                    runtime: runtime ?? .feature,
-                    logline: "",
-                    beatSamples: [:]
-                )
-                movies.append(movie)
-            }
+    // MARK: - Secondary Genre Support
+    
+    /// Available secondary genres based on the selected primary genre (from JSON data)
+    var availableSecondaryGenres: [String] {
+        SampleListLoader.shared.getSecondaryGenres(for: primaryGenreTitle ?? "")
+    }
+    
+    /// The title of the primary genre (for JSON lookup)
+    private var primaryGenreTitle: String? {
+        guard let genre = primaryGenre else { return nil }
+        return genre.title
+    }
+    
+    /// Get sample movies from JSON loader based on selected genres
+    var jsonSampleMovies: [String] {
+        guard let primary = primaryGenreTitle,
+              let secondary = secondaryGenreTitle else { return [] }
+        return SampleListLoader.shared.getSamples(for: primary, secondaryGenre: secondary)
+    }
+    
+    /// The title of the secondary genre (for JSON lookup)
+    private var secondaryGenreTitle: String? {
+        // Map Genre enum to string for JSON lookup
+        guard let genre = secondaryGenre else { return nil }
+        switch genre {
+        case .action: return "Action"
+        case .comedy: return "Comedy"
+        case .drama: return "Drama"
+        case .horror: return "Horror"
+        case .sciFi: return "Sci-Fi"
+        case .thriller: return "Thriller"
+        case .romance: return "Romance"
+        case .fantasy: return "Fantasy"
+        case .crime: return "Crime"
+        case .adventure: return "Adventure"
         }
-        return movies
+    }
+
+    var sampleMovies: [SampleMovie] {
+        if let primary = primaryGenre, let secondary = secondaryGenre {
+            return SampleLibrary.movies(for: [primary, secondary])
+        } else if let genre = primaryGenre ?? secondaryGenre {
+            return SampleLibrary.movies(for: genre)
+        }
+        return []
     }
 
     /// Whether the user can advance from the current step.
@@ -106,13 +132,35 @@ final class WizardState: ObservableObject {
         switch step {
         case .structure: return structure != nil
         case .format:    return medium != nil && runtime != nil
-        case .genre:     return genre != nil
-        case .sample:    return sampleMovie != nil
+        case .genre:     return primaryGenre != nil
+        case .secondaryGenre: return secondaryGenre != nil
+        case .sample:    return !sampleMovieTitle.isEmpty
         case .plot:      return true
         case .template:  return !beats.isEmpty
         case .outline:   return false
         case .finalDraft:return false
         }
+    }
+
+    // MARK: - Genre Selection
+
+    /// Select primary genre and clear secondary selection
+    func selectPrimaryGenre(_ newGenre: Genre) {
+        primaryGenre = newGenre
+        secondaryGenre = nil
+        sampleMovie = nil
+    }
+
+    /// Select secondary genre
+    func selectSecondaryGenre(_ newGenre: Genre) {
+        secondaryGenre = newGenre
+        sampleMovie = nil
+    }
+
+    /// Select a sample movie by title and year (from JSON loader)
+    func selectSampleMovie(title: String, year: Int) {
+        sampleMovieTitle = title
+        sampleMovieYear = year
     }
 
     // MARK: Navigation
@@ -137,9 +185,11 @@ final class WizardState: ObservableObject {
     }
 
     func go(to target: WizardStep) {
-        let isCurrentOrEarlier = target.rawValue <= step.rawValue
+        // Allow navigation to any step that has been completed or the next step
+        let isCompleted = target.rawValue < step.rawValue
         let isNextStep = target.rawValue == step.rawValue + 1 && canAdvance
-        guard isCurrentOrEarlier || isNextStep else { return }
+        let isCurrent = target == step
+        guard isCompleted || isNextStep || isCurrent else { return }
         withAnimation(.easeInOut(duration: 0.25)) { step = target }
     }
 
@@ -149,11 +199,11 @@ final class WizardState: ObservableObject {
             structure = nil
             medium = nil
             runtime = nil
-            genre = nil
-            sampleMovie = nil
-            primaryGenreTitle = nil
-            secondaryGenreTitle = nil
+            primaryGenre = nil
             secondaryGenre = nil
+            sampleMovie = nil
+            sampleMovieTitle = ""
+            sampleMovieYear = 0
             projectTitle = ""
             logline = ""
             plot = ""
@@ -170,11 +220,11 @@ final class WizardState: ObservableObject {
             structure: structure,
             medium: medium,
             runtime: runtime,
-            genre: genre,
-            sampleMovie: sampleMovie,
-            primaryGenreTitle: primaryGenreTitle,
-            secondaryGenreTitle: secondaryGenreTitle,
+            primaryGenre: primaryGenre,
             secondaryGenre: secondaryGenre,
+            sampleMovie: sampleMovie,
+            sampleMovieTitle: sampleMovieTitle,
+            sampleMovieYear: sampleMovieYear,
             projectTitle: projectTitle,
             logline: logline,
             plot: plot,
@@ -189,11 +239,11 @@ final class WizardState: ObservableObject {
             self.structure = data.structure
             self.medium = data.medium
             self.runtime = data.runtime
-            self.genre = data.genre
-            self.sampleMovie = data.sampleMovie
-            self.primaryGenreTitle = data.primaryGenreTitle
-            self.secondaryGenreTitle = data.secondaryGenreTitle
+            self.primaryGenre = data.primaryGenre
             self.secondaryGenre = data.secondaryGenre
+            self.sampleMovie = data.sampleMovie
+            self.sampleMovieTitle = data.sampleMovieTitle
+            self.sampleMovieYear = data.sampleMovieYear
             self.projectTitle = data.projectTitle
             self.logline = data.logline
             self.plot = data.plot
@@ -206,20 +256,6 @@ final class WizardState: ObservableObject {
     func selectGenre(_ newGenre: Genre) {
         if genre != newGenre {
             genre = newGenre
-            sampleMovie = nil
-        }
-    }
-    
-    // When primary genre changes, store it and clear secondary selection
-    func selectPrimaryGenre(_ title: String) {
-        primaryGenreTitle = title
-        secondaryGenreTitle = nil
-    }
-    
-    // When secondary genre changes, clear sample selection
-    func selectSecondaryGenre(_ newGenre: Genre) {
-        if secondaryGenre != newGenre {
-            secondaryGenre = newGenre
             sampleMovie = nil
         }
     }

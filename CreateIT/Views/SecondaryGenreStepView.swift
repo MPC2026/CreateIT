@@ -4,8 +4,16 @@ struct SecondaryGenreStepView: View {
     @EnvironmentObject private var wizard: WizardState
     
     // Get secondary genres based on primary genre selection
-    var availableSecondaryGenres: [String] {
-        SampleListLoader.shared.getSecondaryGenres(for: wizard.primaryGenreTitle ?? "")
+    struct GenreOption: Identifiable {
+        let id = UUID()
+        let name: String
+        let genre: Genre?
+    }
+    
+    var availableSecondaryGenres: [GenreOption] {
+        SampleListLoader.shared.getSecondaryGenres(for: wizard.primaryGenreTitle ?? "").map { name in
+            GenreOption(name: name, genre: genre(from: name))
+        }
     }
     
     // Map string genre names to Genre enum
@@ -36,36 +44,36 @@ struct SecondaryGenreStepView: View {
             if availableSecondaryGenres.isEmpty {
                 ContentUnavailableMessage(message: "Please select a primary genre first")
             } else {
-                CardGrid(data: availableSecondaryGenres, columns: 3) { secondaryGenreName in
-                    guard let genre = genre(from: secondaryGenreName) else { return }
-                    
-                    SelectionCard(
-                        isSelected: wizard.secondaryGenre == genre,
-                        action: {
-                            withAnimation {
-                                wizard.selectSecondaryGenre(genre)
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                wizard.next()
-                            }
-                        }
-                    ) {
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack {
-                                Image(systemName: genre.symbol)
-                                    .font(.system(size: 22))
-                                    .foregroundStyle(.tint)
-                                Spacer()
-                                if wizard.secondaryGenre == genre {
-                                    Image(systemName: "checkmark.circle.fill").foregroundStyle(.tint)
+                CardGrid(data: availableSecondaryGenres, columns: 3) { genreOption in
+                    if let genre = genreOption.genre {
+                        SelectionCard(
+                            isSelected: wizard.secondaryGenre == genre,
+                            action: {
+                                withAnimation {
+                                    wizard.selectSecondaryGenre(genre)
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    wizard.next()
                                 }
                             }
-                            Text(genre.title)
-                                .font(.title3.weight(.bold))
-                            Text(genre.blurb)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
+                        ) {
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    Image(systemName: genre.symbol)
+                                        .font(.system(size: 22))
+                                        .foregroundStyle(.tint)
+                                    Spacer()
+                                    if wizard.secondaryGenre == genre {
+                                        Image(systemName: "checkmark.circle.fill").foregroundStyle(.tint)
+                                    }
+                                }
+                                Text(genre.title)
+                                    .font(.title3.weight(.bold))
+                                Text(genre.blurb)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
                     }
                 }

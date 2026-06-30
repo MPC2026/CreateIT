@@ -59,7 +59,7 @@ class SampleListLoader: ObservableObject {
     
     /// Parse a sample movie string like "Bad Boys (1995)" into title and year
     static func parseMovieString(_ movieString: String) -> (title: String, year: Int)? {
-        let pattern = /^(.*)\s\((\d{4})\)$/
+        let pattern = "(.*)\\s\\((\\d{4})\\)$"
         guard let match = try? NSRegularExpression(pattern: pattern, options: []),
               let firstMatch = match.firstMatch(in: movieString, options: [], range: NSRange(movieString.startIndex..., in: movieString)),
               let titleRange = Range(firstMatch.range(at: 1), in: movieString),

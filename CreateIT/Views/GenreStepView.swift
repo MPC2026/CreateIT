@@ -15,6 +15,8 @@ struct GenreStepView: View {
                     isSelected: wizard.genre == genre,
                     action: {
                         wizard.selectGenre(genre)
+                        // Store primary genre title for secondary selection
+                        wizard.selectPrimaryGenre(genre.title)
                         wizard.next()
                     }
                 ) {

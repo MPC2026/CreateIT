@@ -7,9 +7,9 @@ APP_NAME="CreateIT"
 BUILD_PATH="/Users/michael/Library/Developer/Xcode/DerivedData/CreateIT-gaiqncznvpqexkfgdfunupbfwsye/Build/Products/Release" # Xcode derived data path
 STAGING_DIR="./dmg_staging"
 
-# Get version info from Info.plist
-MARKETING_VERSION=$(plutil -extract CFBundleShortVersionString xml1 -o - "CreateIT/Info.plist" 2>/dev/null | grep '<string>' | sed 's/<[^>]*>//g' | tr -d ' ')
-CURRENT_PROJECT_VERSION=$(plutil -extract CFBundleVersion xml1 -o - "CreateIT/Info.plist" 2>/dev/null | grep '<string>' | sed 's/<[^>]*>//g' | tr -d ' ')
+# Get version info from the built app's Info.plist (not source, since it uses template variables)
+MARKETING_VERSION=$(plutil -extract CFBundleShortVersionString xml1 -o - "$BUILD_PATH/$APP_NAME.app/Contents/Info.plist" 2>/dev/null | grep '<string>' | sed 's/<[^>]*>//g' | tr -d ' ')
+CURRENT_PROJECT_VERSION=$(plutil -extract CFBundleVersion xml1 -o - "$BUILD_PATH/$APP_NAME.app/Contents/Info.plist" 2>/dev/null | grep '<string>' | sed 's/<[^>]*>//g' | tr -d ' ')
 
 if [ -z "$MARKETING_VERSION" ] || [ -z "$CURRENT_PROJECT_VERSION" ]; then
     echo "❌ Error: Could not determine version info from Info.plist"
