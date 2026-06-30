@@ -213,6 +213,14 @@ final class GitHubUpdateService: ObservableObject {
         try script.write(to: helperURL, atomically: true, encoding: .utf8)
         try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: helperURL.path)
 
+        // Terminate the app first before launching the installer
+        DispatchQueue.main.async {
+            NSApplication.shared.terminate(nil)
+        }
+
+        // Give the app time to terminate before running the update script
+        try await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000)) // 2 seconds
+
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/bin/zsh")
         process.arguments = [helperURL.path]
