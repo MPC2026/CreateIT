@@ -307,13 +307,22 @@ final class GitHubUpdateService: ObservableObject {
     }
     
     private func extractBuildNumber(from versionString: String) -> Int {
-        // Look for pattern like "-buildNNN" in the version string
+        // Look for pattern like "-buildNNN" or "bNNN" in the version string
         let components = versionString.split(separator: "-")
         for component in components {
             if component.starts(with: "build"), let buildNum = Int(String(component.dropFirst(5))) {
                 return buildNum
             }
         }
+        
+        // Also check for 'b' followed by numbers (e.g., v2.6b3)
+        if versionString.contains("b") {
+            let parts = versionString.split(separator: "b")
+            if parts.count > 1, let buildNum = Int(String(parts.last!)) {
+                return buildNum
+            }
+        }
+        
         return 0
     }
 
