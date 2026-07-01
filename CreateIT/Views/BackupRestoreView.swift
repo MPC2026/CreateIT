@@ -79,7 +79,7 @@ struct BackupRestoreView: View {
             }
         }
         .padding(32)
-        .frame(minWidth: 450, minHeight: 380)
+        .frame(minWidth: 400, minHeight: 320)
         .alert("Backup System", isPresented: $showAlert) {
             Button("OK") {}
         } message: {

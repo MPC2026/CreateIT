@@ -71,7 +71,7 @@ struct UpdateCenterView: View {
             footer
         }
         .padding(22)
-        .frame(minWidth: 620, minHeight: 460)
+        .frame(minWidth: 500, minHeight: 400)
         .background(Color(nsColor: .windowBackgroundColor))
         .task {
             guard !didLoad else { return }

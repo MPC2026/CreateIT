@@ -72,7 +72,7 @@ struct TemplateStepView: View {
             }
             .environmentObject(wizard)
             .environmentObject(ai)
-            .frame(minWidth: 520, minHeight: 420)
+            .frame(minWidth: 450, minHeight: 380)
         }
         .onAppear { syncSelectedBeat() }
         .onChange(of: wizard.beats.map(\.key)) { _, _ in syncSelectedBeat() }

@@ -56,7 +56,7 @@ struct ContentView: View {
         .animation(.easeInOut(duration: 0.24), value: showTemplatePanel)
         .sheet(isPresented: $showAISettings) {
             AISettingsView()
-                .frame(minWidth: 624, minHeight: 510)
+                .frame(minWidth: 500, minHeight: 400)
         }
         .sheet(isPresented: $showUpdates) {
             UpdateCenterView()

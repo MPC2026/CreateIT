@@ -85,7 +85,7 @@ struct FinalDraftStepView: View {
                 handleConflictDecision(decision, for: conflict)
             }
             .padding(20)
-            .frame(minWidth: 760, minHeight: 560)
+            .frame(minWidth: 600, minHeight: 450)
         }
         .onChange(of: focusedSceneID) { _, value in
             activeSceneID = value
