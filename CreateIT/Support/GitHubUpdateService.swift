@@ -143,18 +143,7 @@ final class GitHubUpdateService: ObservableObject {
             state = .installing
             
             // Launch the installer first (it will wait for the app to terminate)
-            Task { [asset] in
-                do {
-                    try await self.downloadAndLaunchInstaller(asset: asset)
-                    
-                    // Terminate after installer is launched
-                    DispatchQueue.main.async {
-                        NSApplication.shared.terminate(nil)
-                    }
-                } catch {
-                    state = .failed(error.localizedDescription)
-                }
-            }
+            try await downloadAndLaunchInstaller(asset: asset)
         } catch {
             state = .failed(error.localizedDescription)
         }
@@ -230,16 +219,16 @@ final class GitHubUpdateService: ObservableObject {
         process.standardOutput = nil
         process.standardError = nil
         
-        // Terminate the app first
+        // Use launch() instead of run() to avoid blocking - this starts the process and returns immediately
+        process.launch()
+        
+        // Give the update script a moment to start before terminating the app
+        try await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000)) // 0.5 seconds
+        
+        // Terminate the app after launching the update script
         DispatchQueue.main.async {
             NSApplication.shared.terminate(nil)
         }
-        
-        // Give the app time to terminate before running the update script
-        try await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000)) // 2 seconds
-        
-        // Use launch() instead of run() to avoid blocking - this starts the process and returns immediately
-        process.launch()
     }
 
     private func updateScript(dmgPath: String, targetAppPath: String, targetDirectoryPath: String) -> String {
