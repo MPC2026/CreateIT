@@ -44,9 +44,7 @@ ln -s /Applications "$STAGING_DIR/Applications"
 # 4. Set up DMG window layout using AppleScript to fix white line issue
 echo "🎨 Setting up DMG window layout..."
 
-# Only run AppleScript if we're on a local machine with GUI access
-if [ -z "$CI" ]; then
-    cat > /tmp/dmg_layout.scpt << 'APPLESCRIPT'
+cat > /tmp/dmg_layout.scpt << 'APPLESCRIPT'
 tell application "Finder"
     tell disk "CreateIT Installer"
         open
@@ -75,9 +73,9 @@ tell application "Finder"
 end tell
 APPLESCRIPT
 
-    osascript /tmp/dmg_layout.scpt 2>/dev/null || echo "⚠️  Could not set DMG layout (non-GUI environment)"
-else
-    echo "ℹ️  Skipping DMG layout setup in CI environment"
+# Only run AppleScript if not in CI (GitHub Actions doesn't have GUI)
+if [ "$CI" != "true" ]; then
+    osascript /tmp/dmg_layout.scpt 2>/dev/null || true
 fi
 
 # 5. Build the DMG using hdiutil with optimized settings
