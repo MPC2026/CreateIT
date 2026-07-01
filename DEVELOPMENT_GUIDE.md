@@ -61,6 +61,15 @@ cd /path/to/CreateIT
 xcodebuild -project CreateIT.xcodeproj -scheme CreateIT -configuration Release build
 ```
 
+**Note:** If using Xcode 16+ or newer, ensure the project format is compatible with Xcode 15.4 (used by GitHub Actions):
+```bash
+# Check object version (should be 60)
+ruby -e "require 'xcodeproj'; proj = Xcodeproj::Project.open('CreateIT.xcodeproj'); puts proj.object_version"
+
+# If > 60, downgrade:
+ruby -i -pe 's/objectVersion = \d+/objectVersion = 60/' CreateIT.xcodeproj/project.pbxproj
+```
+
 ## Packaging for Distribution
 
 ### Creating a DMG Installer
