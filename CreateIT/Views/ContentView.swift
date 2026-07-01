@@ -336,8 +336,9 @@ struct ContentView: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         stepContent
-                            .padding(28)
-                            .frame(maxWidth: 920)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 16)
+                            .frame(maxWidth: 800)
                             .frame(maxWidth: .infinity)
                     }
                     .onChange(of: outlineScrollTargetBeatKey) { _, value in
