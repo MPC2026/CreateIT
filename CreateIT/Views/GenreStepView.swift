@@ -151,7 +151,11 @@ struct GenreStepView: View {
                 }
             }
         } message: {
-            Text("You've selected \(wizard.selectedGenres.count) genre(s). First is Primary, second is Secondary.")
+            if wizard.selectedGenres.count == 2 {
+                Text("You've selected:\nPrimary: \(wizard.selectedGenres[0])\nSecondary: \(wizard.selectedGenres[1])")
+            } else {
+                Text("You've selected \(wizard.selectedGenres.count) genre(s). First is Primary, second is Secondary.")
+            }
         }
     }
 }
