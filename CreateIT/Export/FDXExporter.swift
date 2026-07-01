@@ -151,7 +151,7 @@ enum FDXExporter {
         var parts: [String] = []
         if let s = wizard.structure { parts.append(s.title) }
         if let m = wizard.medium, let r = wizard.runtime { parts.append("\(m.rawValue) · \(r.label)") }
-        if let g = wizard.genre { parts.append(g.title) }
+        if !wizard.selectedGenres.isEmpty { let genreList = wizard.selectedGenres.joined(separator: ", "); parts.append(genreList) }
         return parts.joined(separator: "  ·  ")
     }
 

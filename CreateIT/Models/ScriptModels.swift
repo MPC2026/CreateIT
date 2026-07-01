@@ -97,6 +97,33 @@ enum Runtime: Int, CaseIterable, Identifiable, Codable {
     }
 }
 
+// MARK: - Genre Selection Mode
+
+enum GenreSelectionMode: String, CaseIterable, Identifiable, Codable {
+    case primaryOnly = "Primary Only"
+    case primarySecondary = "Primary & Secondary"
+
+    var id: String { rawValue }
+
+    var title: String { rawValue }
+
+    var symbol: String {
+        switch self {
+        case .primaryOnly: return "123"
+        case .primarySecondary: return "AB"
+        }
+    }
+
+    var blurb: String {
+        switch self {
+        case .primaryOnly:
+            return "Select one primary genre. Simple and focused."
+        case .primarySecondary:
+            return "Select two genres - primary and secondary for more nuanced samples."
+        }
+    }
+}
+
 // MARK: - Genre
 
 enum Genre: String, CaseIterable, Identifiable, Codable {

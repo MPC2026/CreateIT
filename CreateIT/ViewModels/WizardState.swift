@@ -4,7 +4,8 @@ import SwiftUI
 enum WizardStep: Int, CaseIterable, Codable {
     case structure
     case format
-    case genre
+    case genreMode  // Select Primary Only or Primary & Secondary
+    case genre      // Select primary genre(s)
     case sample
     case plot
     case template
@@ -15,6 +16,7 @@ enum WizardStep: Int, CaseIterable, Codable {
         switch self {
         case .structure: return "Structure"
         case .format:    return "Format"
+        case .genreMode: return "Genre Mode"
         case .genre:     return "Genre"
         case .sample:    return "Sample"
         case .plot:      return "Plot"
@@ -33,11 +35,11 @@ final class WizardState: ObservableObject {
         var structure: ScriptStructure?
         var medium: Medium?
         var runtime: Runtime?
-        var genre: Genre?
-        var sampleMovie: SampleMovie?
+        var genreMode: GenreSelectionMode?
         var primaryGenreTitle: String?
         var secondaryGenreTitle: String?
-        var secondaryGenre: Genre?
+        var selectedGenres: [String]  // All selected genres (for Primary & Secondary mode)
+        var sampleMovie: SampleMovie?
         var projectTitle: String
         var logline: String
         var plot: String
@@ -51,13 +53,13 @@ final class WizardState: ObservableObject {
     @Published var structure: ScriptStructure?
     @Published var medium: Medium?
     @Published var runtime: Runtime?
-    @Published var genre: Genre?
+    @Published var genreMode: GenreSelectionMode?  // New: Primary Only or Primary & Secondary
     @Published var sampleMovie: SampleMovie?
     
-    // Secondary genre selection (for sample filtering)
-    @Published var primaryGenreTitle: String?
-    @Published var secondaryGenreTitle: String?
-    @Published var secondaryGenre: Genre?
+    // Genre tracking (for Primary & Secondary mode)
+    @Published var primaryGenreTitle: String?       // The first selected genre becomes primary
+    @Published var secondaryGenreTitle: String?     // The second selected genre becomes secondary
+    @Published var selectedGenres: [String] = []    // All genres selected by user
 
     // Project details
     @Published var projectTitle: String = ""
@@ -76,9 +78,19 @@ final class WizardState: ObservableObject {
     }
 
     var sampleMovies: [SampleMovie] {
-        guard let primary = primaryGenreTitle, let secondary = secondaryGenreTitle else { return [] }
-        // Get samples from SampleListLoader and convert to SampleMovie objects
-        let sampleStrings = SampleListLoader.shared.getSamples(for: primary, secondaryGenre: secondary)
+        guard let primary = primaryGenreTitle else { return [] }
+        
+        // Get samples based on selection mode
+        let sampleStrings: [String]
+        if let secondary = secondaryGenreTitle, !secondary.isEmpty {
+            // Primary & Secondary mode - get specific combination
+            sampleStrings = SampleListLoader.shared.getSamples(for: primary, secondaryGenre: secondary)
+        } else {
+            // Primary Only mode - get samples for primary genre (first secondary if available)
+            sampleStrings = SampleListLoader.shared.getSecondaryGenres(for: primary).flatMap { secondary in
+                SampleListLoader.shared.getSamples(for: primary, secondaryGenre: secondary)
+            }
+        }
         
         // Limit to 4 unique samples with no duplicates
         let uniqueSamples = Array(Set(sampleStrings)).prefix(4)
@@ -86,10 +98,19 @@ final class WizardState: ObservableObject {
         var movies: [SampleMovie] = []
         for sampleString in uniqueSamples {
             if let (title, year) = SampleListLoader.parseMovieString(sampleString) {
+                // Get genre from selectedGenres
+                let movieGenre: Genre?
+                if let firstGenre = selectedGenres.first,
+                   let genreEnum = Genre(rawValue: firstGenre.lowercased().replacingOccurrences(of: " ", with: "")) {
+                    movieGenre = genreEnum
+                } else {
+                    movieGenre = nil
+                }
+                
                 let movie = SampleMovie(
                     title: title,
                     year: year,
-                    genre: genre ?? .action,
+                    genre: movieGenre ?? .action,
                     medium: medium ?? .movie,
                     runtime: runtime ?? .feature,
                     logline: "",
@@ -106,7 +127,15 @@ final class WizardState: ObservableObject {
         switch step {
         case .structure: return structure != nil
         case .format:    return medium != nil && runtime != nil
-        case .genre:     return genre != nil
+        case .genreMode: return genreMode != nil
+        case .genre:
+            // For Primary Only mode, need at least 1 genre
+            // For Primary & Secondary mode, need exactly 2 genres
+            if let mode = genreMode, mode == .primarySecondary {
+                return selectedGenres.count == 2
+            } else {
+                return selectedGenres.count >= 1
+            }
         case .sample:    return sampleMovie != nil
         case .plot:      return true
         case .template:  return !beats.isEmpty
@@ -149,11 +178,11 @@ final class WizardState: ObservableObject {
             structure = nil
             medium = nil
             runtime = nil
-            genre = nil
-            sampleMovie = nil
+            genreMode = nil
             primaryGenreTitle = nil
             secondaryGenreTitle = nil
-            secondaryGenre = nil
+            selectedGenres = []
+            sampleMovie = nil
             projectTitle = ""
             logline = ""
             plot = ""
@@ -170,11 +199,11 @@ final class WizardState: ObservableObject {
             structure: structure,
             medium: medium,
             runtime: runtime,
-            genre: genre,
-            sampleMovie: sampleMovie,
+            genreMode: genreMode,
             primaryGenreTitle: primaryGenreTitle,
             secondaryGenreTitle: secondaryGenreTitle,
-            secondaryGenre: secondaryGenre,
+            selectedGenres: selectedGenres,
+            sampleMovie: sampleMovie,
             projectTitle: projectTitle,
             logline: logline,
             plot: plot,
@@ -189,11 +218,11 @@ final class WizardState: ObservableObject {
             self.structure = data.structure
             self.medium = data.medium
             self.runtime = data.runtime
-            self.genre = data.genre
-            self.sampleMovie = data.sampleMovie
+            self.genreMode = data.genreMode
             self.primaryGenreTitle = data.primaryGenreTitle
             self.secondaryGenreTitle = data.secondaryGenreTitle
-            self.secondaryGenre = data.secondaryGenre
+            self.selectedGenres = data.selectedGenres
+            self.sampleMovie = data.sampleMovie
             self.projectTitle = data.projectTitle
             self.logline = data.logline
             self.plot = data.plot
@@ -202,26 +231,46 @@ final class WizardState: ObservableObject {
         }
     }
 
-    // When genre changes, clear an out-of-genre sample selection.
-    func selectGenre(_ newGenre: Genre) {
-        if genre != newGenre {
-            genre = newGenre
-            sampleMovie = nil
-        }
-    }
-    
-    // When primary genre changes, store it and clear secondary selection
-    func selectPrimaryGenre(_ title: String) {
-        primaryGenreTitle = title
+    // MARK: - Genre Selection Methods
+
+    /// Select genre mode (Primary Only or Primary & Secondary)
+    func selectGenreMode(_ mode: GenreSelectionMode) {
+        genreMode = mode
+        selectedGenres = []
+        primaryGenreTitle = nil
         secondaryGenreTitle = nil
     }
-    
-    // When secondary genre changes, clear sample selection
-    func selectSecondaryGenre(_ newGenre: Genre) {
-        if secondaryGenre != newGenre {
-            secondaryGenre = newGenre
-            sampleMovie = nil
+
+    /// Add a genre to the selection list
+    /// For Primary Only mode, only one genre allowed
+    /// For Primary & Secondary mode, up to two genres allowed
+    func addSelectedGenre(_ genreTitle: String) {
+        guard let mode = genreMode else { return }
+        
+        if mode == .primaryOnly {
+            // Only allow one genre for Primary Only mode
+            selectedGenres = [genreTitle]
+        } else if mode == .primarySecondary {
+            // Allow up to two genres for Primary & Secondary mode
+            if !selectedGenres.contains(genreTitle) {
+                selectedGenres.append(genreTitle)
+            }
         }
+        
+        // Update primary and secondary based on selection order
+        if selectedGenres.count >= 1 {
+            primaryGenreTitle = selectedGenres[0]
+        }
+        if selectedGenres.count >= 2 {
+            secondaryGenreTitle = selectedGenres[1]
+        }
+    }
+
+    /// Clear genre selections
+    func clearSelectedGenres() {
+        selectedGenres = []
+        primaryGenreTitle = nil
+        secondaryGenreTitle = nil
     }
 
     // When medium changes, keep the runtime valid for that medium.
@@ -401,7 +450,7 @@ final class WizardState: ObservableObject {
         lines.append("TITLE: \(title)")
         if let structure { lines.append("STRUCTURE: \(structure.title)") }
         if let medium, let runtime { lines.append("FORMAT: \(medium.rawValue) · \(runtime.label)") }
-        if let genre { lines.append("GENRE: \(genre.title)") }
+        if !selectedGenres.isEmpty { let genreList = selectedGenres.joined(separator: ", "); lines.append("GENRE: (genreList)") }
         if let sampleMovie { lines.append("SAMPLE STYLE: \(sampleMovie.title) (\(sampleMovie.year))") }
         if !logline.isEmpty {
             lines.append("")

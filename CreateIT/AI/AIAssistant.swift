@@ -120,7 +120,7 @@ final class AIAssistant: ObservableObject {
         if let m = wizard.medium, let r = wizard.runtime {
             context += "Format: \(m.rawValue), \(r.label)\n"
         }
-        if let g = wizard.genre { context += "Genre: \(g.title)\n" }
+        if !wizard.selectedGenres.isEmpty { let genreList = wizard.selectedGenres.joined(separator: ", "); context += "Genre: (genreList)\n" }
         if !wizard.projectTitle.isEmpty { context += "Title: \(wizard.projectTitle)\n" }
         if !wizard.logline.isEmpty { context += "Logline: \(wizard.logline)\n" }
         if !wizard.plot.isEmpty { context += "Plot:\n\(wizard.plot)\n" }
@@ -367,7 +367,7 @@ final class AIAssistant: ObservableObject {
         if let m = wizard.medium, let r = wizard.runtime {
             context += "Format: \(m.rawValue), \(r.label)\n"
         }
-        if let g = wizard.genre { context += "Genre: \(g.title)\n" }
+        if !wizard.selectedGenres.isEmpty { let genreList = wizard.selectedGenres.joined(separator: ", "); context += "Genre: (genreList)\n" }
         if !wizard.projectTitle.isEmpty { context += "Title: \(wizard.projectTitle)\n" }
         if !wizard.logline.isEmpty { context += "Logline: \(wizard.logline)\n" }
         if !wizard.plot.isEmpty { context += "Plot:\n\(wizard.plot)\n" }
@@ -547,7 +547,7 @@ final class AIAssistant: ObservableObject {
         if let m = wizard.medium, let r = wizard.runtime {
             context += "Format: \(m.rawValue), \(r.label)\n"
         }
-        if let g = wizard.genre { context += "Genre: \(g.title)\n" }
+        if !wizard.selectedGenres.isEmpty { let genreList = wizard.selectedGenres.joined(separator: ", "); context += "Genre: (genreList)\n" }
         if !wizard.projectTitle.isEmpty { context += "Title: \(wizard.projectTitle)\n" }
         if !wizard.logline.isEmpty { context += "Logline: \(wizard.logline)\n" }
         if !wizard.plot.isEmpty { context += "Plot:\n\(wizard.plot)\n" }

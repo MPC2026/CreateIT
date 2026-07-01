@@ -11,7 +11,9 @@ struct SecondaryGenreStepView: View {
     }
     
     var availableSecondaryGenres: [GenreOption] {
-        SampleListLoader.shared.getSecondaryGenres(for: wizard.primaryGenreTitle ?? "").map { name in
+        guard let primary = wizard.primaryGenreTitle else { return [] }
+        
+        return SampleListLoader.shared.getSecondaryGenres(for: primary).map { name in
             GenreOption(name: name, genre: genre(from: name))
         }
     }
@@ -38,7 +40,7 @@ struct SecondaryGenreStepView: View {
             StepHeader(
                 eyebrow: "Step 3.5",
                 title: "Choose a secondary genre",
-                subtitle: "This refines your sample film selection."
+                subtitle: "Select a secondary genre to refine your sample film selection."
             )
 
             if availableSecondaryGenres.isEmpty {
@@ -47,12 +49,15 @@ struct SecondaryGenreStepView: View {
                 CardGrid(data: availableSecondaryGenres, columns: 3) { genreOption in
                     if let genre = genreOption.genre {
                         SelectionCard(
-                            isSelected: wizard.secondaryGenre == genre,
+                            isSelected: wizard.secondaryGenreTitle == genre.title,
                             action: {
-                                withAnimation {
-                                    wizard.selectSecondaryGenre(genre)
+                                // Add secondary genre to selection
+                                if !wizard.selectedGenres.contains(genre.title) {
+                                    wizard.addSelectedGenre(genre.title)
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                
+                                // Show alert to confirm primary/secondary assignment
+                                withAnimation {
                                     wizard.next()
                                 }
                             }
@@ -63,7 +68,7 @@ struct SecondaryGenreStepView: View {
                                         .font(.system(size: 22))
                                         .foregroundStyle(.tint)
                                     Spacer()
-                                    if wizard.secondaryGenre == genre {
+                                    if wizard.secondaryGenreTitle == genre.title {
                                         Image(systemName: "checkmark.circle.fill").foregroundStyle(.tint)
                                     }
                                 }

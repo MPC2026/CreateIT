@@ -127,7 +127,7 @@ struct TemplateStepView: View {
             if let m = wizard.medium, let r = wizard.runtime {
                 Text("·"); Text("\(m.rawValue) · \(r.label)")
             }
-            if let g = wizard.genre { Text("·"); Text(g.title) }
+            if !wizard.selectedGenres.isEmpty { let genreList = wizard.selectedGenres.joined(separator: ", "); Text("·"); Text(genreList) }
             if let movie = wizard.sampleMovie { Text("· styled after"); Text(movie.title).fontWeight(.semibold) }
         }
         .font(.callout)

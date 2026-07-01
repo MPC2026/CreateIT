@@ -28,6 +28,7 @@
 		6272FF0686B3BA4FE8334D4B /* GitHubUpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE95C45E901ADD64A7C197CA /* GitHubUpdateService.swift */; };
 		664005EAC9D8A6A228F5ABAF /* ServerSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F72F57A67F9100903D905CD /* ServerSelectionView.swift */; };
 		671B6B1856A2EA3E6D2B2D3D /* LMStudioClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577FA77CCFFA99F066527B7 /* LMStudioClient.swift */; };
+		676FE0122C849C32521D71F5 /* GenreModeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE30B2CBD7890DBEB1436D7 /* GenreModeStepView.swift */; };
 		71BF9BE7319AB400233516C8 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABD7B2FDFDC98B6CB2C6DF /* Components.swift */; };
 		7755D7B2F3A58C09C0BBAC1B /* SampleMovie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A7B10E48F203BC095C8E98 /* SampleMovie.swift */; };
 		7B989AB4174C67859332B7FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D81E2D703AC09B6A6688DFE /* Assets.xcassets */; };
@@ -55,6 +56,7 @@
 		EB6295681F3F1B6D58ACBA74 /* GenreStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BE152A1F1AABB238DBE0D /* GenreStepView.swift */; };
 		EE6E24478743D859FD193046 /* TemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DEA9817626DD49F2858CAF /* TemplatesView.swift */; };
 		EF80FC8A5CA4636AB4618185 /* TemplateLibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543A19A6BA53967EE3FE6948 /* TemplateLibraryStore.swift */; };
+		FECED1FE81CE575D25A9E1F6 /* GenreModeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E94FD20F5D491403BE7903C /* GenreModeStepView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,12 +64,15 @@
 		1A1B163B4281735EE3E9EB03 /* BeatSheetPDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeatSheetPDFExporter.swift; sourceTree = "<group>"; };
 		20EAB205881F2C62D98C2F58 /* CreateITApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateITApp.swift; sourceTree = "<group>"; };
 		2577FA77CCFFA99F066527B7 /* LMStudioClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LMStudioClient.swift; sourceTree = "<group>"; };
+		2AE30B2CBD7890DBEB1436D7 /* GenreModeStepView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GenreModeStepView.swift; path = ./CreateIT/Views/GenreModeStepView.swift; sourceTree = "<group>"; };
 		31812703FE0996CD40A12BEF /* StructureStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructureStepView.swift; sourceTree = "<group>"; };
 		385F0A9A13E9658804CDC588 /* VersionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionHistoryView.swift; sourceTree = "<group>"; };
 		3CB8A652AE2E04473D7F6AFF /* TemplateStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateStepView.swift; sourceTree = "<group>"; };
 		3DD19359C1A68BE48555377B /* ReleaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseNotes.swift; sourceTree = "<group>"; };
+		42BC07BCA2EC09E4BF2900BE /* GenreModeStepView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GenreModeStepView.swift; path = CreateIT/Views/GenreModeStepView.swift; sourceTree = "<group>"; };
 		49C79D0FF80AADAF002F8DC0 /* SecondaryGenreStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryGenreStepView.swift; sourceTree = "<group>"; };
 		4C9268371922760085848CB4 /* WizardState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WizardState.swift; sourceTree = "<group>"; };
+		4E94FD20F5D491403BE7903C /* GenreModeStepView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GenreModeStepView.swift; path = CreateIT/Views/GenreModeStepView.swift; sourceTree = "<group>"; };
 		543A19A6BA53967EE3FE6948 /* TemplateLibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateLibraryStore.swift; sourceTree = "<group>"; };
 		54BEB7C5FF01545507A29CEA /* UpdateCenterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCenterView.swift; sourceTree = "<group>"; };
 		592C4C13879AEC2ECCF689FB /* BackupManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupManager.swift; sourceTree = "<group>"; };
@@ -87,6 +92,7 @@
 		97A7B10E48F203BC095C8E98 /* SampleMovie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleMovie.swift; sourceTree = "<group>"; };
 		9BF1A5F5E946DA6483686113 /* sample_List.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sample_List.json; sourceTree = "<group>"; };
 		A07E694AF87CEC835C6FDC62 /* ScriptModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptModels.swift; sourceTree = "<group>"; };
+		A1070835138E5E4737D6A950 /* GenreModeStepView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenreModeStepView.swift; sourceTree = "<group>"; };
 		A12EB497D813B9AF54052573 /* CreateIT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CreateIT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE15A836F41A96713260A342 /* FDXExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FDXExporter.swift; sourceTree = "<group>"; };
 		C54618AB461C27C2E4DB0926 /* SampleStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleStepView.swift; sourceTree = "<group>"; };
@@ -127,6 +133,17 @@
 				2577FA77CCFFA99F066527B7 /* LMStudioClient.swift */,
 			);
 			path = AI;
+			sourceTree = "<group>";
+		};
+		32164F9B9928BCCFC28D5856 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A1070835138E5E4737D6A950 /* GenreModeStepView.swift */,
+				2AE30B2CBD7890DBEB1436D7 /* GenreModeStepView.swift */,
+				42BC07BCA2EC09E4BF2900BE /* GenreModeStepView.swift */,
+				4E94FD20F5D491403BE7903C /* GenreModeStepView.swift */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 		37001B17FDB1BAFFF340628D /* Data */ = {
@@ -180,6 +197,7 @@
 			children = (
 				898272C3C87D23FB552D1531 /* CreateIT */,
 				E4805BEF5E179050A780B636 /* Products */,
+				32164F9B9928BCCFC28D5856 /* Views */,
 			);
 			sourceTree = "<group>";
 		};
@@ -262,8 +280,6 @@
 			dependencies = (
 			);
 			name = CreateIT;
-			packageProductDependencies = (
-			);
 			productName = CreateIT;
 			productReference = A12EB497D813B9AF54052573 /* CreateIT.app */;
 			productType = "com.apple.product-type.application";
@@ -364,6 +380,8 @@
 				B216CFA9784B7F3C794C878A /* UpdateCenterView.swift in Sources */,
 				E1D790BF729EFAE74B57E7E0 /* VersionHistoryView.swift in Sources */,
 				9EAF820A6168B8CAAD512339 /* WizardState.swift in Sources */,
+				676FE0122C849C32521D71F5 /* GenreModeStepView.swift in Sources */,
+				FECED1FE81CE575D25A9E1F6 /* GenreModeStepView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,7 +422,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 43;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -418,7 +436,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.7;
+				MARKETING_VERSION = 2.8;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = CreateIT;
@@ -463,7 +481,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 43;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -483,7 +501,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.7;
+				MARKETING_VERSION = 2.8;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

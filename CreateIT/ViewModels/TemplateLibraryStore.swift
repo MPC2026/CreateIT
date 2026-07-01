@@ -22,7 +22,7 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
     var structure: ScriptStructure?
     var medium: Medium?
     var runtime: Runtime?
-    var genre: Genre?
+    var selectedGenres: [String]
     var sampleMovie: SampleMovieReference?
     var entries: [String: String]
     var scenes: [SceneOutlineScene]
@@ -30,7 +30,7 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
     var updatedAt: Date
 
     enum CodingKeys: String, CodingKey {
-        case id, projectTitle, logline, plot, structure, medium, runtime, genre, sampleMovie, entries, scenes, createdAt, updatedAt
+        case id, projectTitle, logline, plot, structure, medium, runtime, selectedGenres, sampleMovie, entries, scenes, createdAt, updatedAt
     }
 
     init(
@@ -41,7 +41,7 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
         structure: ScriptStructure?,
         medium: Medium?,
         runtime: Runtime?,
-        genre: Genre?,
+        selectedGenres: [String],
         sampleMovie: SampleMovieReference?,
         entries: [String: String],
         scenes: [SceneOutlineScene] = [],
@@ -55,7 +55,7 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
         self.structure = structure
         self.medium = medium
         self.runtime = runtime
-        self.genre = genre
+        self.selectedGenres = selectedGenres
         self.sampleMovie = sampleMovie
         self.entries = entries
         self.scenes = scenes
@@ -72,7 +72,7 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
         structure = try container.decodeIfPresent(ScriptStructure.self, forKey: .structure)
         medium = try container.decodeIfPresent(Medium.self, forKey: .medium)
         runtime = try container.decodeIfPresent(Runtime.self, forKey: .runtime)
-        genre = try container.decodeIfPresent(Genre.self, forKey: .genre)
+        selectedGenres = try container.decodeIfPresent([String].self, forKey: .selectedGenres) ?? []
         sampleMovie = try container.decodeIfPresent(SampleMovieReference.self, forKey: .sampleMovie)
         entries = try container.decodeIfPresent([String: String].self, forKey: .entries) ?? [:]
         scenes = try container.decodeIfPresent([SceneOutlineScene].self, forKey: .scenes) ?? []
@@ -89,7 +89,7 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
         try container.encodeIfPresent(structure, forKey: .structure)
         try container.encodeIfPresent(medium, forKey: .medium)
         try container.encodeIfPresent(runtime, forKey: .runtime)
-        try container.encodeIfPresent(genre, forKey: .genre)
+        try container.encode(selectedGenres, forKey: .selectedGenres)
         try container.encodeIfPresent(sampleMovie, forKey: .sampleMovie)
         try container.encode(entries, forKey: .entries)
         try container.encode(scenes, forKey: .scenes)
@@ -106,7 +106,7 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
             structure: wizard.structure,
             medium: wizard.medium,
             runtime: wizard.runtime,
-            genre: wizard.genre,
+            selectedGenres: wizard.selectedGenres,
             sampleMovie: wizard.sampleMovie.map {
                 SampleMovieReference(title: $0.title, year: $0.year, genre: $0.genre)
             },
@@ -123,7 +123,7 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
         structure = wizard.structure
         medium = wizard.medium
         runtime = wizard.runtime
-        genre = wizard.genre
+        selectedGenres = wizard.selectedGenres
         sampleMovie = wizard.sampleMovie.map {
             SampleMovieReference(title: $0.title, year: $0.year, genre: $0.genre)
         }
@@ -152,7 +152,7 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
         if let structure { parts.append(structure.rawValue) }
         if let medium { parts.append(medium.rawValue) }
         if let runtime { parts.append(runtime.label) }
-        if let genre { parts.append(genre.title) }
+        if !selectedGenres.isEmpty { parts.append(selectedGenres.joined(separator: ", ")) }
         if parts.isEmpty { parts.append("No selections yet") }
         return parts.joined(separator: " · ")
     }
@@ -209,7 +209,14 @@ final class TemplateLibraryStore: ObservableObject {
         wizard.structure = template.structure
         wizard.medium = template.medium
         wizard.runtime = template.runtime
-        wizard.genre = template.genre
+        wizard.selectedGenres = template.selectedGenres
+        // Update primary/secondary from selected genres
+        if template.selectedGenres.count >= 1 {
+            wizard.primaryGenreTitle = template.selectedGenres[0]
+        }
+        if template.selectedGenres.count >= 2 {
+            wizard.secondaryGenreTitle = template.selectedGenres[1]
+        }
         wizard.sampleMovie = template.sampleMovie?.resolve()
         wizard.projectTitle = template.projectTitle
         wizard.logline = template.logline

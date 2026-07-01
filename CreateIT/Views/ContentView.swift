@@ -510,6 +510,7 @@ struct ContentView: View {
         switch wizard.step {
         case .structure: StructureStepView()
         case .format:    FormatStepView()
+        case .genreMode: GenreModeStepView()
         case .genre:     GenreStepView()
         case .sample:    SampleStepView()
         case .plot:      PlotStepView()

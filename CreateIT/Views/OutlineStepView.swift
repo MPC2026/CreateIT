@@ -123,7 +123,7 @@ struct OutlineStepView: View {
             if let s = wizard.structure { chip(s.rawValue, "rectangle.split.3x1") }
             if let m = wizard.medium { chip(m.rawValue, m.symbol) }
             if let r = wizard.runtime { chip(r.label, "clock") }
-            if let g = wizard.genre { chip(g.title, g.symbol) }
+            if !wizard.selectedGenres.isEmpty { let genreList = wizard.selectedGenres.joined(separator: ", "); chip(genreList, "tag") }
             Spacer()
         }
     }
