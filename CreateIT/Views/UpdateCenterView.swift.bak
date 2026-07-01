@@ -88,7 +88,7 @@ struct UpdateCenterView: View {
             VersionHistoryView()
                 .environmentObject(service)
         }
-        .alert("Install Update?", isPresented: $showInstallConfirmation, actions: {
+        .alert("Install Update?", isPresented: service.showInstallConfirmation, actions: {
             Button("Cancel", role: .cancel) { }
             Button("Install") {
                 Task { await startUpdateCheck() }

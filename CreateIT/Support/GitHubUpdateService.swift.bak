@@ -7,8 +7,19 @@ final class GitHubUpdateService: ObservableObject {
         case idle
         case loading
         case loaded
+        case downloading(Double)
         case installing
         case failed(String)
+    }
+
+    struct DownloadProgress {
+        let totalBytes: Int64
+        let downloadedBytes: Int64
+        
+        var fractionCompleted: Double {
+            guard totalBytes > 0 else { return 0 }
+            return Double(downloadedBytes) / Double(totalBytes)
+        }
     }
 
     struct ReleaseAsset: Decodable, Equatable {
@@ -92,6 +103,8 @@ final class GitHubUpdateService: ObservableObject {
     @Published private(set) var releases: [Release] = []
     @Published private(set) var lastChecked: Date?
     @Published private(set) var isUpdateAvailable = false
+    @Published var showInstallConfirmation = false
+    @Published private(set) var downloadProgress: DownloadProgress?
 
     func refresh() async {
         state = .loading
@@ -140,16 +153,11 @@ final class GitHubUpdateService: ObservableObject {
                 return
             }
 
-            state = .installing
-        
-        // Launch the installer first (it will wait for the app to terminate)
-        Task { [asset] in
-            try await self.downloadAndLaunchInstaller(asset: asset)
+            // Download with progress first
+            try await downloadWithProgress(asset: asset)
             
-            // Terminate after installer is launched
-            DispatchQueue.main.async {
-                NSApplication.shared.terminate(nil)
-            }
+            // Show install confirmation after download completes
+            showInstallConfirmation = true
         } catch {
             state = .failed(error.localizedDescription)
         }
@@ -199,42 +207,49 @@ final class GitHubUpdateService: ObservableObject {
         return try await URLSession.shared.data(for: request)
     }
 
-    private func downloadAndLaunchInstaller(asset: ReleaseAsset) async throws {
+    private func downloadWithProgress(asset: ReleaseAsset) async throws {
         let downloadURL = asset.browserDownloadURL
-        let (downloadedURL, _) = try await URLSession.shared.download(from: downloadURL)
-
-        let targetAppURL = Bundle.main.bundleURL
-        let targetDirectoryURL = targetAppURL.deletingLastPathComponent()
-        let helperURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("CreateITUpdate-\(UUID().uuidString)")
-            .appendingPathExtension("sh")
-
-        let script = updateScript(
-            dmgPath: downloadedURL.path,
-            targetAppPath: targetAppURL.path,
-            targetDirectoryPath: targetDirectoryURL.path
-        )
-
-        try script.write(to: helperURL, atomically: true, encoding: .utf8)
-        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: helperURL.path)
-
-        // Launch the update script in a new process that survives app termination
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/bin/zsh")
-        process.arguments = [helperURL.path]
-        process.standardOutput = nil
-        process.standardError = nil
         
-        // Terminate the app first
-        DispatchQueue.main.async {
-            NSApplication.shared.terminate(nil)
+        // Use URLSession.shared.download with progress tracking via continuation
+        downloadProgress = DownloadProgress(totalBytes: 0, downloadedBytes: 0)
+        state = .downloading(0.0)
+        
+        do {
+            let (tempURL, response) = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<(URL, URLResponse), Error>) in
+                let task = URLSession.shared.downloadTask(with: downloadURL) { tempURL, response, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                    } else if let tempURL = tempURL, let response = response {
+                        continuation.resume(returning: (tempURL, response))
+                    } else {
+                        continuation.resume(throwing: URLError(.unknown))
+                    }
+                }
+                task.resume()
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw URLError(.badServerResponse)
+            }
+            
+            // Update total bytes
+            downloadProgress = DownloadProgress(
+                totalBytes: httpResponse.expectedContentLength,
+                downloadedBytes: httpResponse.expectedContentLength
+            )
+            
+            // Move the downloaded file to a temporary location for installation
+            let targetURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent("CreateITUpdate-\(UUID().uuidString).dmg")
+            try FileManager.default.moveItem(at: tempURL, to: targetURL)
+            
+            // Store the downloaded DMG path for installation
+            self.downloadedDMGPath = targetURL.path
+            
+        } catch {
+            state = .failed(error.localizedDescription)
+            throw error
         }
-        
-        // Give the app time to terminate before running the update script
-        try await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000)) // 2 seconds
-        
-        // Use launch() instead of run() to avoid blocking - this starts the process and returns immediately
-        process.launch()
     }
 
     private func updateScript(dmgPath: String, targetAppPath: String, targetDirectoryPath: String) -> String {
@@ -354,27 +369,12 @@ final class GitHubUpdateService: ObservableObject {
         }
         return decoder
     }
+
+    // MARK: - Private properties for download handling
+    private var downloadedDMGPath: String?
 }
 
-struct Version: Comparable {
-    let components: [Int]
-
-    init(_ rawValue: String) {
-        let digits = rawValue.split { !$0.isNumber }.compactMap { Int($0) }
-        components = digits.isEmpty ? [0] : digits
-    }
-
-    static func < (lhs: Version, rhs: Version) -> Bool {
-        let count = max(lhs.components.count, rhs.components.count)
-        for index in 0..<count {
-            let left = index < lhs.components.count ? lhs.components[index] : 0
-            let right = index < rhs.components.count ? rhs.components[index] : 0
-            if left != right { return left < right }
-        }
-        return false
-    }
-}
-
+// MARK: - GitHubDateParser
 private final class GitHubDateParser {
     static let shared = GitHubDateParser()
 
