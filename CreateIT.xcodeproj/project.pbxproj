@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -138,10 +138,10 @@
 		32164F9B9928BCCFC28D5856 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				A1070835138E5E4737D6A950 /* GenreModeStepView.swift */,
 				2AE30B2CBD7890DBEB1436D7 /* GenreModeStepView.swift */,
 				42BC07BCA2EC09E4BF2900BE /* GenreModeStepView.swift */,
 				4E94FD20F5D491403BE7903C /* GenreModeStepView.swift */,
+				A1070835138E5E4737D6A950 /* GenreModeStepView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -177,12 +177,12 @@
 		898272C3C87D23FB552D1531 /* CreateIT */ = {
 			isa = PBXGroup;
 			children = (
+				0F467F6B361CC800BA2456D6 /* AI */,
 				5D81E2D703AC09B6A6688DFE /* Assets.xcassets */,
 				20EAB205881F2C62D98C2F58 /* CreateITApp.swift */,
-				6B01F34AD2390189324059BB /* Info.plist */,
-				0F467F6B361CC800BA2456D6 /* AI */,
 				37001B17FDB1BAFFF340628D /* Data */,
 				079BB03CE3F1AAEB74315B97 /* Export */,
+				6B01F34AD2390189324059BB /* Info.plist */,
 				ED778EE366753CBFFE2ADCB2 /* Models */,
 				44FE88599C67DB907DA062F2 /* Resources */,
 				D2BEDD269037678BC4AD76F7 /* Support */,
@@ -327,12 +327,12 @@
 				035D7B900A5127DA3CC49AEE /* GitHubUpdateService.swift.bak in Resources */,
 				0A854FEB3175A9984CBFF92A /* GitHubUpdateService.swift.bak2 in Resources */,
 				2847DEF717A0C40DD3F8657F /* ReleasePreviewTemplate.md in Resources */,
+				55B34A24CDD449213F5BB093 /* sample_List.json in Resources */,
 				A311E832EC3D4D0E8961D851 /* SampleLibrary.swift.backup in Resources */,
 				16F41834BB23FB6EB6BFBBD2 /* UpdateCenterView.swift.bak4 in Resources */,
 				A2D0E83DCDAE95B3CB6C5F86 /* UpdateCenterView.swift.bak5 in Resources */,
 				3636C8C0A2D282833B385FCF /* UpdateCenterView.swift.bak6 in Resources */,
 				530C87E6034E5E6F6F5A4AD3 /* WizardState.swift.bak3 in Resources */,
-				55B34A24CDD449213F5BB093 /* sample_List.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +356,8 @@
 				4C484B625FE1AE9E28517679 /* FDXExporter.swift in Sources */,
 				BDFA705FC9D9F566D92E0ABE /* FinalDraftStepView.swift in Sources */,
 				C418A71222B6BBBB2F1149AA /* FormatStepView.swift in Sources */,
+				FECED1FE81CE575D25A9E1F6 /* GenreModeStepView.swift in Sources */,
+				676FE0122C849C32521D71F5 /* GenreModeStepView.swift in Sources */,
 				EB6295681F3F1B6D58ACBA74 /* GenreStepView.swift in Sources */,
 				6272FF0686B3BA4FE8334D4B /* GitHubUpdateService.swift in Sources */,
 				671B6B1856A2EA3E6D2B2D3D /* LMStudioClient.swift in Sources */,
@@ -380,8 +382,6 @@
 				B216CFA9784B7F3C794C878A /* UpdateCenterView.swift in Sources */,
 				E1D790BF729EFAE74B57E7E0 /* VersionHistoryView.swift in Sources */,
 				9EAF820A6168B8CAAD512339 /* WizardState.swift in Sources */,
-				676FE0122C849C32521D71F5 /* GenreModeStepView.swift in Sources */,
-				FECED1FE81CE575D25A9E1F6 /* GenreModeStepView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
