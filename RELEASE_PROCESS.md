@@ -1,6 +1,6 @@
 # Release Process
 
-This guide covers the complete release process for CreateIT: bumping the build number, building the DMG, and uploading to GitHub.
+This guide covers the complete release process for CreateIT: bumping the build number, building the DMG, and publishing to GitHub.
 
 ## Prerequisites
 
@@ -22,29 +22,14 @@ The Xcode project file must be compatible with Xcode 15.4 (used by GitHub Action
 
 ### 1. Bump Build Number
 
-Update the version in three locations:
+Update the build number in `project.pbxproj`:
 
-#### a) Update `project.yml`
 ```bash
-# Edit project.yml and update:
-MARKETING_VERSION: "X.Y"      # Change to new marketing version
-CURRENT_PROJECT_VERSION: "Z"  # Change to new build number
+cd "/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT"
+sed -i '' 's/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = 4;/g' CreateIT.xcodeproj/project.pbxproj
 ```
 
-#### b) Update `CreateIT/Info.plist`
-```xml
-<key>CFBundleShortVersionString</key>
-<string>X.Y</string>
-<key>CFBundleVersion</key>
-<string>Z</string>
-```
-
-#### c) Update `project.pbxproj`
-```bash
-# Run in terminal (using sed):
-sed -i '' 's/MARKETING_VERSION = [0-9.]*;/MARKETING_VERSION = "X.Y";/g' CreateIT.xcodeproj/project.pbxproj
-sed -i '' 's/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = Z;/g' CreateIT.xcodeproj/project.pbxproj
-```
+**Note:** The marketing version (e.g., "3.0") is typically unchanged between builds. Only increment the build number unless you're releasing a new major/minor version.
 
 ### 1a. Verify Project Format Compatibility
 
@@ -96,7 +81,7 @@ git add -A
 
 # Commit if there are changes
 if ! git diff-index --quiet HEAD --; then
-    git commit -m "Release: Update to version X.Y (Build Z)"
+    git commit -m "Release: Version X.Y (Build Z)"
 fi
 
 # Create tag
@@ -112,10 +97,9 @@ git push origin main --tags
 ## Quick Command Summary
 
 ```bash
-# 1. Update version and build number (example: v3.0b2)
+# 1. Update version and build number (example: v3.0b4)
 cd "/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT"
-sed -i '' 's/MARKETING_VERSION = [0-9.]*;/MARKETING_VERSION = "3.0";/g' CreateIT.xcodeproj/project.pbxproj
-sed -i '' 's/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = 2;/g' CreateIT.xcodeproj/project.pbxproj
+sed -i '' 's/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = 4;/g' CreateIT.xcodeproj/project.pbxproj
 
 # 2. Verify project format (should be 60 for Xcode 15.4 compatibility)
 ruby -e "require 'xcodeproj'; proj = Xcodeproj::Project.open('CreateIT.xcodeproj'); puts proj.object_version"
@@ -128,18 +112,17 @@ xcodebuild -project CreateIT.xcodeproj -scheme CreateIT -configuration Release c
 bash scripts/create_dmg.sh
 
 # 5. Commit and push (release auto-publishes via GitHub Actions)
-git add -A && git commit -m "Release: Version 3.0 (Build 2)" && git tag v3.0b2 && git push origin main --tags
+git add -A && git commit -m "Release: Version 3.0 (Build 4)" && git tag v3.0b4 && git push origin main --tags
 ```
 
 **Note:** After pushing the tag, the release will be automatically built and published on GitHub. Check https://github.com/MPC2026/CreateIT/actions to monitor progress.
 
-## Example: Releasing v3.0b2
+## Example: Releasing v3.0b4
 
 ```bash
-# 1. Update versions to 3.0 and build 2 in project.pbxproj
+# 1. Update build number to 4 in project.pbxproj
 cd "/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT"
-sed -i '' 's/MARKETING_VERSION = [0-9.]*;/MARKETING_VERSION = "3.0";/g' CreateIT.xcodeproj/project.pbxproj
-sed -i '' 's/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = 2;/g' CreateIT.xcodeproj/project.pbxproj
+sed -i '' 's/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = 4;/g' CreateIT.xcodeproj/project.pbxproj
 
 # 2. Verify project format (should be 60 for Xcode 15.4 compatibility)
 ruby -e "require 'xcodeproj'; proj = Xcodeproj::Project.open('CreateIT.xcodeproj'); puts proj.object_version"
@@ -152,7 +135,7 @@ xcodebuild -project CreateIT.xcodeproj -scheme CreateIT -configuration Release c
 bash scripts/create_dmg.sh
 
 # 5. Commit and push (release auto-publishes via GitHub Actions)
-git add -A && git commit -m "Release: Version 3.0 (Build 2)" && git tag v3.0b2 && git push origin main --tags
+git add -A && git commit -m "Release: Version 3.0 (Build 4)" && git tag v3.0b4 && git push origin main --tags
 ```
 
 The release will be automatically built and published on GitHub via the `publish-release.yml` workflow.
