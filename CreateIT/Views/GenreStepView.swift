@@ -71,7 +71,16 @@ struct GenreStepView: View {
                                 .foregroundStyle(.tint)
                             Spacer()
                             if wizard.selectedGenres.contains(genre.title) {
-                                Image(systemName: "checkmark.circle.fill").foregroundStyle(.tint)
+                                // Show Primary or Secondary label based on selection order
+                                if let idx = wizard.selectedGenres.firstIndex(of: genre.title), idx == 0 {
+                                    Text("Primary")
+                                        .font(.caption.weight(.bold))
+                                        .foregroundStyle(.tint)
+                                } else if let idx = wizard.selectedGenres.firstIndex(of: genre.title), idx == 1 {
+                                    Text("Secondary")
+                                        .font(.caption.weight(.bold))
+                                        .foregroundStyle(.secondary)
+                                }
                             }
                         }
                         Text(genre.title)
@@ -142,28 +151,23 @@ struct GenreStepView: View {
             if wizard.genreMode == .primarySecondary && wizard.selectedGenres.count >= 2 {
                 // Show option to swap primary/secondary
                 Button("Swap Primary & Secondary", role: .none) {
-                    // Swap the genres
+                    // Swap the genres in selectedGenres
                     if wizard.selectedGenres.count >= 2 {
                         var newSelections = wizard.selectedGenres
                         let temp = newSelections[0]
                         newSelections[0] = newSelections[1]
                         newSelections[1] = temp
                         wizard.selectedGenres = newSelections
+                        // Also update primary/secondary titles directly to ensure sample list refreshes
                         wizard.primaryGenreTitle = newSelections[0]
                         wizard.secondaryGenreTitle = newSelections[1]
-                        
-                        // Update alert state variables and re-show alert
-                        alertPrimary = wizard.primaryGenreTitle ?? ""
-                        alertSecondary = wizard.secondaryGenreTitle ?? ""
-                        showingSelectionAlert = true
                     }
                 }
             }
         } message: {
-            if !alertPrimary.isEmpty && !alertSecondary.isEmpty {
-                Text("You've selected:\nPrimary: \(alertPrimary)\nSecondary: \(alertSecondary)")
-            } else if wizard.selectedGenres.count == 2 {
-                Text("You've selected:\nPrimary: \(wizard.primaryGenreTitle ?? "")\nSecondary: \(wizard.secondaryGenreTitle ?? "")")
+            // Always show the current order from wizard state
+            if let primary = wizard.primaryGenreTitle, let secondary = wizard.secondaryGenreTitle {
+                Text("You've selected:\nPrimary: \(primary)\nSecondary: \(secondary)")
             } else {
                 Text("You've selected \(wizard.selectedGenres.count) genre(s). First is Primary, second is Secondary.")
             }
