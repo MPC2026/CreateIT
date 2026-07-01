@@ -4,7 +4,19 @@
 # This script helps package the app into a macOS Disk Image (.dmg)
 
 APP_NAME="CreateIT"
-BUILD_PATH="/Users/michael/Library/Developer/Xcode/DerivedData/CreateIT-gaiqncznvpqexkfgdfunupbfwsye/Build/Products/Release" # Xcode derived data path
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_DIR"
+
+# Get build settings dynamically to handle different environments
+BUILD_SETTINGS=$(xcodebuild -project CreateIT.xcodeproj -scheme CreateIT -configuration Release -showBuildSettings 2>/dev/null)
+CONFIGURATION_BUILD_DIR=$(echo "$BUILD_SETTINGS" | grep "CONFIGURATION_BUILD_DIR =" | awk '{print $3}')
+
+if [ -z "$CONFIGURATION_BUILD_DIR" ]; then
+    echo "❌ Error: Could not determine build directory"
+    exit 1
+fi
+
+BUILD_PATH="$CONFIGURATION_BUILD_DIR"
 STAGING_DIR="./dmg_staging"
 
 # Get version info from the built app's Info.plist (not source, since it uses template variables)
@@ -13,6 +25,8 @@ CURRENT_PROJECT_VERSION=$(plutil -extract CFBundleVersion xml1 -o - "$BUILD_PATH
 
 if [ -z "$MARKETING_VERSION" ] || [ -z "$CURRENT_PROJECT_VERSION" ]; then
     echo "❌ Error: Could not determine version info from Info.plist"
+    echo "   Build path: $BUILD_PATH"
+    echo "   App exists: $([ -d "$BUILD_PATH/$APP_NAME.app" ] && echo 'yes' || echo 'no')"
     exit 1
 fi
 
