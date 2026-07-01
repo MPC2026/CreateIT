@@ -3,6 +3,8 @@ import SwiftUI
 struct GenreStepView: View {
     @EnvironmentObject private var wizard: WizardState
     @State private var showingSelectionAlert = false
+    @State private var alertPrimary = ""
+    @State private var alertSecondary = ""
     
     // Get available genres based on selected mode
     var availableGenres: [Genre] {
@@ -116,6 +118,8 @@ struct GenreStepView: View {
                     } else if wizard.genreMode == .primarySecondary {
                         // For Primary & Secondary mode, show alert if we have 2 genres
                         if wizard.selectedGenres.count == 2 {
+                            alertPrimary = wizard.primaryGenreTitle ?? ""
+                            alertSecondary = wizard.secondaryGenreTitle ?? ""
                             showingSelectionAlert = true
                         }
                     }
@@ -147,12 +151,19 @@ struct GenreStepView: View {
                         wizard.selectedGenres = newSelections
                         wizard.primaryGenreTitle = newSelections[0]
                         wizard.secondaryGenreTitle = newSelections[1]
+                        
+                        // Update alert state variables and re-show alert
+                        alertPrimary = wizard.primaryGenreTitle ?? ""
+                        alertSecondary = wizard.secondaryGenreTitle ?? ""
+                        showingSelectionAlert = true
                     }
                 }
             }
         } message: {
-            if wizard.selectedGenres.count == 2 {
-                Text("You've selected:\nPrimary: \(wizard.selectedGenres[0])\nSecondary: \(wizard.selectedGenres[1])")
+            if !alertPrimary.isEmpty && !alertSecondary.isEmpty {
+                Text("You've selected:\nPrimary: \(alertPrimary)\nSecondary: \(alertSecondary)")
+            } else if wizard.selectedGenres.count == 2 {
+                Text("You've selected:\nPrimary: \(wizard.primaryGenreTitle ?? "")\nSecondary: \(wizard.secondaryGenreTitle ?? "")")
             } else {
                 Text("You've selected \(wizard.selectedGenres.count) genre(s). First is Primary, second is Secondary.")
             }
