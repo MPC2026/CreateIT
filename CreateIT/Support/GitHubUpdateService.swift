@@ -215,18 +215,7 @@ final class GitHubUpdateService: ObservableObject {
         state = .downloading(0.0)
         
         do {
-            let (tempURL, response) = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<(URL, URLResponse), Error>) in
-                let task = URLSession.shared.downloadTask(with: downloadURL) { tempURL, response, error in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                    } else if let tempURL = tempURL, let response = response {
-                        continuation.resume(returning: (tempURL, response))
-                    } else {
-                        continuation.resume(throwing: URLError(.unknown))
-                    }
-                }
-                task.resume()
-            }
+            let (tempURL, response) = try await URLSession.shared.download(from: downloadURL)
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw URLError(.badServerResponse)
@@ -240,11 +229,38 @@ final class GitHubUpdateService: ObservableObject {
                     downloadedBytes: contentLength
                 )
             }
+            state = .downloading(1.0)
             
-            // Move the downloaded file to a temporary location for installation
-            let targetURL = FileManager.default.temporaryDirectory
-                .appendingPathComponent("CreateITUpdate-\(UUID().uuidString).dmg")
-            try FileManager.default.moveItem(at: tempURL, to: targetURL)
+            let fileManager = FileManager.default
+            let downloadsDirectory = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first
+                ?? fileManager.homeDirectoryForCurrentUser.appendingPathComponent("Downloads", isDirectory: true)
+
+            // Stage the DMG in Downloads like normal browser/system downloads.
+            try fileManager.createDirectory(at: downloadsDirectory, withIntermediateDirectories: true)
+
+            var fileName = URL(fileURLWithPath: asset.name).lastPathComponent
+            if fileName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                fileName = "CreateIT-latest.dmg"
+            }
+            if !fileName.lowercased().hasSuffix(".dmg") {
+                fileName += ".dmg"
+            }
+
+            let targetURL = downloadsDirectory.appendingPathComponent(fileName)
+
+            if fileManager.fileExists(atPath: targetURL.path) {
+                try fileManager.removeItem(at: targetURL)
+            }
+
+            do {
+                try fileManager.moveItem(at: tempURL, to: targetURL)
+            } catch {
+                // Fall back to copy if move fails across volumes/filesystems.
+                try fileManager.copyItem(at: tempURL, to: targetURL)
+                if fileManager.fileExists(atPath: tempURL.path) {
+                    try? fileManager.removeItem(at: tempURL)
+                }
+            }
             
             // Store the downloaded DMG path for installation
             self.downloadedDMGPath = targetURL.path

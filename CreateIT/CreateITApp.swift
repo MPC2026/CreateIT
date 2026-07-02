@@ -16,7 +16,7 @@ struct CreateITApp: App {
                 .environmentObject(updates)
                 .environmentObject(templateLibrary)
         }
-        .defaultSize(width: 960, height: 680)
+        .defaultSize(width: 860, height: 620)
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button("New Script") { templateLibrary.startNewDraft(with: wizard) }

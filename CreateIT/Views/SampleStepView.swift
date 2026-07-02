@@ -17,14 +17,8 @@ struct SampleStepView: View {
                     SelectionCard(
                         isSelected: wizard.sampleMovie?.id == movie.id,
                         action: {
-                            // Use withAnimation to ensure UI updates before navigation
-                            withAnimation {
-                                wizard.sampleMovie = movie
-                            }
-                            // Small delay to ensure state is committed before advancing
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                wizard.next()
-                            }
+                            wizard.sampleMovie = movie
+                            wizard.forceNext()
                         }
                     ) {
                         VStack(alignment: .leading, spacing: 10) {

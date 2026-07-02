@@ -13,6 +13,7 @@ vendor/
 # Build outputs & Caches
 dist/
 build/
+PrioBuild/
 .next/
 .nuxt/
 out/

@@ -64,38 +64,39 @@ struct StepIndicator: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+            HStack(spacing: 5) {
                 ForEach(WizardStep.allCases, id: \.rawValue) { item in
                     let isActive = item == wizard.step
                     let isDone = item.rawValue < wizard.step.rawValue
                     Button {
                         wizard.go(to: item)
                     } label: {
-                        VStack(spacing: 5) {
+                        VStack(spacing: 3) {
                             ZStack {
                                 Circle()
                                     .fill(isActive || isDone ? Color.accentColor : Color.secondary.opacity(0.25))
-                                    .frame(width: 22, height: 22)
+                                    .frame(width: 18, height: 18)
                                 if isDone {
                                     Image(systemName: "checkmark")
-                                        .font(.system(size: 10, weight: .bold))
+                                        .font(.system(size: 8, weight: .bold))
                                         .foregroundStyle(.white)
                                 } else {
                                     Text("\(item.rawValue + 1)")
-                                        .font(.system(size: 10, weight: .bold))
+                                        .font(.system(size: 8, weight: .bold))
                                         .foregroundStyle(isActive ? .white : .secondary)
                                 }
                             }
 
                             Text(item.title)
-                                .font(.caption2.weight(isActive ? .semibold : .regular))
+                                .font(.system(size: 9, weight: isActive ? .semibold : .regular))
                                 .foregroundStyle(isActive ? .primary : .secondary)
                                 .multilineTextAlignment(.center)
-                                .lineLimit(2)
-                                .frame(width: 60, alignment: .center)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                                .frame(width: 46, alignment: .center)
                         }
-                        .frame(width: 68)
-                        .padding(.vertical, 3)
+                        .frame(width: 52)
+                        .padding(.vertical, 2)
                     }
                     .buttonStyle(.plain)
                     .disabled(item.rawValue > wizard.step.rawValue + 1 || (item.rawValue == wizard.step.rawValue + 1 && !wizard.canAdvance))
@@ -103,7 +104,7 @@ struct StepIndicator: View {
                     if item != WizardStep.allCases.last {
                         Rectangle()
                             .fill(Color.secondary.opacity(0.18))
-                            .frame(width: 14, height: 1)
+                            .frame(width: 10, height: 1)
                     }
                 }
             }

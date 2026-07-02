@@ -3,8 +3,6 @@ import SwiftUI
 struct GenreStepView: View {
     @EnvironmentObject private var wizard: WizardState
     @State private var showingSelectionAlert = false
-    @State private var alertPrimary = ""
-    @State private var alertSecondary = ""
     
     // Get available genres based on selected mode
     var availableGenres: [Genre] {
@@ -29,7 +27,7 @@ struct GenreStepView: View {
                         if let mode = wizard.genreMode, mode == .primaryOnly {
                             // For Primary Only, only allow one genre
                             wizard.addSelectedGenre(genre.title)
-                            wizard.next()
+                            wizard.forceNext()
                         } else {
                             // For Primary & Secondary, toggle selection (max 2)
                             if wizard.selectedGenres.contains(genre.title) {
@@ -123,12 +121,10 @@ struct GenreStepView: View {
                 if wizard.selectedGenres.count >= 1 {
                     // For Primary Only mode, just advance
                     if wizard.genreMode == .primaryOnly && wizard.selectedGenres.count >= 1 {
-                        wizard.next()
+                        wizard.forceNext()
                     } else if wizard.genreMode == .primarySecondary {
                         // For Primary & Secondary mode, show alert if we have 2 genres
                         if wizard.selectedGenres.count == 2 {
-                            alertPrimary = wizard.primaryGenreTitle ?? ""
-                            alertSecondary = wizard.secondaryGenreTitle ?? ""
                             showingSelectionAlert = true
                         }
                     }
@@ -145,12 +141,12 @@ struct GenreStepView: View {
             .disabled(wizard.selectedGenres.count < 1)
         }
         .alert("Genre Selection", isPresented: $showingSelectionAlert) {
-            Button("Confirm", role: .cancel) {
-                wizard.next()
+            Button("Continue") {
+                wizard.forceNext()
             }
             if wizard.genreMode == .primarySecondary && wizard.selectedGenres.count >= 2 {
                 // Show option to swap primary/secondary
-                Button("Swap Primary & Secondary", role: .none) {
+                Button("Swap & Continue") {
                     // Swap the genres in selectedGenres
                     if wizard.selectedGenres.count >= 2 {
                         var newSelections = wizard.selectedGenres
@@ -161,9 +157,11 @@ struct GenreStepView: View {
                         // Also update primary/secondary titles directly to ensure sample list refreshes
                         wizard.primaryGenreTitle = newSelections[0]
                         wizard.secondaryGenreTitle = newSelections[1]
+                        wizard.forceNext()
                     }
                 }
             }
+            Button("Change Selection", role: .cancel) { }
         } message: {
             // Always show the current order from wizard state
             if let primary = wizard.primaryGenreTitle, let secondary = wizard.secondaryGenreTitle {

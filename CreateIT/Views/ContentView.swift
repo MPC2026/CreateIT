@@ -38,7 +38,7 @@ struct ContentView: View {
             HStack(spacing: 0) {
                 if showTemplatePanel {
                     expandedSidebarRail
-                        .frame(width: 320)
+                        .frame(width: 280)
                         .transition(.move(edge: .leading).combined(with: .opacity))
                 } else {
                     collapsedSidebarRail
@@ -99,32 +99,31 @@ struct ContentView: View {
     }
 
     private var topNavigationHeader: some View {
-        HStack(alignment: .center, spacing: 18) {
-            HStack(spacing: 14) {
+        HStack(alignment: .center, spacing: 12) {
+            HStack(spacing: 10) {
                 Image("CreateITLogoV2")
                     .resizable()
                     .interpolation(.high)
                     .scaledToFit()
-                    .frame(width: 66, height: 66)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    .shadow(color: .black.opacity(0.26), radius: 14, x: 0, y: 6)
+                    .frame(width: 52, height: 52)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .shadow(color: .black.opacity(0.20), radius: 8, x: 0, y: 4)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("CreateIT")
-                        .font(.system(size: 28, weight: .heavy, design: .rounded))
+                        .font(.system(size: 24, weight: .heavy, design: .rounded))
                     Text("Story workspace")
                         .font(.caption.weight(.medium))
                         .foregroundStyle(.secondary)
                 }
             }
-            .frame(width: 240, alignment: .leading)
+            .frame(width: 200, alignment: .leading)
 
-            Spacer(minLength: 24)
+            Spacer(minLength: 10)
 
             StepIndicator()
-                .fixedSize(horizontal: true, vertical: false)
 
-            Spacer(minLength: 56)
+            Spacer(minLength: 8)
 
             VStack(alignment: .trailing, spacing: 8) {
                 Button {
@@ -135,13 +134,12 @@ struct ContentView: View {
                 .help(aiHelp)
                 .tint(aiConnected ? .green : nil)
             }
-            .padding(.horizontal, 50)
-            .fixedSize(horizontal: true, vertical: false)
+            .padding(.horizontal, 6)
             .buttonStyle(.bordered)
             .padding(.top, 1)
         }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 6)
         .background(
             LinearGradient(
                 colors: [
@@ -535,6 +533,9 @@ struct ContentView: View {
             }
             Spacer()
             footerHint
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .minimumScaleFactor(0.85)
             Spacer()
             if wizard.step == .plot {
                 Button {
