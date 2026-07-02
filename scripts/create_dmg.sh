@@ -52,6 +52,9 @@ rm -rf "$STAGING_DIR"
 mkdir -p "$STAGING_DIR"
 cp -R "$BUILD_PATH/$APP_NAME.app" "$STAGING_DIR/"
 
+# Fix permissions on the app bundle inside staging
+chmod -R 755 "$STAGING_DIR/$APP_NAME.app"
+
 # 3. Create a symlink to Applications folder for the user's convenience
 ln -s /Applications "$STAGING_DIR/Applications"
 
@@ -100,6 +103,7 @@ hdiutil create -volname "$APP_NAME Installer" \
     -format UDZO \
     -fs HFS+ \
     -fsargs "-c c=64,a=16,e=16" \
+    -verbose \
     "dist/$DMG_NAME"
 
 if [ $? -eq 0 ]; then
@@ -107,6 +111,17 @@ if [ $? -eq 0 ]; then
 else
     echo "❌ Failed to create DMG."
     exit 1
+fi
+
+# 5b. Fix potential prohibitory sign by re-creating with proper permissions
+echo "🔧 Fixing permissions on DMG..."
+hdiutil convert "dist/$DMG_NAME" -format UDZO -ov -o "dist/tmp_image"
+mv "dist/tmp_image.dmg" "dist/$DMG_NAME"
+
+if [ $? -eq 0 ]; then
+    echo "✅ Permissions fixed"
+else
+    echo "⚠️  Could not fix permissions (this may cause prohibitory sign)"
 fi
 
 # 6. Move old DMGs to PriorBuilds folder
