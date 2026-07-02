@@ -151,3 +151,24 @@ The release will be automatically built and published on GitHub via the `publish
 ### Git push fails with "permission denied"
 - Verify you have write access to the repository
 - Check your git remote: `git remote -v`
+
+### GitHub Actions build fails with URL or FileManager errors
+If you see errors like:
+- `value of type 'URL' has no member 'deletingLastComponent'`
+- `call can throw but is not marked with 'try'` for `attributesOfItem`
+- `cannot infer contextual base in reference to member 'utf8'`
+
+**Fix:** These are Swift API changes that need to be applied to `GitHubUpdateService.swift`:
+
+```bash
+# 1. Fix URL path method (deletingLastComponent → deletingLastPathComponent)
+sed -i '' 's/appURL.deletingLastComponent()/appURL.deletingLastPathComponent()/' CreateIT/Support/GitHubUpdateService.swift
+
+# 2. Fix attributesOfItem to use try and remove nil coalescing
+sed -i '' 's/var attributes = fileManager.attributesOfItem(atPath: scriptURL.path) ?? \[:\]/var attributes = try fileManager.attributesOfItem(atPath: scriptURL.path)/' CreateIT/Support/GitHubUpdateService.swift
+
+# 3. Fix encoding reference (.utf8 → String.Encoding.utf8)
+sed -i '' 's/encoding: \.utf8/encoding: String.Encoding.utf8/' CreateIT/Support/GitHubUpdateService.swift
+```
+
+After applying fixes, rebuild and create a new DMG before committing and pushing.
