@@ -1,25 +1,41 @@
+# === macOS System Files ===
 .DS_Store
+
+# === Python Environments ===
+.venv/
+
+# === Project Build Logs & Outputs ===
+build.log
+*.log
 build/
+.build/
+PriorBuilds/
+dmg_staging/
+PrioBuild/
+dist/
+out/
+.cache/
 DerivedData/
+
+# === Dependencies ===
+node_modules/
+vendor/
+
+# === Framework Specific Caches ===
+.bun/
+.next/
+.nuxt/
+.expo/
+storage/logs/
+
+# === Apple / Xcode Project Tracking ===
+*.xcworkspace
 *.xcuserstate
 *.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace
 
-# Dependencies
-node_modules/
-.bun/
-vendor/
-
-# Build outputs & Caches
-dist/
-build/
-PrioBuild/
-.next/
-.nuxt/
-out/
-.cache/
-
-# Media and Binary Lockfiles
+# === Media & Package Lockfiles ===
 *.lock
 package-lock.json
 yarn.lock
@@ -27,17 +43,3 @@ pnpm-lock.yaml
 *.mp4
 *.png
 *.jpg
-
-# Auto‑generated ignore patterns for CreateIT
-node_modules/
-vendor/
-storage/logs/
-.expo/
-dist/
-package-lock.json
-composer.lock
-.DS_Store
-.build/
-DerivedData/
-*.xcworkspace
-*.xcodeproj/project.xcworkspace

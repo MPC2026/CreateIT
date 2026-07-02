@@ -156,7 +156,8 @@ final class GitHubUpdateService: ObservableObject {
             // Download with progress first
             try await downloadWithProgress(asset: asset)
             
-            // Show install confirmation after download completes
+            // Transition to idle after download completes, then show install confirmation
+            state = .idle
             showInstallConfirmation = true
         } catch {
             state = .failed(error.localizedDescription)
@@ -229,7 +230,9 @@ final class GitHubUpdateService: ObservableObject {
                     downloadedBytes: contentLength
                 )
             }
-            state = .downloading(1.0)
+            
+            // File operations - update state to indicate progress
+            state = .installing  // Transition to installing state for file operations
             
             let fileManager = FileManager.default
             let downloadsDirectory = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first
@@ -264,10 +267,54 @@ final class GitHubUpdateService: ObservableObject {
             
             // Store the downloaded DMG path for installation
             self.downloadedDMGPath = targetURL.path
+            state = .idle  // Back to idle after all operations complete
             
         } catch {
             state = .failed(error.localizedDescription)
             throw error
+        }
+    }
+
+    func installUpdate() async {
+        guard let dmgPath = downloadedDMGPath else {
+            state = .failed("No downloaded DMG found")
+            return
+        }
+        
+        state = .installing
+        
+        do {
+            // Get the target app path
+            let fileManager = FileManager.default
+            let bundle = Bundle.main
+            guard let appURL = bundle.bundleURL as URL?,
+                  let targetDirectory = appURL.deletingLastComponent().parent else {
+                state = .failed("Could not determine app location")
+                return
+            }
+            
+            // Create the installation script
+            let installScript = updateScript(dmgPath: dmgPath, targetAppPath: appURL.path, targetDirectoryPath: targetDirectory.path)
+            
+            // Write script to temporary file
+            let scriptURL = FileManager.default.temporaryDirectory.appendingPathComponent("install_update.sh")
+            try installScript.write(to: scriptURL, atomically: true, encoding: .utf8)
+            
+            // Make script executable
+            try fileManager.chmod(0o755, scriptURL.path)
+            
+            // Run the installation script in background
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/bin/zsh")
+            process.arguments = [scriptURL.path]
+            try process.run()
+            
+            // Wait a moment then quit the app to allow installation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                NSApplication.shared.terminate(nil)
+            }
+        } catch {
+            state = .failed(error.localizedDescription)
         }
     }
 

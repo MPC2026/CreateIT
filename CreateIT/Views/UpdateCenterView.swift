@@ -25,7 +25,7 @@ struct UpdateCenterView: View {
                     updateStateCard
 
                     // Download progress card (shown during download)
-                    if case .downloading(let progress) = service.state, let progressValue = service.downloadProgress {
+                    if case .downloading(let progress) = service.state, let progressValue = service.downloadProgress, progress < 1.0 {
                         downloadProgressCard(progress: progressValue, fraction: progress)
                     }
 
@@ -91,7 +91,7 @@ struct UpdateCenterView: View {
         .alert("Install Update?", isPresented: $showInstallConfirmation, actions: {
             Button("Cancel", role: .cancel) { }
             Button("Install") {
-                Task { await startUpdateCheck() }
+                Task { await service.installUpdate() }
             }
         }, message: {
             if let release = service.latestRelease {
@@ -248,9 +248,9 @@ struct UpdateCenterView: View {
             HStack(spacing: 10) {
                 ProgressView().controlSize(.small)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Installing update")
+                    Text("Preparing installation")
                         .font(.headline)
-                    Text("CreateIT is downloading the new app and will relaunch when it finishes.")
+                    Text("CreateIT is preparing the update for installation.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
