@@ -210,7 +210,7 @@ final class GitHubUpdateService: ObservableObject {
     private func downloadWithProgress(asset: ReleaseAsset) async throws {
         let downloadURL = asset.browserDownloadURL
         
-        // Use URLSession.shared.download with progress tracking via continuation
+        // Use URLSession.shared.downloadTask - progress updates are limited but we can track completion
         downloadProgress = DownloadProgress(totalBytes: 0, downloadedBytes: 0)
         state = .downloading(0.0)
         
@@ -232,11 +232,14 @@ final class GitHubUpdateService: ObservableObject {
                 throw URLError(.badServerResponse)
             }
             
-            // Update total bytes
-            downloadProgress = DownloadProgress(
-                totalBytes: httpResponse.expectedContentLength,
-                downloadedBytes: httpResponse.expectedContentLength
-            )
+            // Update progress with total bytes (download completed at this point)
+            let contentLength = httpResponse.expectedContentLength
+            if contentLength > 0 {
+                downloadProgress = DownloadProgress(
+                    totalBytes: contentLength,
+                    downloadedBytes: contentLength
+                )
+            }
             
             // Move the downloaded file to a temporary location for installation
             let targetURL = FileManager.default.temporaryDirectory

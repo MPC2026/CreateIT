@@ -336,7 +336,7 @@ struct ContentView: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         stepContent
-                            .padding(.horizontal, 24)
+                            .padding(.horizontal, 20)
                             .padding(.vertical, 16)
                             .frame(maxWidth: 800)
                             .frame(maxWidth: .infinity)

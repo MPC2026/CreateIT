@@ -76,8 +76,8 @@ struct UpdateCenterView: View {
             .scrollIndicators(.visible)
             footer
         }
-        .padding(22)
-        .frame(minWidth: 500, minHeight: 400)
+        .padding(16)
+        .frame(minWidth: 450, minHeight: 380)
         .background(Color(nsColor: .windowBackgroundColor))
         .task {
             guard !didLoad else { return }
