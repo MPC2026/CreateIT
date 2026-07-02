@@ -293,7 +293,7 @@ final class GitHubUpdateService: ObservableObject {
             }
             
             // Get the parent directory of the app bundle (contains the app)
-            let targetDirectory = appURL.deletingLastComponent()
+            let targetDirectory = appURL.deletingLastPathComponent()
             
             // Create the installation script
             let installScript = updateScript(dmgPath: dmgPath, targetAppPath: appURL.path, targetDirectoryPath: targetDirectory.path)
@@ -303,7 +303,7 @@ final class GitHubUpdateService: ObservableObject {
             try installScript.write(to: scriptURL, atomically: true, encoding: String.Encoding.utf8)
             
             // Make script executable using FileAttributeKey
-            var attributes = fileManager.attributesOfItem(atPath: scriptURL.path) ?? [:]
+            var attributes = try fileManager.attributesOfItem(atPath: scriptURL.path)
             attributes[.posixPermissions] = 0o755
             try fileManager.setAttributes(attributes, ofItemAtPath: scriptURL.path)
             
