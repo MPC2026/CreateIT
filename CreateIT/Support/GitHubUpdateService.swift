@@ -287,21 +287,25 @@ final class GitHubUpdateService: ObservableObject {
             // Get the target app path
             let fileManager = FileManager.default
             let bundle = Bundle.main
-            guard let appURL = bundle.bundleURL as URL?,
-                  let targetDirectory = appURL.deletingLastComponent().parent else {
+            guard let appURL = bundle.bundleURL as URL? else {
                 state = .failed("Could not determine app location")
                 return
             }
+            
+            // Get the parent directory of the app bundle (contains the app)
+            let targetDirectory = appURL.deletingLastComponent()
             
             // Create the installation script
             let installScript = updateScript(dmgPath: dmgPath, targetAppPath: appURL.path, targetDirectoryPath: targetDirectory.path)
             
             // Write script to temporary file
             let scriptURL = FileManager.default.temporaryDirectory.appendingPathComponent("install_update.sh")
-            try installScript.write(to: scriptURL, atomically: true, encoding: .utf8)
+            try installScript.write(to: scriptURL, atomically: true, encoding: String.Encoding.utf8)
             
-            // Make script executable
-            try fileManager.chmod(0o755, scriptURL.path)
+            // Make script executable using FileAttributeKey
+            var attributes = fileManager.attributesOfItem(atPath: scriptURL.path) ?? [:]
+            attributes[.posixPermissions] = 0o755
+            try fileManager.setAttributes(attributes, ofItemAtPath: scriptURL.path)
             
             // Run the installation script in background
             let process = Process()
