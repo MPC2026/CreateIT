@@ -16,6 +16,10 @@
 		<data>
 		A8mUst4AlC6zrFoZFiQd7XKYd54=
 		</data>
+		<key>Resources/sample_List.json</key>
+		<data>
+		IoTY3yYoD/45L/rshWa2zeRm2AA=
+		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
@@ -38,6 +42,13 @@
 			<key>hash2</key>
 			<data>
 			Ihtsqwrwe3x0EWWU+U7VN/QuF2nooMkmgxADqO92vD0=
+			</data>
+		</dict>
+		<key>Resources/sample_List.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Tlo6WWvcyJwcLuRoJjvHykpxyFiw6SomGTAYtqSZt+U=
 			</data>
 		</dict>
 	</dict>
