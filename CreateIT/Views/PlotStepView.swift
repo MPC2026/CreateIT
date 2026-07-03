@@ -117,28 +117,7 @@ struct PlotStepView: View {
                         }
                     }
                     
-                    if !movie.beatSamples.isEmpty {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Beat Samples")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                            
-                            let keys = Array(movie.beatSamples.keys).sorted()
-                            ForEach(Array(keys.enumerated()), id: \.offset) { (idx, key) in
-                                if let sample = movie.sample(for: key) {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(key)
-                                            .font(.caption2.weight(.medium))
-                                            .foregroundStyle(.tint)
-                                        Text(sample)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    // Note: Beat samples are shown on the Beats page, not here
                 } else {
                     HStack(spacing: 8) {
                         Image(systemName: "info.circle")

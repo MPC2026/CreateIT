@@ -24,6 +24,7 @@ struct TemplateStepView: View {
     @State private var storyOutlineError: String?
     @State private var exportStatusMessage: String?
     @State private var exportStatusIsError = false
+    @State private var showSampleAlertFlag = false
 
     private var filledCount: Int {
         wizard.beats.filter { !(wizard.entries[$0.key]?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true) }.count
@@ -74,9 +75,27 @@ struct TemplateStepView: View {
             .environmentObject(ai)
             .frame(minWidth: 450, minHeight: 380)
         }
-        .onAppear { syncSelectedBeat() }
+        .onAppear { 
+            syncSelectedBeat()
+            showSampleAlert()
+        }
         .onChange(of: wizard.beats.map(\.key)) { _, _ in syncSelectedBeat() }
         .onChange(of: selectedBeatKey) { _, _ in syncAssistantPrompt() }
+        .alert("Use Sample Beat References?", isPresented: $showSampleAlertFlag) {
+            Button("Yes", role: .cancel) {
+                // User wants to use sample beat references
+                wizard.sampleMovie?.beatSamples.forEach { key, sample in
+                    if wizard.entries[key]?.isEmpty ?? true {
+                        wizard.entries[key] = sample
+                    }
+                }
+            }
+            Button("No", role: .cancel) {
+                // User doesn't want sample beat references
+            }
+        } message: {
+            Text("Would you like to use the sample movie's beat information as a reference? This will populate each beat with example text from the selected movie.")
+        }
     }
 
     // MARK: Heading
@@ -490,6 +509,11 @@ struct TemplateStepView: View {
             get: { selectedBeatKey.isEmpty ? (wizard.beats.first?.key ?? "") : selectedBeatKey },
             set: { selectedBeatKey = $0 }
         )
+    }
+
+    private func showSampleAlert() {
+        guard wizard.sampleMovie != nil, !showSampleAlertFlag else { return }
+        showSampleAlertFlag = true
     }
 
     private func syncSelectedBeat() {
