@@ -125,16 +125,6 @@ final class AIAssistant: ObservableObject {
         if !wizard.logline.isEmpty { context += "Logline: \(wizard.logline)\n" }
         if !wizard.plot.isEmpty { context += "Plot:\n\(wizard.plot)\n" }
 
-        var reference = ""
-        if let movie = wizard.sampleMovie {
-            reference +=
-                "Reference film for structural guidance only: \(movie.title) (\(movie.year)).\n"
-            if let sample = movie.sample(for: beat.key) {
-                reference +=
-                    "How that film handles this beat (for pacing/function, do not copy): \(sample)\n"
-            }
-        }
-
         // Include any text the writer already started, to continue their voice.
         let existing =
             wizard.entries[beat.key]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
@@ -144,7 +134,6 @@ final class AIAssistant: ObservableObject {
 
         let user = """
             \(context)
-            \(reference)
             Write the "\(beat.title)" beat.
             Purpose of this beat: \(beat.purpose)
             \(existingBlock)
@@ -571,15 +560,9 @@ final class AIAssistant: ObservableObject {
         return context.isEmpty ? "No project details have been entered yet." : context
     }
 
+    // Note: referenceContext removed in v3.0b24 - no sample selection step
     private func referenceContext(for wizard: WizardState, beatKey: String?) -> String {
-        guard let movie = wizard.sampleMovie else { return "" }
-        var reference =
-            "Reference film for structural guidance only: \(movie.title) (\(movie.year)).\n"
-        if let beatKey, let sample = movie.sample(for: beatKey) {
-            reference +=
-                "How that film handles this beat (for pacing/function, do not copy): \(sample)\n"
-        }
-        return reference
+        ""  // No sample movie reference available
     }
 
     private static func isCancellation(_ error: Error) -> Bool {

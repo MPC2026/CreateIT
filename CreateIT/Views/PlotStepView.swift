@@ -96,36 +96,12 @@ struct PlotStepView: View {
     private var sampleDetailsSection: some View {
         GroupBox {
             VStack(alignment: .leading, spacing: 12) {
-                if let movie = wizard.sampleMovie {
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text(movie.title)
-                            .font(.headline)
-                        Text("(\(movie.year))")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    
-                    if !movie.logline.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Logline")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                            Text(movie.logline)
-                                .font(.callout)
-                                .foregroundStyle(.primary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                    }
-                    
-                    // Note: Beat samples are shown on the Beats page, not here
-                } else {
-                    HStack(spacing: 8) {
-                        Image(systemName: "info.circle")
-                            .foregroundStyle(.tint)
-                        Text("Select a sample film on the previous step to see structural guidance.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                HStack(spacing: 8) {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(.tint)
+                    Text("Sample movie selection has been removed. You can now proceed directly to plot.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
             .padding(.vertical, 8)
@@ -207,7 +183,6 @@ struct PlotStepView: View {
                 if let m = wizard.medium { chip(m.rawValue, m.symbol) }
                 if let r = wizard.runtime { chip(r.label, "clock") }
                 if !wizard.selectedGenres.isEmpty { let genreList = wizard.selectedGenres.joined(separator: ", "); chip(genreList, "tag") }
-                if let movie = wizard.sampleMovie { chip(movie.title, "film") }
                 Spacer()
             }
 
@@ -216,7 +191,6 @@ struct PlotStepView: View {
                 if let m = wizard.medium { chip(m.rawValue, m.symbol) }
                 if let r = wizard.runtime { chip(r.label, "clock") }
                 if !wizard.selectedGenres.isEmpty { let genreList = wizard.selectedGenres.joined(separator: ", "); chip(genreList, "tag") }
-                if let movie = wizard.sampleMovie { chip(movie.title, "film") }
             }
         }
     }

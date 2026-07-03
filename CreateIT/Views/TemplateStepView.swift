@@ -77,25 +77,10 @@ struct TemplateStepView: View {
         }
         .onAppear { 
             syncSelectedBeat()
-            showSampleAlert()
         }
         .onChange(of: wizard.beats.map(\.key)) { _, _ in syncSelectedBeat() }
         .onChange(of: selectedBeatKey) { _, _ in syncAssistantPrompt() }
-        .alert("Use Sample Beat References?", isPresented: $showSampleAlertFlag) {
-            Button("Yes", role: .cancel) {
-                // User wants to use sample beat references
-                wizard.sampleMovie?.beatSamples.forEach { key, sample in
-                    if wizard.entries[key]?.isEmpty ?? true {
-                        wizard.entries[key] = sample
-                    }
-                }
-            }
-            Button("No", role: .cancel) {
-                // User doesn't want sample beat references
-            }
-        } message: {
-            Text("Would you like to use the sample movie's beat information as a reference? This will populate each beat with example text from the selected movie.")
-        }
+        // Note: Sample Beat References alert removed in v3.0b24 - no sample selection step
     }
 
     // MARK: Heading
@@ -147,7 +132,6 @@ struct TemplateStepView: View {
                 Text("·"); Text("\(m.rawValue) · \(r.label)")
             }
             if !wizard.selectedGenres.isEmpty { let genreList = wizard.selectedGenres.joined(separator: ", "); Text("·"); Text(genreList) }
-            if let movie = wizard.sampleMovie { Text("· styled after"); Text(movie.title).fontWeight(.semibold) }
         }
         .font(.callout)
         .foregroundStyle(.secondary)
@@ -511,10 +495,7 @@ struct TemplateStepView: View {
         )
     }
 
-    private func showSampleAlert() {
-        guard wizard.sampleMovie != nil, !showSampleAlertFlag else { return }
-        showSampleAlertFlag = true
-    }
+    // Sample movie functionality removed in v3.0b24
 
     private func syncSelectedBeat() {
         guard let first = wizard.beats.first else {
@@ -857,9 +838,7 @@ struct BeatCardView: View {
         )
     }
 
-    private var sampleText: String? {
-        wizard.sampleMovie?.sample(for: beat.key)
-    }
+    // Sample movie functionality removed in v3.0b24
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -868,10 +847,6 @@ struct BeatCardView: View {
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-
-            if let sampleText {
-                sampleBox(sampleText)
-            }
 
             ZStack(alignment: .topLeading) {
                 BeatDraftTextEditor(text: binding) {
@@ -967,7 +942,7 @@ struct BeatCardView: View {
             HStack(spacing: 6) {
                 Image(systemName: "lightbulb")
                     .font(.caption)
-                Text("How \(wizard.sampleMovie?.title ?? "the sample") handles this beat")
+                Text("Reference example for this beat")
                     .font(.caption.weight(.semibold))
                 Spacer()
                 Button(showSample ? "Hide" : "Show") {
@@ -1127,20 +1102,7 @@ private struct BeatAIDraftSheetView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            if let sample = wizard.sampleMovie?.sample(for: beat.key) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Reference sample")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                    Text(sample)
-                        .font(.callout)
-                }
-                .padding(12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(Color.accentColor.opacity(0.08)))
-            }
+            // Sample movie reference section removed in v3.0b24
 
             if let existing = wizard.entries[beat.key], !existing.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 VStack(alignment: .leading, spacing: 6) {

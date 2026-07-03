@@ -6,9 +6,8 @@ enum WizardStep: Int, CaseIterable, Codable {
     case format
     case genreMode  // Select Primary Only or Primary & Secondary
     case genre      // Select primary genre(s)
-    case sample
     case plot
-    case template
+    case template  // Note: .sample step was removed in v3.0b24 — no sample selection step
     case outline
     case finalDraft
 
@@ -18,7 +17,6 @@ enum WizardStep: Int, CaseIterable, Codable {
         case .format:    return "Format"
         case .genreMode: return "Genre Mode"
         case .genre:     return "Genre"
-        case .sample:    return "Sample"
         case .plot:      return "Plot"
         case .template:  return "Beats"
         case .outline:   return "Scenes"
@@ -39,7 +37,6 @@ final class WizardState: ObservableObject {
         var primaryGenreTitle: String?
         var secondaryGenreTitle: String?
         var selectedGenres: [String]  // All selected genres (for Primary & Secondary mode)
-        var sampleMovie: SampleMovie?
         var projectTitle: String
         var logline: String
         var plot: String
@@ -54,7 +51,6 @@ final class WizardState: ObservableObject {
     @Published var medium: Medium?
     @Published var runtime: Runtime?
     @Published var genreMode: GenreSelectionMode?  // New: Primary Only or Primary & Secondary
-    @Published var sampleMovie: SampleMovie?
     
     // Genre tracking (for Primary & Secondary mode)
     @Published var primaryGenreTitle: String?       // The first selected genre becomes primary
@@ -77,73 +73,6 @@ final class WizardState: ObservableObject {
         return BeatLibrary.beats(for: structure, medium: medium)
     }
 
-    var sampleMovies: [SampleMovie] {
-        guard let primary = primaryGenreTitle else { return [] }
-        
-        // Get samples based on selection mode
-        let sampleEntries: [SampleMovieEntry]
-        if let secondary = secondaryGenreTitle, !secondary.isEmpty {
-            // Primary & Secondary mode - get specific combination
-            sampleEntries = SampleListLoader.shared.getSamples(for: primary, secondaryGenre: secondary)
-        } else {
-            // Primary Only mode - get samples for primary genre (first secondary if available)
-            let secondaryGenres = SampleListLoader.shared.getSecondaryGenres(for: primary)
-            sampleEntries = secondaryGenres.flatMap { secondary in
-                SampleListLoader.shared.getSamples(for: primary, secondaryGenre: secondary)
-            }
-        }
-        
-        // Limit to 4 unique samples with no duplicates by title
-        var seenTitles = Set<String>()
-        let uniqueSamples = sampleEntries.filter { entry in
-            if seenTitles.contains(entry.title) {
-                return false
-            }
-            seenTitles.insert(entry.title)
-            return true
-        }.prefix(4)
-        
-        var movies: [SampleMovie] = []
-        for sampleEntry in uniqueSamples {
-            // Get genre from selectedGenres
-            let movieGenre: Genre?
-            if let firstGenre = selectedGenres.first,
-               let genreEnum = Genre(rawValue: firstGenre.lowercased().replacingOccurrences(of: " ", with: "")) {
-                movieGenre = genreEnum
-            } else {
-                movieGenre = nil
-            }
-            
-            // Get beat samples from SampleLibrary for this genre
-            let beatSamples = getBeatSamples(for: movieGenre)
-            
-            let movie = SampleMovie(
-                title: sampleEntry.title,
-                year: sampleEntry.year,
-                genre: movieGenre ?? .action,
-                medium: medium ?? .movie,
-                runtime: runtime ?? .feature,
-                logline: sampleEntry.logline ?? "",
-                beatSamples: beatSamples
-            )
-            movies.append(movie)
-        }
-        return movies
-    }
-    
-    /// Get beat samples from SampleLibrary for a genre
-    private func getBeatSamples(for genre: Genre?) -> [String: String] {
-        guard let genre = genre else { return [:] }
-        
-        // Try to find matching movie in SampleLibrary and use its beat samples
-        let libraryMovies = SampleLibrary.all.filter { $0.genre == genre }
-        if let firstMovie = libraryMovies.first {
-            return firstMovie.beatSamples
-        }
-        
-        return [:]
-    }
-
     /// Whether the user can advance from the current step.
     var canAdvance: Bool {
         switch step {
@@ -158,7 +87,6 @@ final class WizardState: ObservableObject {
             } else {
                 return selectedGenres.count >= 1
             }
-        case .sample:    return sampleMovie != nil
         case .plot:      return true
         case .template:  return !beats.isEmpty
         case .outline:   return false
@@ -204,7 +132,6 @@ final class WizardState: ObservableObject {
             primaryGenreTitle = nil
             secondaryGenreTitle = nil
             selectedGenres = []
-            sampleMovie = nil
             projectTitle = ""
             logline = ""
             plot = ""
@@ -225,7 +152,6 @@ final class WizardState: ObservableObject {
             primaryGenreTitle: primaryGenreTitle,
             secondaryGenreTitle: secondaryGenreTitle,
             selectedGenres: selectedGenres,
-            sampleMovie: sampleMovie,
             projectTitle: projectTitle,
             logline: logline,
             plot: plot,
@@ -244,7 +170,6 @@ final class WizardState: ObservableObject {
             self.primaryGenreTitle = data.primaryGenreTitle
             self.secondaryGenreTitle = data.secondaryGenreTitle
             self.selectedGenres = data.selectedGenres
-            self.sampleMovie = data.sampleMovie
             self.projectTitle = data.projectTitle
             self.logline = data.logline
             self.plot = data.plot
@@ -472,8 +397,7 @@ final class WizardState: ObservableObject {
         lines.append("TITLE: \(title)")
         if let structure { lines.append("STRUCTURE: \(structure.title)") }
         if let medium, let runtime { lines.append("FORMAT: \(medium.rawValue) · \(runtime.label)") }
-        if !selectedGenres.isEmpty { let genreList = selectedGenres.joined(separator: ", "); lines.append("GENRE: (genreList)") }
-        if let sampleMovie { lines.append("SAMPLE STYLE: \(sampleMovie.title) (\(sampleMovie.year))") }
+        if !selectedGenres.isEmpty { let genreList = selectedGenres.joined(separator: ", "); lines.append("GENRE: \(genreList)") }
         if !logline.isEmpty {
             lines.append("")
             lines.append("LOGLINE: \(logline)")

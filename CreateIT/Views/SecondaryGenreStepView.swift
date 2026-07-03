@@ -13,9 +13,12 @@ struct SecondaryGenreStepView: View {
     var availableSecondaryGenres: [GenreOption] {
         guard let primary = wizard.primaryGenreTitle else { return [] }
         
-        return SampleListLoader.shared.getSecondaryGenres(for: primary).map { name in
-            GenreOption(name: name, genre: genre(from: name))
-        }
+        // All genres except the primary one can be secondary
+        return Genre.allCases
+            .filter { $0.title != primary }
+            .map { genre in
+                GenreOption(name: genre.title, genre: genre)
+            }
     }
     
     // Map string genre names to Genre enum

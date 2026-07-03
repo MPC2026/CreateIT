@@ -1,7 +1,7 @@
 import Foundation
 
 /// How each beat should appear in the exported Final Draft document.
-enum BeatElement: String, CaseIterable, Identifiable {
+public enum BeatElement: String, CaseIterable, Identifiable {
     /// Beats import as outline rows (Navigator / Beat Board friendly).
     case section = "Section Heading"
     /// Beats import as Beat Board cards with synopsis text.
@@ -9,7 +9,7 @@ enum BeatElement: String, CaseIterable, Identifiable {
     /// Beats import as scenes (each becomes a slug line on the page).
     case scene = "Scene Heading"
 
-    var id: String { rawValue }
+    public var id: String { rawValue }
 
     var label: String {
         switch self {
@@ -80,10 +80,6 @@ enum FDXExporter {
             } else {
                 if includeGuidance {
                     paragraph("Action", "GUIDANCE: \(beat.purpose)", style: "Italic")
-                    if let sample = wizard.sampleMovie?.sample(for: beat.key) {
-                        let name = wizard.sampleMovie?.title ?? "Sample"
-                        paragraph("Action", "\(name.uppercased()) REFERENCE: \(sample)", style: "Italic")
-                    }
                 }
 
                 if written.isEmpty {

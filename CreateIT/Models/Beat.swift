@@ -2,8 +2,7 @@ import Foundation
 
 // MARK: - Beat Template
 
-/// A single structural beat in an outline. `key` is used to look up
-/// matching sample text from a `SampleMovie`.
+/// A single structural beat in an outline.
 struct BeatTemplate: Identifiable {
     let key: String
     let act: Int

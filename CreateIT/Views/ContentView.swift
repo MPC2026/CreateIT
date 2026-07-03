@@ -511,7 +511,6 @@ struct ContentView: View {
         case .format:    FormatStepView()
         case .genreMode: GenreModeStepView()
         case .genre:     GenreStepView()
-        case .sample:    SampleStepView()
         case .plot:      PlotStepView()
         case .template:  TemplateStepView()
         case .outline:   OutlineStepView(scrollTargetBeatKey: $outlineScrollTargetBeatKey)
@@ -574,8 +573,6 @@ struct ContentView: View {
             Text("Pick a structure to begin").foregroundStyle(.secondary).font(.callout)
         case .format where !wizard.canAdvance:
             Text("Choose a medium and a runtime").foregroundStyle(.secondary).font(.callout)
-        case .sample where wizard.sampleMovie == nil:
-            Text("Choose a film whose shape inspires you").foregroundStyle(.secondary).font(.callout)
         case .template where wizard.beats.isEmpty:
             Text("Create beats before moving on").foregroundStyle(.secondary).font(.callout)
         case .template:

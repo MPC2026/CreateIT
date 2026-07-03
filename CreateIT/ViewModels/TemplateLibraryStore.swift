@@ -2,18 +2,6 @@ import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct SampleMovieReference: Codable, Equatable {
-    let title: String
-    let year: Int
-    let genre: Genre
-
-    func resolve() -> SampleMovie? {
-        SampleLibrary.all.first {
-            $0.title == title && $0.year == year && $0.genre == genre
-        }
-    }
-}
-
 struct SavedTemplate: Identifiable, Codable, Equatable {
     let id: UUID
     var projectTitle: String
@@ -23,14 +11,13 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
     var medium: Medium?
     var runtime: Runtime?
     var selectedGenres: [String]
-    var sampleMovie: SampleMovieReference?
     var entries: [String: String]
     var scenes: [SceneOutlineScene]
     var createdAt: Date
     var updatedAt: Date
 
     enum CodingKeys: String, CodingKey {
-        case id, projectTitle, logline, plot, structure, medium, runtime, selectedGenres, sampleMovie, entries, scenes, createdAt, updatedAt
+        case id, projectTitle, logline, plot, structure, medium, runtime, selectedGenres, entries, scenes, createdAt, updatedAt
     }
 
     init(
@@ -42,7 +29,6 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
         medium: Medium?,
         runtime: Runtime?,
         selectedGenres: [String],
-        sampleMovie: SampleMovieReference?,
         entries: [String: String],
         scenes: [SceneOutlineScene] = [],
         createdAt: Date = .now,
@@ -56,7 +42,6 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
         self.medium = medium
         self.runtime = runtime
         self.selectedGenres = selectedGenres
-        self.sampleMovie = sampleMovie
         self.entries = entries
         self.scenes = scenes
         self.createdAt = createdAt
@@ -73,7 +58,6 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
         medium = try container.decodeIfPresent(Medium.self, forKey: .medium)
         runtime = try container.decodeIfPresent(Runtime.self, forKey: .runtime)
         selectedGenres = try container.decodeIfPresent([String].self, forKey: .selectedGenres) ?? []
-        sampleMovie = try container.decodeIfPresent(SampleMovieReference.self, forKey: .sampleMovie)
         entries = try container.decodeIfPresent([String: String].self, forKey: .entries) ?? [:]
         scenes = try container.decodeIfPresent([SceneOutlineScene].self, forKey: .scenes) ?? []
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt) ?? .now
@@ -90,7 +74,6 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
         try container.encodeIfPresent(medium, forKey: .medium)
         try container.encodeIfPresent(runtime, forKey: .runtime)
         try container.encode(selectedGenres, forKey: .selectedGenres)
-        try container.encodeIfPresent(sampleMovie, forKey: .sampleMovie)
         try container.encode(entries, forKey: .entries)
         try container.encode(scenes, forKey: .scenes)
         try container.encode(createdAt, forKey: .createdAt)
@@ -107,9 +90,6 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
             medium: wizard.medium,
             runtime: wizard.runtime,
             selectedGenres: wizard.selectedGenres,
-            sampleMovie: wizard.sampleMovie.map {
-                SampleMovieReference(title: $0.title, year: $0.year, genre: $0.genre)
-            },
             entries: wizard.entries,
             scenes: wizard.scenes
         )
@@ -124,9 +104,6 @@ struct SavedTemplate: Identifiable, Codable, Equatable {
         medium = wizard.medium
         runtime = wizard.runtime
         selectedGenres = wizard.selectedGenres
-        sampleMovie = wizard.sampleMovie.map {
-            SampleMovieReference(title: $0.title, year: $0.year, genre: $0.genre)
-        }
         entries = wizard.entries
         scenes = wizard.scenes
         updatedAt = .now
@@ -217,7 +194,6 @@ final class TemplateLibraryStore: ObservableObject {
         if template.selectedGenres.count >= 2 {
             wizard.secondaryGenreTitle = template.selectedGenres[1]
         }
-        wizard.sampleMovie = template.sampleMovie?.resolve()
         wizard.projectTitle = template.projectTitle
         wizard.logline = template.logline
         wizard.plot = template.plot

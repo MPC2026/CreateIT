@@ -177,3 +177,28 @@ enum Genre: String, CaseIterable, Identifiable, Codable {
         }
     }
 }
+
+// MARK: - Core Timeline Models
+
+/// Defines a structural narrative beat within the screenwriting timeline configuration matrix.
+struct TimelineBeatElement: Identifiable, Codable, Hashable {
+    let id: UUID
+    var timestamp: TimeInterval
+    var title: String
+    var descriptionContent: String
+    var structuralTag: String
+    
+    init(
+        id: UUID = UUID(),
+        timestamp: TimeInterval = Date().timeIntervalSince1970,
+        title: String,
+        descriptionContent: String,
+        structuralTag: String = "General"
+    ) {
+        self.id = id
+        self.timestamp = timestamp
+        self.title = title
+        self.descriptionContent = descriptionContent
+        self.structuralTag = structuralTag
+    }
+}
