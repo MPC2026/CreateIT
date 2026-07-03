@@ -53,7 +53,7 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           # DMG name matches what create_dmg.sh produces (CreateIT-vX.YbZ.dmg)
-          echo "dmg_name=CreateIT-${VERSION}.dmg" >> "$GITHUB_OUTPUT"
+          echo "dmg_name=CreateIT-${TAG}.dmg" >> "$GITHUB_OUTPUT"
           echo "release_name=CreateIT ${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Publish GitHub release
