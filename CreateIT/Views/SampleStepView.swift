@@ -17,9 +17,8 @@ struct SampleStepView: View {
                     SelectionCard(
                         isSelected: wizard.sampleMovie?.id == movie.id,
                         action: {
-                            // Only select the movie - don't auto-advance yet
                             wizard.sampleMovie = movie
-                            // User will manually click Continue to advance
+                            wizard.next()
                         }
                     ) {
                         VStack(alignment: .leading, spacing: 10) {
@@ -47,20 +46,6 @@ struct SampleStepView: View {
                   systemImage: "info.circle")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-
-            // Continue button - only enabled when a sample film is selected
-            Button(action: {
-                wizard.next()
-            }) {
-                Text("Continue")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(wizard.sampleMovie != nil ? Color.blue : Color.gray)
-                    .cornerRadius(8)
-            }
-            .disabled(wizard.sampleMovie == nil)
         }
     }
 }

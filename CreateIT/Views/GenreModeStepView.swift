@@ -14,9 +14,8 @@ struct GenreModeStepView: View {
                 SelectionCard(
                     isSelected: wizard.genreMode == mode,
                     action: {
-                        // Only select the mode - don't auto-advance yet
                         wizard.selectGenreMode(mode)
-                        // User will manually advance after selecting mode
+                        wizard.next()
                     }
                 ) {
                     VStack(alignment: .leading, spacing: 10) {
