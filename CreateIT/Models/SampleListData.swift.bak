@@ -18,9 +18,9 @@ struct SecondaryGenreData: Codable, Equatable {
 /// Represents a sample movie entry that can be parsed from JSON
 /// Supports both simple string format "Movie Title (Year)" and object format with logline
 struct SampleMovieEntry: Codable, Equatable, Hashable {
-    var title: String
-    var year: Int
-    var logline: String?
+    let title: String
+    let year: Int
+    let logline: String?
     
     enum CodingKeys: String, CodingKey {
         case title, year, logline

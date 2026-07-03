@@ -1,0 +1,8 @@
+{
+    "twinny.numPredictChat": 654096,
+    "twinny.numPredictFim": 4096,
+    "twinny.maxLines": 4096,
+    "twinny.contextLength": 65536,
+    "twinny.debounceWait": 30,
+    "twinny.temperature": 0
+}

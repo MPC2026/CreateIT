@@ -22,10 +22,7 @@ struct PlotStepView: View {
 
     private var twoColumnLayout: some View {
         HStack(alignment: .top, spacing: 20) {
-            VStack(alignment: .leading, spacing: 18) {
-                primaryColumn
-                sampleDetailsSection
-            }
+            primaryColumn
             secondaryColumn
                 .frame(width: 300, alignment: .topLeading)
         }
@@ -35,7 +32,6 @@ struct PlotStepView: View {
         VStack(alignment: .leading, spacing: 20) {
             summaryChips
             primaryColumn
-            sampleDetailsSection
             secondaryColumn
         }
     }
@@ -50,6 +46,15 @@ struct PlotStepView: View {
                     .font(.title3)
             }
 
+                
+                // Sample title (if available)
+                if let sampleMovie = wizard.sampleMovie, !sampleMovie.title.isEmpty {
+                    Text(sampleMovie.title)
+                        .font(.title3.weight(.medium))
+                        .foregroundStyle(.secondary)
+                        .padding(.top, -4)
+                }
+
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text("Logline")
@@ -61,6 +66,15 @@ struct PlotStepView: View {
                 TextField("One sentence: who wants what, and what's in the way?", text: $wizard.logline)
                     .textFieldStyle(.roundedBorder)
             }
+
+                
+                // Sample logline (if available)
+                if let sampleMovie = wizard.sampleMovie, !sampleMovie.logline.isEmpty {
+                    Text(sampleMovie.logline)
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .padding(.top, -4)
+                }
 
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
@@ -88,49 +102,26 @@ struct PlotStepView: View {
                                 .padding(16)
                                 .allowsHitTesting(false)
                         }
-                    }
-            }
-        }
-    }
 
-    private var sampleDetailsSection: some View {
-        GroupBox {
-            VStack(alignment: .leading, spacing: 12) {
-                if let movie = wizard.sampleMovie {
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text(movie.title)
-                            .font(.headline)
-                        Text("(\(movie.year))")
-                            .font(.subheadline)
+                
+                // Sample plot guidance (if available)
+                if let sampleMovie = wizard.sampleMovie, !sampleMovie.title.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Divider()
+                        Text("Sample Reference: \(sampleMovie.title)")
+                            .font(.caption.weight(.semibold))
                             .foregroundStyle(.secondary)
-                    }
-                    
-                    if !movie.logline.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Logline")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                            Text(movie.logline)
-                                .font(.callout)
-                                .foregroundStyle(.primary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                    }
-                    
-                    if !movie.beatSamples.isEmpty {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Beat Samples")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                            
-                            let keys = Array(movie.beatSamples.keys).sorted()
-                            ForEach(Array(keys.enumerated()), id: \.offset) { (idx, key) in
-                                if let sample = movie.sample(for: key) {
-                                    VStack(alignment: .leading, spacing: 2) {
+                        
+                        // Show beat samples as guidance
+                        if !sampleMovie.beatSamples.isEmpty {
+                            let sortedKeys = sampleMovie.beatSamples.keys.sorted()
+                            ForEach(sortedKeys, id: \.self) { key in
+                                if let sampleText = sampleMovie.sample(for: key) {
+                                    HStack(alignment: .top, spacing: 8) {
                                         Text(key)
-                                            .font(.caption2.weight(.medium))
-                                            .foregroundStyle(.tint)
-                                        Text(sample)
+                                            .font(.caption.weight(.medium))
+                                            .foregroundStyle(.accentColor)
+                                        Text(sampleText)
                                             .font(.caption)
                                             .foregroundStyle(.secondary)
                                             .fixedSize(horizontal: false, vertical: true)
@@ -139,17 +130,10 @@ struct PlotStepView: View {
                             }
                         }
                     }
-                } else {
-                    HStack(spacing: 8) {
-                        Image(systemName: "info.circle")
-                            .foregroundStyle(.tint)
-                        Text("Select a sample film on the previous step to see structural guidance.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                    .padding(.top, 8)
                 }
+                    }
             }
-            .padding(.vertical, 8)
         }
     }
 

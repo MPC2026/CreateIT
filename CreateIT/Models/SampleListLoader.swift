@@ -47,7 +47,7 @@ class SampleListLoader: ObservableObject {
     }
     
     /// Get sample movies for a primary-secondary genre combination
-    func getSamples(for primaryGenre: String, secondaryGenre: String) -> [String] {
+    func getSamples(for primaryGenre: String, secondaryGenre: String) -> [SampleMovieEntry] {
         guard let data = loadedData else { return [] }
         
         if let genreData = data.genres.first(where: { $0.primary == primaryGenre }),

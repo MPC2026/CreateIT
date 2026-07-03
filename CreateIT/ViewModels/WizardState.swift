@@ -81,45 +81,67 @@ final class WizardState: ObservableObject {
         guard let primary = primaryGenreTitle else { return [] }
         
         // Get samples based on selection mode
-        let sampleStrings: [String]
+        let sampleEntries: [SampleMovieEntry]
         if let secondary = secondaryGenreTitle, !secondary.isEmpty {
             // Primary & Secondary mode - get specific combination
-            sampleStrings = SampleListLoader.shared.getSamples(for: primary, secondaryGenre: secondary)
+            sampleEntries = SampleListLoader.shared.getSamples(for: primary, secondaryGenre: secondary)
         } else {
             // Primary Only mode - get samples for primary genre (first secondary if available)
-            sampleStrings = SampleListLoader.shared.getSecondaryGenres(for: primary).flatMap { secondary in
+            let secondaryGenres = SampleListLoader.shared.getSecondaryGenres(for: primary)
+            sampleEntries = secondaryGenres.flatMap { secondary in
                 SampleListLoader.shared.getSamples(for: primary, secondaryGenre: secondary)
             }
         }
         
-        // Limit to 4 unique samples with no duplicates
-        let uniqueSamples = Array(Set(sampleStrings)).prefix(4)
+        // Limit to 4 unique samples with no duplicates by title
+        var seenTitles = Set<String>()
+        let uniqueSamples = sampleEntries.filter { entry in
+            if seenTitles.contains(entry.title) {
+                return false
+            }
+            seenTitles.insert(entry.title)
+            return true
+        }.prefix(4)
         
         var movies: [SampleMovie] = []
-        for sampleString in uniqueSamples {
-            if let (title, year) = SampleListLoader.parseMovieString(sampleString) {
-                // Get genre from selectedGenres
-                let movieGenre: Genre?
-                if let firstGenre = selectedGenres.first,
-                   let genreEnum = Genre(rawValue: firstGenre.lowercased().replacingOccurrences(of: " ", with: "")) {
-                    movieGenre = genreEnum
-                } else {
-                    movieGenre = nil
-                }
-                
-                let movie = SampleMovie(
-                    title: title,
-                    year: year,
-                    genre: movieGenre ?? .action,
-                    medium: medium ?? .movie,
-                    runtime: runtime ?? .feature,
-                    logline: "",
-                    beatSamples: [:]
-                )
-                movies.append(movie)
+        for sampleEntry in uniqueSamples {
+            // Get genre from selectedGenres
+            let movieGenre: Genre?
+            if let firstGenre = selectedGenres.first,
+               let genreEnum = Genre(rawValue: firstGenre.lowercased().replacingOccurrences(of: " ", with: "")) {
+                movieGenre = genreEnum
+            } else {
+                movieGenre = nil
             }
+            
+            // Get beat samples from SampleLibrary for this genre
+            let beatSamples = getBeatSamples(for: movieGenre)
+            
+            let movie = SampleMovie(
+                title: sampleEntry.title,
+                year: sampleEntry.year,
+                genre: movieGenre ?? .action,
+                medium: medium ?? .movie,
+                runtime: runtime ?? .feature,
+                logline: sampleEntry.logline ?? "",
+                beatSamples: beatSamples
+            )
+            movies.append(movie)
         }
         return movies
+    }
+    
+    /// Get beat samples from SampleLibrary for a genre
+    private func getBeatSamples(for genre: Genre?) -> [String: String] {
+        guard let genre = genre else { return [:] }
+        
+        // Try to find matching movie in SampleLibrary and use its beat samples
+        let libraryMovies = SampleLibrary.all.filter { $0.genre == genre }
+        if let firstMovie = libraryMovies.first {
+            return firstMovie.beatSamples
+        }
+        
+        return [:]
     }
 
     /// Whether the user can advance from the current step.

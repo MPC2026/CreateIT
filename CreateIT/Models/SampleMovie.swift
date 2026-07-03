@@ -11,7 +11,7 @@ struct SampleMovie: Identifiable, Codable {
     let genre: Genre
     let medium: Medium
     let runtime: Runtime
-    let logline: String
+    var logline: String
     let beatSamples: [String: String]
 
     /// Returns the sample text for a beat key, if one exists.
