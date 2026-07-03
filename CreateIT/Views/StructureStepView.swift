@@ -15,6 +15,7 @@ struct StructureStepView: View {
                     isSelected: wizard.structure == structure,
                     action: {
                         wizard.structure = structure
+                        wizard.forceNext()
                     }
                 ) {
                     VStack(alignment: .leading, spacing: 12) {

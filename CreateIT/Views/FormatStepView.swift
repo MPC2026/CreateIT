@@ -18,8 +18,8 @@ struct FormatStepView: View {
                         isSelected: wizard.medium == medium,
                         action: {
                             wizard.selectMedium(medium)
-                            if medium == .movie {
-                                wizard.forceNext()
+                            if medium == .movie && wizard.canAdvance {
+                                wizard.next()
                             }
                         }
                     ) {
@@ -60,6 +60,9 @@ struct FormatStepView: View {
                             isSelected: wizard.runtime == runtime,
                             action: {
                                 wizard.runtime = runtime
+                                if wizard.canAdvance {
+                                    wizard.next()
+                                }
                             }
                         ) {
                             HStack(spacing: 14) {

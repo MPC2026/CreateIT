@@ -27,6 +27,10 @@ struct GenreStepView: View {
                         if let mode = wizard.genreMode, mode == .primaryOnly {
                             // For Primary Only, only allow one genre
                             wizard.addSelectedGenre(genre.title)
+                            // Auto-advance after selecting genre (1 click) when canAdvance is true
+                            if wizard.canAdvance {
+                                wizard.next()
+                            }
                         } else {
                             // For Primary & Secondary, toggle selection (max 2)
                             if wizard.selectedGenres.contains(genre.title) {
@@ -117,10 +121,10 @@ struct GenreStepView: View {
             
             // Continue button - only enabled when we have at least 1 genre
             Button(action: {
-                if wizard.selectedGenres.count >= 1 {
+                if wizard.selectedGenres.count >= 1 && wizard.canAdvance {
                     // For Primary Only mode, just advance
-                    if wizard.genreMode == .primaryOnly && wizard.selectedGenres.count >= 1 {
-                        wizard.forceNext()
+                    if wizard.genreMode == .primaryOnly {
+                        wizard.next()
                     } else if wizard.genreMode == .primarySecondary {
                         // For Primary & Secondary mode, show alert if we have 2 genres
                         if wizard.selectedGenres.count == 2 {
@@ -141,7 +145,9 @@ struct GenreStepView: View {
         }
         .alert("Genre Selection", isPresented: $showingSelectionAlert) {
             Button("Continue") {
-                wizard.forceNext()
+                if wizard.canAdvance {
+                    wizard.next()
+                }
             }
             if wizard.genreMode == .primarySecondary && wizard.selectedGenres.count >= 2 {
                 // Show option to swap primary/secondary
