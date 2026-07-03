@@ -43,7 +43,7 @@ struct SecondaryGenreStepView: View {
             StepHeader(
                 eyebrow: "Step 3.5",
                 title: "Choose a secondary genre",
-                subtitle: "Select a secondary genre to refine your sample film selection."
+                subtitle: nil
             )
 
             if availableSecondaryGenres.isEmpty {

@@ -60,7 +60,6 @@ struct FormatStepView: View {
                             isSelected: wizard.runtime == runtime,
                             action: {
                                 wizard.runtime = runtime
-                                wizard.forceNext()
                             }
                         ) {
                             HStack(spacing: 14) {

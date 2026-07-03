@@ -24,7 +24,6 @@ struct PlotStepView: View {
         HStack(alignment: .top, spacing: 20) {
             VStack(alignment: .leading, spacing: 18) {
                 primaryColumn
-                sampleDetailsSection
             }
             secondaryColumn
                 .frame(width: 300, alignment: .topLeading)
@@ -35,7 +34,6 @@ struct PlotStepView: View {
         VStack(alignment: .leading, spacing: 20) {
             summaryChips
             primaryColumn
-            sampleDetailsSection
             secondaryColumn
         }
     }
@@ -93,20 +91,7 @@ struct PlotStepView: View {
         }
     }
 
-    private var sampleDetailsSection: some View {
-        GroupBox {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 8) {
-                    Image(systemName: "info.circle")
-                        .foregroundStyle(.tint)
-                    Text("Sample movie selection has been removed. You can now proceed directly to plot.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .padding(.vertical, 8)
-        }
-    }
+
 
     private var secondaryColumn: some View {
         VStack(alignment: .leading, spacing: 16) {
