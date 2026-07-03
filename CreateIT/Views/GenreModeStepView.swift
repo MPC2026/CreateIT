@@ -14,16 +14,9 @@ struct GenreModeStepView: View {
                 SelectionCard(
                     isSelected: wizard.genreMode == mode,
                     action: {
+                        // Only select the mode - don't auto-advance yet
                         wizard.selectGenreMode(mode)
-                        
-                        // Navigate based on mode
-                        if mode == .primaryOnly {
-                            // For Primary Only, go directly to genre selection (which will auto-advance after one selection)
-                            wizard.forceNext()
-                        } else {
-                            // For Primary & Secondary, go to genre selection where user can pick two
-                            wizard.forceNext()
-                        }
+                        // User will manually advance after selecting mode
                     }
                 ) {
                     VStack(alignment: .leading, spacing: 10) {

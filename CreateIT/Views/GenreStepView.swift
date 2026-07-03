@@ -27,7 +27,7 @@ struct GenreStepView: View {
                         if let mode = wizard.genreMode, mode == .primaryOnly {
                             // For Primary Only, only allow one genre
                             wizard.addSelectedGenre(genre.title)
-                            wizard.forceNext()
+                            // Don't auto-advance - let user click Continue button
                         } else {
                             // For Primary & Secondary, toggle selection (max 2)
                             if wizard.selectedGenres.contains(genre.title) {
