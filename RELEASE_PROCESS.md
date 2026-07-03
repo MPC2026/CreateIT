@@ -69,7 +69,12 @@ cd "/Users/michael/Documents/MacbookPro/My Apps/Projects/Apps/MacOS/CreateIT"
 bash scripts/create_dmg.sh
 ```
 
-The DMG will be created in `dist/CreateIT-vX.YbZ.dmg`
+**Important:** Verify the DMG was created in the `dist/` folder:
+```bash
+ls -la dist/
+```
+
+The DMG should be at `dist/CreateIT-vX.YbZ.dmg`. If it's not there, check the script output for errors.
 
 ### 5. Commit and Tag
 
@@ -111,9 +116,11 @@ xcodebuild -project CreateIT.xcodeproj -scheme CreateIT -configuration Release c
 # 4. Create DMG (uses dynamic build path from xcodebuild settings)
 bash scripts/create_dmg.sh
 
-# 5. Commit and push (release auto-publishes via GitHub Actions)
+# 5. Verify DMG was created in dist folder
+ls -la dist/
+
+# 6. Commit and push (release auto-publishes via GitHub Actions)
 git add -A && git commit -m "Release: Version 3.0 (Build 4)" && git tag v3.0b4 && git push origin main --tags
-```
 
 **Note:** After pushing the tag, the release will be automatically built and published on GitHub. Check https://github.com/MPC2026/CreateIT/actions to monitor progress.
 
@@ -134,9 +141,11 @@ xcodebuild -project CreateIT.xcodeproj -scheme CreateIT -configuration Release c
 # 4. Create DMG (uses dynamic build path from xcodebuild settings)
 bash scripts/create_dmg.sh
 
-# 5. Commit and push (release auto-publishes via GitHub Actions)
+# 5. Verify DMG was created in dist folder
+ls -la dist/
+
+# 6. Commit and push (release auto-publishes via GitHub Actions)
 git add -A && git commit -m "Release: Version 3.0 (Build 4)" && git tag v3.0b4 && git push origin main --tags
-```
 
 The release will be automatically built and published on GitHub via the `publish-release.yml` workflow.
 
@@ -147,6 +156,13 @@ The release will be automatically built and published on GitHub via the `publish
 
 ### DMG creation fails
 - Check that the app exists at: `~/Library/Developer/Xcode/DerivedData/CreateIT-*/Build/Products/Release/CreateIT.app`
+
+### DMG not appearing in dist folder
+If `create_dmg.sh` completes but you don't see a `.dmg` file in the `dist/` folder:
+1. Check the script output for errors (look for ❌ markers)
+2. Verify the build succeeded: `ls -la ~/Library/Developer/Xcode/DerivedData/CreateIT-*/Build/Products/Release/*.app`
+3. Run the script again with verbose output to see what's happening
+4. Ensure you have write permissions in the project directory
 
 ### Git push fails with "permission denied"
 - Verify you have write access to the repository
