@@ -62,13 +62,13 @@ The latest `xcodebuild` release build failed with the following errors:
 
 ---
 
-## Phase 5: Post-Recovery Tasks (Current Phase) ✅
+## Phase 5: Post-Recovery Tasks (v3.0b25) - COMPLETED ✅
 
-[ ] 1. Verify version from built Info.plist
-[ ] 2. Create DMG: bash scripts/create_dmg.sh
-[ ] 3. Commit: git add -A && git commit -m "Release: Version 3.0 (Build 25)"
-[ ] 4. Tag: git tag v3.0b25
-[ ] 5. Push: git push origin main --tags (triggers GitHub Actions auto-publish)
+- [x] Verify version from built Info.plist (3.0b25, Build 25)
+- [x] Create DMG: bash scripts/create_dmg.sh
+- [x] Commit: git add -A && git commit -m "Release: Version 3.0b25"
+- [x] Tag: git tag v3.0b25
+- [x] Push: git push origin main --tags (triggers GitHub Actions auto-publish)
 
 ---
 
