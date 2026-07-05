@@ -122,11 +122,20 @@ struct EditSceneView: View {
             
             Spacer()
             
-            // Save button
-            Button("Save Scene") {
-                save()
+            // Action buttons
+            HStack {
+                Button("Cancel") {
+                    dismiss()
+                }
+                .buttonStyle(.bordered)
+                
+                Spacer()
+                
+                Button("Save Scene") {
+                    save()
+                }
+                .buttonStyle(.borderedProminent)
             }
-            .buttonStyle(.borderedProminent)
             .frame(maxWidth: .infinity)
         }
         .padding(24)
