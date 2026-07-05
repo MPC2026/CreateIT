@@ -131,3 +131,79 @@ struct CardGrid<Data: RandomAccessCollection, Content: View>: View where Data.El
         }
     }
 }
+
+// MARK: - Scene Card
+
+/// A reusable view showing scene details in card format with act, beat, scene number, and text preview.
+struct SceneCardView: View {
+    let scene: SceneOutlineScene
+    let beat: BeatTemplate?
+    let isSelected: Bool
+    let laneColor: Color
+    let action: () -> Void
+
+    @State private var hovering = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .top, spacing: 12) {
+                // Lane color indicator
+                RoundedRectangle(cornerRadius: 3, style: .continuous)
+                    .fill(laneColor)
+                    .frame(width: 6, height: .infinity)
+
+                // Scene details
+                VStack(alignment: .leading, spacing: 4) {
+                    // Header: Act X - Beat Name - Scene Y
+                    HStack(spacing: 6) {
+                        Text("ACT \(scene.act)")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                        if let beatTitle = beat?.title {
+                            Text("• \(beatTitle)")
+                                .font(.caption.weight(.regular))
+                                .foregroundStyle(.primary)
+                        }
+                        Text("• Scene \(scene.beatSceneNumber)")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    // Title
+                    if !scene.title.isEmpty {
+                        Text(scene.title)
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(isSelected ? Color.accentColor : .primary)
+                    }
+
+                    // Summary preview
+                    if !scene.summary.isEmpty {
+                        Text(scene.summary)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(3)
+                    }
+                }
+
+                Spacer()
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(isSelected ? Color.accentColor.opacity(0.1) : Color(nsColor: .controlBackgroundColor))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(
+                    isSelected ? Color.accentColor : Color.primary.opacity(hovering ? 0.18 : 0.08),
+                    lineWidth: isSelected ? 2 : 1)
+        )
+        .shadow(color: .black.opacity(hovering ? 0.08 : 0), radius: 6, y: 2)
+        .buttonStyle(.plain)
+        .onHover { hovering = $0 }
+        .animation(.easeOut(duration: 0.15), value: hovering)
+        .animation(.easeOut(duration: 0.15), value: isSelected)
+    }
+}

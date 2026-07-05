@@ -318,7 +318,7 @@ final class WizardState: ObservableObject {
         scenes.first(where: { $0.id == sceneID })
     }
 
-    private func beat(for beatKey: String?) -> BeatTemplate? {
+    func beat(for beatKey: String?) -> BeatTemplate? {
         guard let beatKey else { return nil }
         return beats.first(where: { $0.key == beatKey })
     }

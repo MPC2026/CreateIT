@@ -17,6 +17,7 @@ struct OutlineStepView: View {
     @State private var beatElement: BeatElement = .card
     @State private var includeGuidance = true
     @State private var collapsedBeatKeys: Set<String> = []
+    @State private var editingScene: SceneOutlineScene?
 
     init(scrollTargetBeatKey: Binding<String?> = .constant(nil)) {
         _scrollTargetBeatKey = scrollTargetBeatKey
@@ -28,7 +29,7 @@ struct OutlineStepView: View {
                 StepHeader(
                     eyebrow: "Step 6",
                     title: "Scenes",
-                    subtitle: "Use each beat as a container for its scene list. Start with a practical scene count, then edit, add, or remove scenes inside each beat.")
+                    subtitle: "Browse and edit individual scenes. Click a scene card to open it for editing.")
                 Spacer(minLength: 16)
                 scenesExportMenu
             }
@@ -114,6 +115,13 @@ struct OutlineStepView: View {
                     .foregroundStyle(.white)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .padding(.bottom, 8)
+            }
+        }
+        .sheet(item: $editingScene) { scene in
+            EditSceneView(scene: scene) { updatedScene in
+                if let index = wizard.scenes.firstIndex(where: { $0.id == scene.id }) {
+                    wizard.scenes[index] = updatedScene
+                }
             }
         }
     }
@@ -277,34 +285,20 @@ struct OutlineStepView: View {
     }
 
     private var sceneBoard: some View {
-        LazyVStack(alignment: .leading, spacing: 18) {
-            beatTableHeader
-
-            ForEach(actSections) { section in
-                VStack(alignment: .leading, spacing: 10) {
-                    actHeader(section)
-
-                    ForEach(section.beats) { beat in
-                        beatSection(beat)
-                    }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 12) {
+                ForEach(wizard.orderedScenes) { scene in
+                    SceneCardView(
+                        scene: scene,
+                        beat: wizard.beat(for: scene.beatKey),
+                        isSelected: editingScene?.id == scene.id,
+                        laneColor: laneColor(for: scene.act)) {
+                            selectScene(scene.id)
+                        }
                 }
-                .padding(16)
-                .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color(nsColor: .controlBackgroundColor).opacity(0.92),
-                                    Color(nsColor: .textBackgroundColor).opacity(0.78)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing)))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .strokeBorder(Color.primary.opacity(0.08)))
             }
+            .padding(.horizontal, 16)
         }
-        .padding(.vertical, 2)
     }
 
     private var beatTableHeader: some View {
@@ -958,7 +952,9 @@ struct OutlineStepView: View {
     }
 
     private func selectScene(_ sceneID: UUID) {
-        activeSceneID = sceneID
+        if let scene = wizard.scenes.first(where: { $0.id == sceneID }) {
+            editingScene = scene
+        }
     }
 
     private func draftScenesWithAI() {

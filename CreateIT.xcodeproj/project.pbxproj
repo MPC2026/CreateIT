@@ -28,17 +28,19 @@
 		A92B101BB1775A77DFB92299 /* TemplateLibrarySidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF1825E5B57FB2FBBD60A5F /* TemplateLibrarySidebarView.swift */; };
 		A96E2E760370C5D31559A47C /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC164401EB304C3DC069F8C5 /* AppInfo.swift */; };
 		B216CFA9784B7F3C794C878A /* UpdateCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54BEB7C5FF01545507A29CEA /* UpdateCenterView.swift */; };
+		B3C4D5E6F78901234567890A /* GenreModeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B3C4D5E6F7890123456789 /* GenreModeStepView.swift */; };
 		BD67BE172BC4287F0E4BF590 /* ReleaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD19359C1A68BE48555377B /* ReleaseNotes.swift */; };
 		BDFA705FC9D9F566D92E0ABE /* FinalDraftStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F647E79C09775169A3B3D1A4 /* FinalDraftStepView.swift */; };
 		C2605EFF0EB9862BC540364A /* OutlineStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F895E6B7E44A18CD2DDF28B /* OutlineStepView.swift */; };
 		C418A71222B6BBBB2F1149AA /* FormatStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F3FFD0E48453427FCDA992 /* FormatStepView.swift */; };
-		B3C4D5E6F78901234567890A /* GenreModeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B3C4D5E6F7890123456789 /* GenreModeStepView.swift */; };
+		C5D6E7F8G9H0123456789ABC /* BackupRestoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A7B2C4DDF1E3B9A1B2C3D4 /* BackupRestoreView.swift */; };
 		D7E2D21BB93ECEDA30DEA0DA /* BeatSheetPDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1B163B4281735EE3E9EB03 /* BeatSheetPDFExporter.swift */; };
 		E1D790BF729EFAE74B57E7E0 /* VersionHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385F0A9A13E9658804CDC588 /* VersionHistoryView.swift */; };
 		E7878C8B6FAFC3176C9A6102 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF36BF2EE7E3FB08ECFA72CB /* ContentView.swift */; };
 		EB6295681F3F1B6D58ACBA74 /* GenreStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BE152A1F1AABB238DBE0D /* GenreStepView.swift */; };
 		EE6E24478743D859FD193046 /* TemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DEA9817626DD49F2858CAF /* TemplatesView.swift */; };
 		EF80FC8A5CA4636AB4618185 /* TemplateLibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543A19A6BA53967EE3FE6948 /* TemplateLibraryStore.swift */; };
+		F13661F253A9B2F1EF8EE637 /* EditSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD01E120E43D808BDB9D581 /* EditSceneView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,10 +48,9 @@
 		1A1B163B4281735EE3E9EB03 /* BeatSheetPDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeatSheetPDFExporter.swift; sourceTree = "<group>"; };
 		20EAB205881F2C62D98C2F58 /* CreateITApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateITApp.swift; sourceTree = "<group>"; };
 		2577FA77CCFFA99F066527B7 /* LMStudioClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LMStudioClient.swift; sourceTree = "<group>"; };
+		2CD01E120E43D808BDB9D581 /* EditSceneView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EditSceneView.swift; path = CreateIT/Views/EditSceneView.swift; sourceTree = "<group>"; };
 		31812703FE0996CD40A12BEF /* StructureStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructureStepView.swift; sourceTree = "<group>"; };
 		385F0A9A13E9658804CDC588 /* VersionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionHistoryView.swift; sourceTree = "<group>"; };
-			D0A7B2C4DDF1E3B9A1B2C3D4 /* BackupRestoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupRestoreView.swift; sourceTree = "<group>"; };
-		C5D6E7F8G9H0123456789ABC /* BackupRestoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A7B2C4DDF1E3B9A1B2C3D4 /* BackupRestoreView.swift */; };
 		3CB8A652AE2E04473D7F6AFF /* TemplateStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateStepView.swift; sourceTree = "<group>"; };
 		3DD19359C1A68BE48555377B /* ReleaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseNotes.swift; sourceTree = "<group>"; };
 		4C9268371922760085848CB4 /* WizardState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WizardState.swift; sourceTree = "<group>"; };
@@ -58,7 +59,6 @@
 		5D81E2D703AC09B6A6688DFE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6818992677CCE804A6E70568 /* PlotStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlotStepView.swift; sourceTree = "<group>"; };
 		68F3FFD0E48453427FCDA992 /* FormatStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatStepView.swift; sourceTree = "<group>"; };
-		A2B3C4D5E6F7890123456789 /* GenreModeStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenreModeStepView.swift; sourceTree = "<group>"; };
 		6B01F34AD2390189324059BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6E9E93BC8FE34D5146FBCE8E /* ReleasePreviewTemplate.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReleasePreviewTemplate.md; sourceTree = "<group>"; };
 		7F72F57A67F9100903D905CD /* ServerSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSelectionView.swift; sourceTree = "<group>"; };
@@ -66,9 +66,11 @@
 		8F895E6B7E44A18CD2DDF28B /* OutlineStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlineStepView.swift; sourceTree = "<group>"; };
 		A07E694AF87CEC835C6FDC62 /* ScriptModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptModels.swift; sourceTree = "<group>"; };
 		A12EB497D813B9AF54052573 /* CreateIT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CreateIT.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2B3C4D5E6F7890123456789 /* GenreModeStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenreModeStepView.swift; sourceTree = "<group>"; };
 		AE15A836F41A96713260A342 /* FDXExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FDXExporter.swift; sourceTree = "<group>"; };
 		C87BE152A1F1AABB238DBE0D /* GenreStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenreStepView.swift; sourceTree = "<group>"; };
 		CC164401EB304C3DC069F8C5 /* AppInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
+		D0A7B2C4DDF1E3B9A1B2C3D4 /* BackupRestoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupRestoreView.swift; sourceTree = "<group>"; };
 		DA535918C75941BECCA1E337 /* SceneOutline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneOutline.swift; sourceTree = "<group>"; };
 		DE95C45E901ADD64A7C197CA /* GitHubUpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubUpdateService.swift; sourceTree = "<group>"; };
 		E2DEA9817626DD49F2858CAF /* TemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplatesView.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 			children = (
 				898272C3C87D23FB552D1531 /* CreateIT */,
 				E4805BEF5E179050A780B636 /* Products */,
+				2CD01E120E43D808BDB9D581 /* EditSceneView.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -168,7 +171,7 @@
 				EF36BF2EE7E3FB08ECFA72CB /* ContentView.swift */,
 				F647E79C09775169A3B3D1A4 /* FinalDraftStepView.swift */,
 				68F3FFD0E48453427FCDA992 /* FormatStepView.swift */,
-					A2B3C4D5E6F7890123456789 /* GenreModeStepView.swift */,
+				A2B3C4D5E6F7890123456789 /* GenreModeStepView.swift */,
 				C87BE152A1F1AABB238DBE0D /* GenreStepView.swift */,
 				8F895E6B7E44A18CD2DDF28B /* OutlineStepView.swift */,
 				6818992677CCE804A6E70568 /* PlotStepView.swift */,
@@ -178,7 +181,7 @@
 				3CB8A652AE2E04473D7F6AFF /* TemplateStepView.swift */,
 				E2DEA9817626DD49F2858CAF /* TemplatesView.swift */,
 				54BEB7C5FF01545507A29CEA /* UpdateCenterView.swift */,
-			D0A7B2C4DDF1E3B9A1B2C3D4 /* BackupRestoreView.swift */,
+				D0A7B2C4DDF1E3B9A1B2C3D4 /* BackupRestoreView.swift */,
 				385F0A9A13E9658804CDC588 /* VersionHistoryView.swift */,
 			);
 			path = Views;
@@ -217,8 +220,6 @@
 			dependencies = (
 			);
 			name = CreateIT;
-			packageProductDependencies = (
-			);
 			productName = CreateIT;
 			productReference = A12EB497D813B9AF54052573 /* CreateIT.app */;
 			productType = "com.apple.product-type.application";
@@ -304,6 +305,7 @@
 				B216CFA9784B7F3C794C878A /* UpdateCenterView.swift in Sources */,
 				E1D790BF729EFAE74B57E7E0 /* VersionHistoryView.swift in Sources */,
 				9EAF820A6168B8CAAD512339 /* WizardState.swift in Sources */,
+				F13661F253A9B2F1EF8EE637 /* EditSceneView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,7 +346,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-			CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -358,7 +360,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-			MARKETING_VERSION = 3.0;
+				MARKETING_VERSION = 3.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = CreateIT;
@@ -403,7 +405,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-			CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -423,7 +425,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-			MARKETING_VERSION = 3.0;
+				MARKETING_VERSION = 3.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
