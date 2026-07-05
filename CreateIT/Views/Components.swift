@@ -188,6 +188,7 @@ struct SceneCardView: View {
                 Spacer()
             }
         }
+        .buttonStyle(.borderless)
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
@@ -201,7 +202,7 @@ struct SceneCardView: View {
                     lineWidth: isSelected ? 2 : 1)
         )
         .shadow(color: .black.opacity(hovering ? 0.08 : 0), radius: 6, y: 2)
-        .buttonStyle(.plain)
+        .contentShape(Rectangle())
         .onHover { hovering = $0 }
         .animation(.easeOut(duration: 0.15), value: hovering)
         .animation(.easeOut(duration: 0.15), value: isSelected)
