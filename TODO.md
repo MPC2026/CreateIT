@@ -16,7 +16,6 @@
   - Add activeBeatId state for tracking which beat is being edited
   - Implement inline editing using existing BeatDraftTextEditor
 
-## Release Process
+## Release Process (Completed)
 
-- [x] Commit and push changes with tag v3.1b15
-- [ ] Update TODO.md to reflect current development priorities
+- [x] Commit and push changes with tag v3.1b16
