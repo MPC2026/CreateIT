@@ -91,7 +91,7 @@ struct AISettingsView: View {
                 Button {
                     Task { await ai.testConnection() }
                 } label: {
-                    Label("Test Connection", systemImage: "antenna.radiowaves.left.and.right")
+                    Label("Connect to AI Server", systemImage: "antenna.radiowaves.left.and.right")
                 }
                 .buttonStyle(.borderedProminent)
                 
