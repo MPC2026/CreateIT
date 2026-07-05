@@ -1286,6 +1286,12 @@ private struct SceneSummaryTextEditor: NSViewRepresentable {
         textView.drawsBackground = true
         textView.backgroundColor = .textBackgroundColor
         textView.font = NSFont.preferredFont(forTextStyle: .body)
+        
+        // Set left alignment
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .left
+        textView.defaultParagraphStyle = paragraphStyle
+        
         textView.string = text
 
         scrollView.documentView = textView
@@ -1395,15 +1401,6 @@ private final class SceneSummaryEditorTextView: NSTextView {
     override func mouseDown(with event: NSEvent) {
         onActivate?()
         super.mouseDown(with: event)
-    }
-
-    override func layout() {
-        super.layout()
-        textStorage?.enumerateAttributes(in: NSRange(location: 0, length: (textStorage?.length ?? 0)), options: []) { _, _, _ in
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.alignment = .left
-            self.textStorage?.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: self.textStorage?.length ?? 0))
-        }
     }
 }
 
