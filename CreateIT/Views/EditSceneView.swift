@@ -69,11 +69,8 @@ struct EditSceneView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.primary)
                 
-                TextEditor(text: $summary)
+                LeftAlignedTextEditor(text: $summary, minHeight: 120)
                     .frame(minHeight: 120)
-                    .font(.callout)
-                    .padding(8)
-                    .background(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.primary.opacity(0.12)))
             }
             
             // AI Assistant section
@@ -197,6 +194,49 @@ struct EditSceneView: View {
             }
         }
     }
+}
+
+private struct LeftAlignedTextEditor: NSViewRepresentable {
+    @Binding var text: String
+    var minHeight: CGFloat
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+    
+    func makeNSView(context: Context) -> NSScrollView {
+        let scrollView = NSTextView.scrollableTextView()
+        guard let textView = scrollView.documentView as? NSTextView else {
+            return scrollView
+        }
+        
+        textView.isEditable = true
+        textView.isSelectable = true
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.textContainer?.widthTracksTextView = true
+        textView.textContainer?.containerSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        textView.textContainer?.lineFragmentPadding = 8
+        textView.backgroundColor = .textBackgroundColor
+        textView.font = NSFont.preferredFont(forTextStyle: .callout)
+        textView.string = text
+        
+        // Set left alignment
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .left
+        textView.defaultParagraphStyle = paragraphStyle
+        
+        return scrollView
+    }
+    
+    func updateNSView(_ nsView: NSScrollView, context: Context) {
+        guard let textView = nsView.documentView as? NSTextView else { return }
+        if textView.string != text {
+            textView.string = text
+        }
+    }
+    
+    final class Coordinator: NSObject {}
 }
 
 #Preview {
