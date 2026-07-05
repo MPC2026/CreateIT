@@ -83,7 +83,7 @@ struct EditSceneView: View {
                 .frame(maxWidth: .infinity)
             }
             .padding(20)
-            .frame(width: 500, height: 400)
+            .frame(width: 600, height: 500)
         }
     }
     
