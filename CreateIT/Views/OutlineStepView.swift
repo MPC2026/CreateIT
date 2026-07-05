@@ -1396,6 +1396,15 @@ private final class SceneSummaryEditorTextView: NSTextView {
         onActivate?()
         super.mouseDown(with: event)
     }
+
+    override func layout() {
+        super.layout()
+        textStorage?.enumerateAttributes(in: NSRange(location: 0, length: (textStorage?.length ?? 0)), options: []) { _, _, _ in
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.alignment = .left
+            self.textStorage?.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: self.textStorage?.length ?? 0))
+        }
+    }
 }
 
 private final class SceneTitleField: NSTextField {
