@@ -182,6 +182,7 @@ struct SceneCardView: View {
                             .font(.callout)
                             .foregroundStyle(.secondary)
                             .lineLimit(3)
+                            .multilineTextAlignment(.leading)
                     }
                 }
 
