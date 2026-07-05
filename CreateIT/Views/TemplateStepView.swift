@@ -17,7 +17,7 @@ struct TemplateStepView: View {
     @State private var activeAIActionID: UUID?
     @State private var activeAITask: Task<Void, Never>?
     @State private var selectedBeatKey: String = ""
-    @State private var activeBeatAIDraft: BeatTemplate?
+    @State private var activeBeatId: String?  // Track which beat is currently being edited inline
     @State private var beatElement: BeatElement = .card
     @State private var includeGuidance = true
     @State private var storyOutline: [String: String] = [:]
@@ -46,14 +46,10 @@ struct TemplateStepView: View {
                         .foregroundStyle(.tint)
                         .padding(.top, 4)
                     ForEach(group.beats) { beat in
-                        BeatCardView(
+                        BeatLineView(
                             beat: beat,
-                            isTargeted: selectedBeatKey == beat.key,
-                            onFocus: { selectedBeatKey = beat.key },
-                            onDraftWithAI: {
-                                selectedBeatKey = beat.key
-                                activeBeatAIDraft = beat
-                            }
+                            isActive: activeBeatId == beat.id,
+                            onFocus: { activeBeatId = beat.id }
                         )
                     }
                 }
@@ -66,14 +62,6 @@ struct TemplateStepView: View {
                     .font(.callout.weight(.medium))
                     .foregroundStyle(exportStatusIsError ? .red : .secondary)
             }
-        }
-        .sheet(item: $activeBeatAIDraft) { beat in
-            BeatAIDraftSheetView(beat: beat) {
-                await draftBeatWithAI(beat)
-            }
-            .environmentObject(wizard)
-            .environmentObject(ai)
-            .frame(minWidth: 450, minHeight: 380)
         }
         .onAppear { 
             syncSelectedBeat()
@@ -1165,6 +1153,78 @@ private struct BeatAIDraftSheetView: View {
             dismiss()
         } else if !Task.isCancelled {
             errorMessage = "The AI draft could not be created. Try again after checking LM Studio."
+        }
+    }
+}
+
+// MARK: - BeatLineView (Inline beat editing)
+
+struct BeatLineView: View {
+    @EnvironmentObject private var wizard: WizardState
+    let beat: BeatTemplate
+    let isActive: Bool
+    let onFocus: () -> Void
+
+    private var binding: Binding<String> {
+        Binding(
+            get: { wizard.entries[beat.key] ?? "" },
+            set: { wizard.entries[beat.key] = $0 }
+        )
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(beat.title)
+                    .font(.headline.weight(.bold))
+                if isActive {
+                    Text("Editing")
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Capsule().fill(Color.accentColor.opacity(0.14)))
+                        .foregroundStyle(.tint)
+                }
+                Spacer()
+                if let runtime = wizard.runtime {
+                    Text(beat.timing(for: runtime))
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Capsule().fill(Color.secondary.opacity(0.12)))
+                }
+            }
+
+            ZStack(alignment: .topLeading) {
+                BeatDraftTextEditor(text: binding) {
+                    onFocus()
+                }
+                .frame(minHeight: 80)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(isActive ? Color.accentColor.opacity(0.06) : Color(nsColor: .textBackgroundColor)))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(isActive ? Color.accentColor.opacity(0.35) : Color.primary.opacity(0.12), lineWidth: isActive ? 1.5 : 1))
+                .onChange(of: binding.wrappedValue) { _, _ in onFocus() }
+            }
+
+            Text(beat.purpose)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color(nsColor: .controlBackgroundColor)))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(isActive ? Color.accentColor.opacity(0.3) : Color.primary.opacity(0.08), lineWidth: isActive ? 2 : 1))
+        .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .onTapGesture {
+            onFocus()
         }
     }
 }
